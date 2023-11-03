@@ -37,15 +37,21 @@ def displaypage(pathname):
         eventid = ctx.triggered[0]["prop_id"].split(".")[0]
         if eventid == "url":
             if pathname == "/" or pathname == "/home":
-                returnlayout = "home"
-            elif pathname == "/records":
-                returnlayout = "records"
-            elif pathname == "/user":
-                returnlayout = "user"
-            elif pathname == "/reports":
-                returnlayout = "reports"
+                returnlayout = "This is the homepage"
+            elif pathname == "/newrecord":
+                returnlayout = "Create new records here"
+            elif pathname == "/viewrecord":
+                returnlayout = "View existing records here"
+            elif pathname == "/newuser":
+                returnlayout = "Create new users here"
+            elif pathname == "/viewuser":
+                returnlayout = "View existing users here"
+            elif pathname == "/newreport":
+                returnlayout = "Generate reports here"
+            elif pathname == "/viewreport":
+                returnlayout = "View previously generated reports here"
             elif pathname == "/help":
-                returnlayout = "help"
+                returnlayout = "The user manual can be found here"
             else:
                 returnlayout = "error404"
             return [returnlayout]
