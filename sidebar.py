@@ -13,7 +13,7 @@ SIDEBAR_STYLE = {
     "top": 0,
     "left": 0,
     "bottom": 0,
-    "width": "18rem",
+    "width": "16rem",
     "padding": "2rem 1rem",
     "background-color": "#333",
 }
@@ -33,7 +33,7 @@ mainelement_style = {
 }
 
 subelement_style = {
-    "font-size": "1rem",
+    "font-size": "0.93rem",
     "margin-left": "1.5em",
     "color": "#fff",
     "margin-bottom": "0",
