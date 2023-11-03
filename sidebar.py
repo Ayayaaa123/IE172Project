@@ -39,41 +39,45 @@ subelement_style = {
     "margin-bottom": "0",
 }
 
+line_style = {
+    "border-bottom":"2px solid white", 
+    "margin-top":"0", 
+    "margin-bottom":"0",
+}
+
+
 sidebar = dbc.Nav(
-    [
-        dbc.NavLink("UP VETMED", href="/home", style=upvetmed_style),
-        dbc.NavLink("Patient Records", href="/records", active="exact", style=mainelement_style),
-        html.Hr(style={"border-bottom":"2px solid white", "margin-top":"0", "margin-bottom":"0"}),
+    [      
+        dbc.NavLink("UP VETMED", href="/home", active="exact", className="active-link", style=upvetmed_style),
+        html.Br(),
+        html.H2("Patient Records", className="h2-normal", style=mainelement_style),
+        html.Hr(style=line_style),
         dbc.Nav(
             [
-                dbc.NavLink("New Record", href="/records/new", active="exact", style=subelement_style),
-                html.Hr(style={"border-bottom":"1px solid white", "margin-top":"0", "margin-bottom":"0"}),
-                dbc.NavLink("View Records", href="/records/view", active="exact", style=subelement_style),
-                html.Hr(style={"border-bottom":"1px solid white", "margin-top":"0", "margin-bottom":"0"}),
+                dbc.NavLink("New Record", href="/newrecord", active="exact", className="active-link", style=subelement_style),
+                dbc.NavLink("View Records", href="/viewrecord", active="exact", className="active-link", style=subelement_style),
             ],
         ),
-        dbc.NavLink("User Management", href="/user", active="exact", style=mainelement_style),
-        html.Hr(style={"border-bottom":"2px solid white", "margin-top":"0", "margin-bottom":"0"}),
+        html.Br(),
+        html.H2("User Management", className="h2-normal", style=mainelement_style),
+        html.Hr(style=line_style),
         dbc.Nav(
             [
-                dbc.NavLink("New User", href="/user/new", active="exact", style=subelement_style),
-                html.Hr(style={"border-bottom":"1px solid white", "margin-top":"0", "margin-bottom":"0"}),
-                dbc.NavLink("View Users", href="/user/view", active="exact", style=subelement_style),
-                html.Hr(style={"border-bottom":"1px solid white", "margin-top":"0", "margin-bottom":"0"}),
+                dbc.NavLink("New User", href="/newuser", active="exact", className="active-link", style=subelement_style),
+                dbc.NavLink("View Users", href="/viewuser", active="exact", className="active-link", style=subelement_style),
             ]
         ),
-        dbc.NavLink("Reports", href="/reports", active="exact", style=mainelement_style),
-        html.Hr(style={"border-bottom":"2px solid white", "margin-top":"0", "margin-bottom":"0"}),
+        html.Br(),
+        html.H2("Reports", className="h2-normal", style=mainelement_style),
+        html.Hr(style=line_style),
         dbc.Nav(
             [
-                dbc.NavLink("Generate Report", href="/reports/generate", active="exact", style=subelement_style),
-                html.Hr(style={"border-bottom":"1px solid white", "margin-top":"0", "margin-bottom":"0"}),
-                dbc.NavLink("View Generated Reports", href="/reports/view", active="exact", style=subelement_style),
-                html.Hr(style={"border-bottom":"1px solid white", "margin-top":"0", "margin-bottom":"0"}),
+                dbc.NavLink("Generate Report", href="/newreport", active="exact", className="active-link", style=subelement_style),
+                dbc.NavLink("View Generated Reports", href="/viewreport", active="exact", className="active-link", style=subelement_style),
             ]
         ),
-        dbc.NavLink("Help", href="/help", active="exact", style=mainelement_style),
-        html.Hr(style={"border-bottom":"2px solid white", "margin-top":"0", "margin-bottom":"0"}),
+        html.Br(),
+        dbc.NavLink("Help", href="/help", active="exact", className="active-link", style=mainelement_style),
     ],
     vertical=True,
     pills=True,
