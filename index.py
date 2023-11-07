@@ -8,6 +8,8 @@ import pandas as pd
 import webbrowser
 from app import app
 from apps import sidebar as sb
+from apps import topnavbar as tnb
+from apps.records import owner
 
 CONTENT_STYLE = {
     "margin-left": "18rem",
@@ -18,8 +20,14 @@ CONTENT_STYLE = {
 app.layout = html.Div(
     [
         dcc.Location(id="url", refresh=True),
-        sb.sidebar,
-        html.Div(id="page-content", style=CONTENT_STYLE),
+        html.Div(tnb.navbar, id="top-navigation"),
+        html.Div(
+            [
+                sb.sidebar,
+                html.Div(id="page-content", style=CONTENT_STYLE),
+            ],
+            style = {'display':'flex'},
+        )
     ]
 )
 
@@ -38,8 +46,8 @@ def displaypage(pathname):
         if eventid == "url":
             if pathname == "/" or pathname == "/home":
                 returnlayout = "This is the homepage"
-            elif pathname == "/newrecord":
-                returnlayout = "Create new records here"
+            elif pathname == "/newrecord" or pathname == "/newrecord/owner":
+                returnlayout = owner.layout
             elif pathname == "/viewrecord":
                 returnlayout = "View existing records here"
             elif pathname == "/newuser":
@@ -60,6 +68,22 @@ def displaypage(pathname):
     else:
         raise PreventUpdate
     
+
+@app.callback(
+    [
+        Output('top-navigation', 'style'),
+    ],
+    [
+        Input('url', 'pathname'),
+    ],
+)
+def show_top_navigation(pathname):
+    if pathname in ['/newrecord','/newrecord/owner','/newrecord/patient','/newrecord/visit']:
+        return [{'display':'block'}]
+    else:
+        return [{'display':'none'}]
+
+
 if __name__ == "__main__":
     webbrowser.open("http://127.0.0.1:8050/", new=0, autoraise=True)
     app.run_server(debug=False)
