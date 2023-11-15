@@ -8,7 +8,6 @@ import pandas as pd
 import webbrowser
 from app import app
 from apps import sidebar as sb
-from apps import topnavbar as tnb
 from apps.records import owner
 
 CONTENT_STYLE = {
@@ -20,7 +19,6 @@ CONTENT_STYLE = {
 app.layout = html.Div(
     [
         dcc.Location(id="url", refresh=True),
-        html.Div(tnb.navbar, id="top-navigation"),
         html.Div(
             [
                 sb.sidebar,
@@ -46,7 +44,7 @@ def displaypage(pathname):
         if eventid == "url":
             if pathname == "/" or pathname == "/home":
                 returnlayout = "This is the homepage"
-            elif pathname == "/newrecord" or pathname == "/newrecord/owner":
+            elif pathname == "/newrecord" or pathname == "/newrecord/general":
                 returnlayout = owner.layout
             elif pathname == "/viewrecord":
                 returnlayout = "View existing records here"
@@ -68,22 +66,23 @@ def displaypage(pathname):
     else:
         raise PreventUpdate
     
-
 @app.callback(
     [
-        Output('top-navigation', 'style'),
+        Output(link_id, 'style') for link_id in sb.newrecord_hidden_links
     ],
     [
         Input('url', 'pathname'),
-    ],
+    ]
 )
-def show_top_navigation(pathname):
-    if pathname in ['/newrecord','/newrecord/owner','/newrecord/patient','/newrecord/visit']:
-        return [{'display':'block'}]
+def show_more_link(pathname):
+    styles={'display':'none'}
+    if pathname in ['/newrecord', '/newrecord/general', '/newrecord/visit']:
+        styles={'display':'block'}
     else:
-        return [{'display':'none'}]
+        styles={'display':'none'}
+    return [styles.copy() for _ in sb.newrecord_hidden_links]
 
-
+    
 if __name__ == "__main__":
     webbrowser.open("http://127.0.0.1:8050/", new=0, autoraise=True)
     app.run_server(debug=False)
