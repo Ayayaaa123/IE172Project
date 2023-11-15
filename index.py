@@ -8,7 +8,7 @@ import pandas as pd
 import webbrowser
 from app import app
 from apps import sidebar as sb
-from apps.records import owner
+from apps.records import general
 
 CONTENT_STYLE = {
     "margin-left": "18rem",
@@ -45,7 +45,7 @@ def displaypage(pathname):
             if pathname == "/" or pathname == "/home":
                 returnlayout = "This is the homepage"
             elif pathname == "/newrecord" or pathname == "/newrecord/general":
-                returnlayout = owner.layout
+                returnlayout = general.layout
             elif pathname == "/viewrecord":
                 returnlayout = "View existing records here"
             elif pathname == "/newuser":
