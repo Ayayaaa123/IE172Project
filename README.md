@@ -6,11 +6,11 @@ VSCode
 - Open VS Code and set up the virtual environment
 - Install dash, dash_bootstrap_components, pandas, numpy, psycopg2, datetime
 - Create a folder inside the IE172Project and name it assets
-- Add the bootstrap.css inside the assets folder
+- Add the bootstrap.css and logo.webp inside the assets folder
 - Create another folder inside the IE172Project and name it apps
-- Add sidebar.py, topnavbar.py, and dbconnect.py inside the apps folder
+- Add sidebar.py and dbconnect.py inside the apps folder
 - Create another folder inside the apps folder and name it records
-- Add owner.py inside the records folder
+- Add general.py inside the records folder
 
 SQL
 - Create a database inside SQL
