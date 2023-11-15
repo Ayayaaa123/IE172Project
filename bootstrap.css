@@ -10834,11 +10834,43 @@ textarea.form-control-lg {
   }
 }
 
+.active-link{
+  color: #fff
+}
 .active-link.active {
   font-weight: bold;
+  color: #fff !important;
   background-color: #333 !important;
 }
 .active-link:hover {
+  background-color: #555;
+}
+.logo{
+  width:50px;
+  height:auto;
+}
+.logo-link{
+  text-align: center;
+  margin-top: -20px;
+}
+.logo-link.active{
+  background-color: #333 !important;
+}
+.logo-link:hover{
+  background-color: #555;
+}
+.hidden-link{
+  color: #fff;
+  font-size: 0.90rem;
+  margin-left: 1.5em;
+  margin-bottom: 0;
+}
+.hidden-link.active{
+  font-weight: bold;
+  color: #fff !important;
+  background-color: #333 !important;
+}
+.hidden-link:hover{
   background-color: #555;
 }
 .h2-normal {
