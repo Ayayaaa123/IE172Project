@@ -18,14 +18,6 @@ SIDEBAR_STYLE = {
     "background-color": "#333",
 }
 
-upvetmed_style = {
-    "font-size": "2rem",
-    "text-align": "center",
-    "text-decoration": "underline",
-    "color": "#fff",
-    "margin-top": "-20px",
-}
-
 mainelement_style = {
     "font-size": "1.5rem",
     "color": "#fff",
@@ -34,7 +26,7 @@ mainelement_style = {
 
 subelement_style = {
     "font-size": "0.93rem",
-    "margin-left": "1.5em",
+    "margin-left": "1em",
     "color": "#fff",
     "margin-bottom": "0",
 }
@@ -48,13 +40,15 @@ line_style = {
 
 sidebar = dbc.Nav(
     [      
-        dbc.NavLink("UP VETMED", href="/home", active="exact", className="active-link", style=upvetmed_style),
+        dbc.NavLink(html.Img(src="assets/logo.webp", height="100px"), href="/home", active="exact", className="logo-link"),
         html.Br(),
         html.H2("Patient Records", className="h2-normal", style=mainelement_style),
         html.Hr(style=line_style),
         dbc.Nav(
             [
                 dbc.NavLink("New Record", href="/newrecord", active="exact", className="active-link", style=subelement_style),
+                dbc.NavLink("General Information", href="/newrecord/general", active="exact", className="hidden-link", id='more-link-1'),
+                dbc.NavLink("Visit Details", href="/newrecord/visit", active="exact", className="hidden-link", id='more-link-2'),
                 dbc.NavLink("View Records", href="/viewrecord", active="exact", className="active-link", style=subelement_style),
             ],
         ),
@@ -83,3 +77,5 @@ sidebar = dbc.Nav(
     pills=True,
     style=SIDEBAR_STYLE
 )
+
+newrecord_hidden_links=['more-link-1','more-link-2']
