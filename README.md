@@ -4,7 +4,7 @@ VSCode
 - Install the virtual environment inside the folder using Powershell
 - Add the files: index.py and app.py on the folder
 - Open VS Code and set up the virtual environment
-- Install dash, dash_bootstrap_components, pandas, numpy, psycopg2, datetime
+- Install dash, dash_bootstrap_components, pandas, numpy, psycopg2, datetime, dash-mantine-components
 - Create a folder inside the IE172Project and name it assets
 - Add the bootstrap.css and logo.webp inside the assets folder
 - Create another folder inside the IE172Project and name it apps
