@@ -156,8 +156,10 @@ layout = html.Div(
                                         dbc.Label("Birthdate"),
                                         dmc.DatePicker(
                                             id='patient_bd',
+                                            placeholder="Select Birthdate",
                                             style={'width':'75%'},
                                             inputFormat='MMM DD, YYYY',
+                                            dropdownType='modal',
                                         ),
                                     ],
                                     width=4
