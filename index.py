@@ -45,7 +45,7 @@ def displaypage(pathname):
             if pathname == "/" or pathname == "/home":
                 returnlayout = "This is the homepage"
             elif pathname == "/newrecord" or pathname == "/newrecord/patient":
-                returnlayout = general.layout
+                returnlayout = patient.layout
             elif pathname == "/viewrecord":
                 returnlayout = "View existing records here"
             elif pathname == "/newuser":
