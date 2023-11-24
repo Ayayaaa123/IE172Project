@@ -46,9 +46,9 @@ sidebar = dbc.Nav(
         html.Hr(style=line_style),
         dbc.Nav(
             [
-                dbc.NavLink("New Record", href="/newrecord", active="exact", className="active-link", style=subelement_style),
-                dbc.NavLink("General Information", href="/newrecord/general", active="exact", className="hidden-link", id='more-link-1'),
-                dbc.NavLink("Visit Details", href="/newrecord/visit", active="exact", className="hidden-link", id='more-link-2'),
+                dbc.NavLink("Add New Record", href="/newrecord", active="exact", className="active-link", style=subelement_style),
+                dbc.NavLink("Add New Patient", href="/newrecord/patient", active="exact", className="hidden-link", id='more-link-1'),
+                dbc.NavLink("Add New Visit", href="/newrecord/visit", active="exact", className="hidden-link", id='more-link-2'),
                 dbc.NavLink("View Records", href="/viewrecord", active="exact", className="active-link", style=subelement_style),
             ],
         ),
