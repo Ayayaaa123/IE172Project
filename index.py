@@ -8,7 +8,7 @@ import pandas as pd
 import webbrowser
 from app import app
 from apps import sidebar as sb
-from apps.records import general
+from apps.records import patient
 
 CONTENT_STYLE = {
     "margin-left": "18rem",
