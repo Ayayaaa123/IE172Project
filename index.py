@@ -44,7 +44,7 @@ def displaypage(pathname):
         if eventid == "url":
             if pathname == "/" or pathname == "/home":
                 returnlayout = "This is the homepage"
-            elif pathname == "/newrecord" or pathname == "/newrecord/general":
+            elif pathname == "/newrecord" or pathname == "/newrecord/patient":
                 returnlayout = general.layout
             elif pathname == "/viewrecord":
                 returnlayout = "View existing records here"
@@ -76,7 +76,7 @@ def displaypage(pathname):
 )
 def show_more_link(pathname):
     styles={'display':'none'}
-    if pathname in ['/newrecord', '/newrecord/general', '/newrecord/visit']:
+    if pathname in ['/newrecord', '/newrecord/patient', '/newrecord/visit']:
         styles={'display':'block'}
     else:
         styles={'display':'none'}
