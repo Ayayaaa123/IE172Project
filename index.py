@@ -14,6 +14,7 @@ CONTENT_STYLE = {
     "margin-left": "18rem",
     "margin-right": "2rem",
     "padding": "2rem 1rem",
+    "width": "100%",
 }
 
 app.layout = html.Div(
@@ -26,7 +27,8 @@ app.layout = html.Div(
             ],
             style = {'display':'flex'},
         )
-    ]
+    ],
+    style={'width':'100%'}
 )
 
 @app.callback(
