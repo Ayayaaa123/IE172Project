@@ -6,5 +6,4 @@ VSCode
 SQL
 - Create a database inside SQL
 - Input the SQL credentials on dbconnect.py
-- Create the database using the code:
-Create Table ...
+- Create the database using the code in this gdocs: https://docs.google.com/document/d/1gxeABfTAQeqOyQfS7fi7pSkrWC1FUp0AHXSF5mw3c5w/edit
