@@ -44,11 +44,20 @@ sidebar = dbc.Nav(
         html.Br(),
         html.H2("Patient Records", className="h2-normal", style=mainelement_style),
         html.Hr(style=line_style),
+        dbc. Accordion(
+            [
+                dbc.AccordionItem(
+                    [
+                        dbc.NavLink("Add New Patient", href="/newrecord/patient", active="exact", className="active-link", style=subelement_style),
+                        dbc.NavLink("Add New Visit", href="/newrecord/visit", active="exact", className="active-link", style=subelement_style),
+                    ],
+                    id="add-new-link",
+                ),
+            ],
+            className="custom-accordion",
+        ),
         dbc.Nav(
             [
-                dbc.NavLink("Add New Record", href="/newrecord", active="exact", className="active-link", style=subelement_style),
-                dbc.NavLink("Add New Patient", href="/newrecord/patient", active="exact", className="hidden-link", id='more-link-1'),
-                dbc.NavLink("Add New Visit", href="/newrecord/visit", active="exact", className="hidden-link", id='more-link-2'),
                 dbc.NavLink("View Records", href="/viewrecord", active="exact", className="active-link", style=subelement_style),
             ],
         ),
@@ -77,5 +86,3 @@ sidebar = dbc.Nav(
     pills=True,
     style=SIDEBAR_STYLE
 )
-
-newrecord_hidden_links=['more-link-1','more-link-2']

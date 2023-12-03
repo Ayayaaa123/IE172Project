@@ -4412,7 +4412,7 @@ textarea.form-control-lg {
   display: flex;
   align-items: center;
   width: 100%;
-  padding: 1rem 1.25rem;
+  padding: 1rem 1rem;
   font-size: 1rem;
   color: #212529;
   text-align: left;
@@ -4433,7 +4433,7 @@ textarea.form-control-lg {
   box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.125);
 }
 .accordion-button:not(.collapsed)::after {
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%230c63e4'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='rgba(255, 255, 255, 0.75)'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
   transform: rotate(-180deg);
 }
 .accordion-button::after {
@@ -4442,7 +4442,7 @@ textarea.form-control-lg {
   height: 1.25rem;
   margin-left: auto;
   content: "";
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23212529'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='rgba(255, 255, 255, 0.75)'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
   background-repeat: no-repeat;
   background-size: 1.25rem;
   transition: transform 0.2s ease-in-out;
@@ -4495,7 +4495,8 @@ textarea.form-control-lg {
 }
 
 .accordion-body {
-  padding: 1rem 1.25rem;
+  padding: 0rem 1rem;
+  margin-bottom: 0.5em
 }
 
 .accordion-flush .accordion-collapse {
@@ -10859,23 +10860,38 @@ textarea.form-control-lg {
 .logo-link:hover{
   background-color: #555;
 }
-.hidden-link{
-  color: #fff;
-  font-size: 0.90rem;
-  margin-left: 1.5em;
-  margin-bottom: 0;
-}
-.hidden-link.active{
-  font-weight: bold;
-  color: #fff !important;
-  background-color: #333 !important;
-}
-.hidden-link:hover{
-  background-color: #555;
-}
 .h2-normal {
   font-weight: normal;
 }
+.custom-accordion {
+  background-color: #333;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+}
+.custom-accordion .accordion-button {
+  background-color: #333;
+  box-shadow: none;
+  border: none;
+  border-radius: 0;
+  color: #fff;
+  margin-bottom:0;
+}
+.custom-accordion .accordion-item {
+  background-color: #333;
+  box-shadow: none;
+  border: none;
+  border-radius: 0;
+  color: #fff;
+}
+.custom-accordion .accordion-button::before {
+  content: "Add New Record";
+  font-size: 0.93rem;
+  margin-left: 1em;
+  color: #fff;
+}
+
 
 
 /*# sourceMappingURL=bootstrap.css.map */

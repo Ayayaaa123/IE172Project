@@ -67,22 +67,6 @@ def displaypage(pathname):
             raise PreventUpdate
     else:
         raise PreventUpdate
-    
-@app.callback(
-    [
-        Output(link_id, 'style') for link_id in sb.newrecord_hidden_links
-    ],
-    [
-        Input('url', 'pathname'),
-    ]
-)
-def show_more_link(pathname):
-    styles={'display':'none'}
-    if pathname in ['/newrecord', '/newrecord/patient', '/newrecord/visit']:
-        styles={'display':'block'}
-    else:
-        styles={'display':'none'}
-    return [styles.copy() for _ in sb.newrecord_hidden_links]
 
     
 if __name__ == "__main__":
