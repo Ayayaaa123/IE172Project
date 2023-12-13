@@ -42,26 +42,40 @@ sidebar = dbc.Nav(
     [      
         dbc.NavLink(html.Img(src="assets/logo.webp", height="100px"), href="/home", active="exact", className="logo-link"),
         html.Br(),
+        
         html.H2("Patient Records", className="h2-normal", style=mainelement_style),
         html.Hr(style=line_style),
         dbc. Accordion(
             [
-                dbc.AccordionItem(
+                dbc.AccordionItem( #indent needs to be fixed or uncomment ln 10889 in bootstrap.css
                     [
                         dbc.NavLink("Add New Patient", href="/newrecord/patient", active="exact", className="active-link", style=subelement_style),
                         dbc.NavLink("Add New Visit", href="/newrecord/visit", active="exact", className="active-link", style=subelement_style),
                     ],
+                    #title="Add New Record", 
                     id="add-new-link",
                 ),
+                
+        #         dbc.AccordionItem(
+        #             [
+        #                 dbc.NavLink("Patient Records", href="/viewrecord/patient", active="exact", className="active-link", style=subelement_style),
+        #                 dbc.NavLink("Visit Records", href="/viewrecord/visit", active="exact", className="active-link", style=subelement_style),
+        #             ],
+        #             title="View Records", 
+        #             id="add-new-link",
+        #         ),
             ],
             className="custom-accordion",
-        ),
+            start_collapsed=True,
+        ), 
+        
         dbc.Nav(
             [
                 dbc.NavLink("View Records", href="/viewrecord", active="exact", className="active-link", style=subelement_style),
             ],
         ),
         html.Br(),
+        
         html.H2("User Management", className="h2-normal", style=mainelement_style),
         html.Hr(style=line_style),
         dbc.Nav(
@@ -71,6 +85,7 @@ sidebar = dbc.Nav(
             ]
         ),
         html.Br(),
+        
         html.H2("Reports", className="h2-normal", style=mainelement_style),
         html.Hr(style=line_style),
         dbc.Nav(
@@ -80,6 +95,7 @@ sidebar = dbc.Nav(
             ]
         ),
         html.Br(),
+        
         dbc.NavLink("Help", href="/help", active="exact", className="active-link", style=mainelement_style),
     ],
     vertical=True,
