@@ -181,7 +181,6 @@ def newvisit_loadpatient(pathname, searchterm):
             values = [f"%{searchterm}%", f"%{searchterm}%", f"%{searchterm}%"]
         result = db.querydatafromdatabase(sql, values, cols)
         options = [{'label': row['patient_name'], 'value': row['patient_id']} for _, row in result.iterrows()]
-        print(f"Options: {options}")
         return options, 
     else:
         raise PreventUpdate
