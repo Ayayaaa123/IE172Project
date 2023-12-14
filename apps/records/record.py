@@ -26,12 +26,10 @@ layout = html.Div(
                                 searchable=True,
                                 options=[],
                                 value=None,
-                                clearable=False,
                             ),
                         ]
                     )
                 ),
-                html.Div(id="searchlist_patientvisit"),
             ]
         ),
         html.Br(),
@@ -46,7 +44,6 @@ layout = html.Div(
                                 searchable=True,
                                 options=[],
                                 value=None,
-                                clearable=False,
                             ),
                         ]
                     )
@@ -111,7 +108,6 @@ def update_additional_inputs(_, selected_services):
                 options=[],
                 value=None,
                 multi=True,
-                clearable=False,
             ),
         ])
     if 'new_problem' in selected_services:
@@ -135,7 +131,6 @@ def update_additional_inputs(_, selected_services):
                 searchable=True,
                 options=[],
                 value=None,
-                clearable=False,
             ),
             html.Br(),
             dcc.Checklist(
@@ -151,24 +146,42 @@ def update_additional_inputs(_, selected_services):
     return inputs
 
 
-
-# @app.callback(
-#     [
-#         Output('searchlist_patientvisit', 'children')
-#     ],
-#     [
-#         Input('url', 'pathname'),
-#         Input('searchfilter_patientvisit', 'value'),
-#     ]
-# )
-# def moviehome_loadmovielist(pathname, searchterm):
-#     if pathname == "/newrecord/visit":
-#         sql = """ SELECT
-#             FROM
-#                 INNER JOIN 
-#             WHERE
-#         """
-#         values = []
-        
-#     else:
-#         raise PreventUpdate
+@app.callback(
+    [
+        Output('searchfilter_patientvisit', 'options'),
+    ],
+    [
+        Input('url', 'pathname'),
+        Input('searchfilter_patientvisit', 'value'),
+    ]
+)
+def newvisit_loadpatient(pathname, searchterm):
+    if pathname == "/newrecord/visit" and not searchterm:
+        sql = """ 
+            SELECT 
+                patient_id,
+                COALESCE(patient_m, '') || ' - ' || COALESCE(client_ln, '') || ', ' || COALESCE(client_fn, '') || ' ' || COALESCE(client_mi, '') AS patient_name
+            FROM 
+                patient
+            INNER JOIN 
+                client ON patient.client_id = client.client_id  
+            WHERE 
+                NOT patient_delete_ind 
+                AND NOT client_delete_ind 
+            """
+        values = []
+        cols = ['patient_id', 'patient_name']
+        if searchterm:
+            sql += """ AND (
+                patient_m ILIKE %s 
+                OR client_ln ILIKE %s 
+                OR client_fn ILIKE %s
+            );
+            """
+            values = [f"%{searchterm}%", f"%{searchterm}%", f"%{searchterm}%"]
+        result = db.querydatafromdatabase(sql, values, cols)
+        options = [{'label': row['patient_name'], 'value': row['patient_id']} for _, row in result.iterrows()]
+        print(f"Options: {options}")
+        return options, 
+    else:
+        raise PreventUpdate

@@ -29,21 +29,21 @@ layout = html.Div(
                                 dbc.Col(
                                     [
                                         dbc.Label("Last Name"),
-                                        dbc.Input(id='owner_ln', type='text', placeholder='Enter Last Name', style={'width':'75%'})
+                                        dbc.Input(id='client_ln', type='text', placeholder='Enter Last Name', style={'width':'75%'})
                                     ],
                                     width=4
                                 ),
                                 dbc.Col(
                                     [
                                         dbc.Label("First Name"),
-                                        dbc.Input(id='owner_fn', type='text', placeholder='Enter First Name', style={'width':'75%'})
+                                        dbc.Input(id='client_fn', type='text', placeholder='Enter First Name', style={'width':'75%'})
                                     ],
                                     width=4
                                 ),
                                 dbc.Col(
                                     [
                                         dbc.Label("Middle Initial"),
-                                        dbc.Input(id='owner_mi', type='text', placeholder='Enter Middle Initial', style={'width':'75%'})
+                                        dbc.Input(id='client_mi', type='text', placeholder='Enter Middle Initial', style={'width':'75%'})
                                     ],
                                     width=4
                                 ),
@@ -55,21 +55,21 @@ layout = html.Div(
                                 dbc.Col(
                                     [
                                         dbc.Label("Email Address"),
-                                        dbc.Input(id='owner_email', type='text', placeholder='Enter Email Address', style={'width':'75%'})
+                                        dbc.Input(id='client_email', type='text', placeholder='Enter Email Address', style={'width':'75%'})
                                     ],
                                     width=4
                                 ),
                                 dbc.Col(
                                     [
                                         dbc.Label("Contact Number"),
-                                        dbc.Input(id='owner_cn', type='text', placeholder='Enter Contact Number', style={'width':'75%'})
+                                        dbc.Input(id='client_cn', type='text', placeholder='Enter Contact Number', style={'width':'75%'})
                                     ],
                                     width=4
                                 ),
                                 dbc.Col(
                                     [
                                         dbc.Label("Province"),
-                                        dbc.Input(id='province', type='text', placeholder='Enter Province', style={'width':'75%'})
+                                        dbc.Input(id='client_province', type='text', placeholder='Enter Province', style={'width':'75%'})
                                     ],
                                     width=4
                                 ),
@@ -81,21 +81,21 @@ layout = html.Div(
                                 dbc.Col(
                                     [
                                         dbc.Label("City"),
-                                        dbc.Input(id='city', type='text', placeholder='Enter City', style={'width':'75%'})
+                                        dbc.Input(id='client_city', type='text', placeholder='Enter City', style={'width':'75%'})
                                     ],
                                     width=4
                                 ),
                                 dbc.Col(
                                     [
                                         dbc.Label("Barangay"),
-                                        dbc.Input(id='barangay', type='text', placeholder='Enter Barangay', style={'width':'75%'})
+                                        dbc.Input(id='client_barangay', type='text', placeholder='Enter Barangay', style={'width':'75%'})
                                     ],
                                     width=4
                                 ),
                                 dbc.Col(
                                     [
                                         dbc.Label("Street"),
-                                        dbc.Input(id='street', type='text', placeholder='Enter Street', style={'width':'75%'})
+                                        dbc.Input(id='client_street', type='text', placeholder='Enter Street', style={'width':'75%'})
                                     ],
                                     width=4
                                 ),
@@ -240,11 +240,11 @@ layout = html.Div(
     [
         # The values of the fields are states 
         # They are required in this process but they do not trigger this callback
-        State('owner_ln', 'value'),
-        State('owner_fn', 'value'),
-        State('owner_mi', 'value'),
-        State('owner_email', 'value'),
-        State('owner_cn', 'value'),
+        State('client_ln', 'value'),
+        State('client_fn', 'value'),
+        State('client_mi', 'value'),
+        State('client_email', 'value'),
+        State('client_cn', 'value'),
         State('province', 'value'),
         State('city', 'value'),
         State('barangay', 'value'),
@@ -259,7 +259,7 @@ layout = html.Div(
 )
 
 def patientprofile_saveprofile(submitbtn, closebtn, 
-                               owner_ln, owner_fn, owner_mi, owner_email, owner_cn, 
+                               client_ln, client_fn, client_mi, client_email, client_cn, 
                                province, city, barangay, street, 
                                patient_m, patient_sex, patient_breed, patient_bd, patient_idiosync, patient_color):
     
@@ -277,23 +277,23 @@ def patientprofile_saveprofile(submitbtn, closebtn,
             alert_text = ''
 
             # check inputs if they have values
-            if not owner_ln: # If owner_ln is blank, not owner_ln = True
+            if not client_ln: # If client_ln is blank, not client_ln = True
                 alert_open = True
                 alert_color = 'danger'
                 alert_text = "Check your inputs. Please supply the owner's last name."
-            elif not owner_fn:
+            elif not client_fn:
                 alert_open = True
                 alert_color = 'danger'
                 alert_text = "Check your inputs. Please supply the owner's first name."
-            elif not owner_mi:
+            elif not client_mi:
                 alert_open = True
                 alert_color = 'danger'
                 alert_text = "Check your inputs. Please supply the owner's middle initials."
-            elif not owner_email:
+            elif not client_email:
                 alert_open = True
                 alert_color = 'danger'
                 alert_text = "Check your inputs. Please supply the owner's email."
-            elif not owner_cn:
+            elif not client_cn:
                 alert_open = True
                 alert_color = 'danger'
                 alert_text = "Check your inputs. Please supply the owner's contact number."
@@ -354,7 +354,7 @@ def patientprofile_saveprofile(submitbtn, closebtn,
                     """
                     #edit sql code later
 
-                    values = [owner_ln, owner_fn, owner_mi, owner_email, owner_cn, province, city, barangay, street, patient_m, patient_sex, patient_breed, patient_bd, patient_idiosync, patient_color]
+                    values = [client_ln, client_fn, client_mi, client_email, client_cn, province, city, barangay, street, patient_m, patient_sex, patient_breed, patient_bd, patient_idiosync, patient_color]
 
                     db.modifydatabase(sql, values)
                     # If this is successful, we want the successmodal to show
