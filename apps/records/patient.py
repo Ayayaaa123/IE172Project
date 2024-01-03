@@ -9,6 +9,8 @@ import pandas as pd
 import dash_mantine_components as dmc
 from app import app
 from apps import dbconnect as db
+import datetime
+from dash import ALL, MATCH
 
 layout = html.Div(
     [
@@ -189,10 +191,36 @@ layout = html.Div(
             style={'width':'100%'}
         ), # end of card for patient information    
         html.Br(),
+        dbc.Card(
+            [
+                dbc.CardHeader(
+                    [
+                        html.H2("Vaccination and Deworming Details")
+                    ]
+                ),
+                dbc.CardBody([
+                    dbc.Row([
+                        dbc.Col(html.H3("Vaccination"), width=2),
+                        dbc.Col(dbc.Button("+", id='vaccine-addbutton', className='custom-button', n_clicks=0), width=2),
+                        dbc.Col(dbc.Button("-", id='vaccine-deletebutton', className='custom-button', n_clicks=0), width=2),
+                    ]),
+                    html.Div(id='vaccine-line-items'),
+                    html.Br(),
+                    dbc.Row([
+                        dbc.Col(html.H3("Deworming"), width=2),
+                        dbc.Col(dbc.Button("+", id='deworming-addbutton', className='custom-button', n_clicks=0), width=2),
+                        dbc.Col(dbc.Button("-", id='deworming-deletebutton', className='custom-button', n_clicks=0), width=2),
+                    ]),
+                    html.Div(id='deworming-line-items'),
+                ]),
+            ],
+        ),
+        html.Br(),
         dbc.Button(
             'Submit',
             id = 'patientprofile_submit',
-            n_clicks = 0 #initialization 
+            n_clicks = 0, #initialization 
+            className='custom-submitbutton',
         ),
 
         dbc.Modal( # dialog box for successful saving of profile
@@ -208,7 +236,7 @@ layout = html.Div(
                     dbc.Button(
                         "Submit",
                         href = '/home', # bring user back to homepage
-                        id = 'patientprofile_btn_modal'
+                        id = 'patientprofile_btn_modal',
                     )                    
                 )
             ],
@@ -219,6 +247,8 @@ layout = html.Div(
         )
     ]
 )
+
+
 
 @app.callback( #callback for profile submission
     [
@@ -369,3 +399,176 @@ def patientprofile_saveprofile(submitbtn, closebtn,
 
     else:
         raise PreventUpdate
+    
+
+vaccine_line_items = []
+deworming_line_items = []
+
+@app.callback(
+    [
+        Output("vaccine-line-items", "children"),
+    ],
+    [
+        Input("vaccine-addbutton", "n_clicks"),
+        Input("vaccine-deletebutton", "n_clicks"),
+    ],
+)
+def manage_vaccine_line_item(add_click, delete_click):
+    ctx = dash.callback_context
+    triggered_id = ctx.triggered[0]['prop_id'].split('.')[0]
+    
+    if triggered_id and "vaccine-addbutton" in triggered_id:
+        if len(vaccine_line_items) < add_click:
+            i = len(vaccine_line_items)
+            vaccine_line_items.extend([
+                html.Div(style={'height':'5px'}),
+                dbc.Row([
+                    dbc.Col(
+                        dcc.Dropdown(
+                            id={"type": "vaccine_list_patient", "index": i},
+                            placeholder='Select Vaccine',
+                            searchable=True,
+                            options=[],
+                            value=None,
+                        )
+                    ),
+                    dbc.Col(
+                        dmc.DatePicker(
+                            id={"type": "vaccine_date", "index": i},
+                            placeholder="Select Date",
+                            value=datetime.datetime.now().date(),
+                            inputFormat='MMM DD, YYYY',
+                            dropdownType='modal',
+                        ),
+                    ),
+                ]),
+                html.Div(style={'height':'5px'}),
+            ]) 
+
+    elif triggered_id and "vaccine-deletebutton" in triggered_id:
+        if len(vaccine_line_items) > 0:
+            vaccine_line_items.pop()
+
+    else:
+        raise PreventUpdate
+
+    return [vaccine_line_items]
+
+
+@app.callback(
+    [
+        Output("deworming-line-items", "children"),
+    ],
+    [
+        Input("deworming-addbutton", "n_clicks"),
+        Input("deworming-deletebutton", "n_clicks"),
+    ],
+)
+def manage_deworming_line_item(add_click, delete_click):
+    ctx = dash.callback_context
+    triggered_id = ctx.triggered[0]['prop_id'].split('.')[0]
+    
+    if triggered_id and "deworming-addbutton" in triggered_id:
+        if len(deworming_line_items) < add_click:
+            i = len(deworming_line_items)
+            deworming_line_items.extend([
+                html.Div(style={'height':'5px'}),
+                dbc.Row([
+                    dbc.Col(
+                        dcc.Dropdown(
+                            id={"type": "deworming_list_patient", "index": i},
+                            placeholder='Select Deworming',
+                            searchable=True,
+                            options=[],
+                            value=None,
+                        )
+                    ),
+                    dbc.Col(
+                        dmc.DatePicker(
+                            id={"type": "deworming_date", "index": i},
+                            placeholder="Select Date",
+                            value=datetime.datetime.now().date(),
+                            inputFormat='MMM DD, YYYY',
+                            dropdownType='modal',
+                        ),
+                    ),
+                ]),
+                html.Div(style={'height':'5px'}),
+            ]) 
+
+    elif triggered_id and "deworming-deletebutton" in triggered_id:
+        if len(deworming_line_items) > 0:
+            deworming_line_items.pop()
+
+    else:
+        raise PreventUpdate
+
+    return [deworming_line_items]
+
+
+@app.callback(
+    [
+        Output({"type": "vaccine_list_patient", "index": MATCH}, "options"),
+    ],
+    [
+        Input('url', 'pathname'),
+        Input({"type": "vaccine_list_patient", "index": MATCH}, "value"),
+    ]
+)
+def newpatient_loadvaccines(pathname, searchterm):
+    if pathname == "/newrecord/patient" and not searchterm:
+        sql = """ 
+            SELECT 
+                vacc_m_id,
+                vacc_m
+            FROM 
+                vacc_m 
+            WHERE 
+                NOT vacc_m_delete_ind 
+            """
+        values = []
+        cols = ['vacc_id', 'vacc_m']
+        if searchterm:
+            sql += """ AND vacc_m ILIKE %s
+            """
+            values = [f"%{searchterm}%"]
+    else:
+        raise PreventUpdate  
+     
+    result = db.querydatafromdatabase(sql, values, cols)
+    options = [{'label': row['vacc_m'], 'value': row['vacc_id']} for _, row in result.iterrows()]
+    return options, 
+
+
+@app.callback(
+    [
+        Output({"type": "deworming_list_patient", "index": MATCH}, 'options'),
+    ],
+    [
+        Input('url', 'pathname'),
+        Input({"type": "deworming_list_patient", "index": MATCH}, 'value'),
+    ]
+)
+def newpatient_loaddeworm(pathname, searchterm):
+    if pathname == "/newrecord/patient" and not searchterm:
+        sql = """ 
+            SELECT 
+                deworm_m_id,
+                deworm_m
+            FROM 
+                deworm_m
+            WHERE 
+                NOT deworm_m_delete_ind 
+            """
+        values = []
+        cols = ['deworm_id', 'deworm_m']
+        if searchterm:
+            sql += """ AND deworm_m ILIKE %s
+            """
+            values = [f"%{searchterm}%"]
+    else:
+        raise PreventUpdate  
+     
+    result = db.querydatafromdatabase(sql, values, cols)
+    options = [{'label': row['deworm_m'], 'value': row['deworm_id']} for _, row in result.iterrows()]
+    return options, 
