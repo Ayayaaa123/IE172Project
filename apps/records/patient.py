@@ -275,36 +275,37 @@ layout = html.Div(
         State('client_mi', 'value'),
         State('client_email', 'value'),
         State('client_cn', 'value'),
-        State('province', 'value'),
-        State('city', 'value'),
-        State('barangay', 'value'),
-        State('street', 'value'),
+        State('client_province', 'value'),
+        State('client_city', 'value'),
+        State('client_barangay', 'value'),
+        State('client_street', 'value'),
         State('patient_m', 'value'),
         State('patient_sex', 'value'),
         State('patient_breed', 'value'),
-        State('patient_bd', 'date'),
+        State('patient_bd', 'value'),
         State('patient_idiosync', 'value'),
         State('patient_color', 'value'),
     ]
 )
-
 def patientprofile_saveprofile(submitbtn, closebtn, 
                                client_ln, client_fn, client_mi, client_email, client_cn, 
-                               province, city, barangay, street, 
+                               client_province, client_city, client_barangay, client_street, 
                                patient_m, patient_sex, patient_breed, patient_bd, patient_idiosync, patient_color):
     
     ctx = dash.callback_context # the ctx filter -- ensures that only a change in url will activate this callback
     
     if ctx.triggered:
         eventid = ctx.triggered[0]['prop_id'].split('.')[0]
-        if eventid == 'patientprofile_submit' and submitbtn:
+        if eventid and 'patientprofile_submit' in eventid:
             # submitbtn condition checks if callback was activated by a click and not by having the submit button appear in the layout
 
             # Set default outputs
-            alert_open = False
-            modal_open = False
             alert_color = ''
             alert_text = ''
+            alert_open = False
+            modal_open = False
+            modal_text = ''
+            modal_href = '#'
 
             # check inputs if they have values
             if not client_ln: # If client_ln is blank, not client_ln = True
@@ -328,19 +329,19 @@ def patientprofile_saveprofile(submitbtn, closebtn,
                 alert_color = 'danger'
                 alert_text = "Check your inputs. Please supply the owner's contact number."
 
-            elif not province:
+            elif not client_province:
                 alert_open = True
                 alert_color = 'danger'
                 alert_text = "Check your inputs. Please supply the owner's complete address."
-            elif not city:
+            elif not client_city:
                 alert_open = True
                 alert_color = 'danger'
                 alert_text = "Check your inputs. Please supply the owner's complete address."
-            elif not barangay:
+            elif not client_barangay:
                 alert_open = True
                 alert_color = 'danger'
                 alert_text = "Check your inputs. Please supply the owner's complete address."
-            elif not street:
+            elif not client_street:
                 alert_open = True
                 alert_color = 'danger'
                 alert_text = "Check your inputs. Please supply the owner's complete address."
@@ -373,30 +374,36 @@ def patientprofile_saveprofile(submitbtn, closebtn,
             else: # all inputs are valid
                 
                 #save to db
-                    sql = """ 
-                        INSERT INTO movies(
-                            movie_name, 
-                            genre_id,
-                            movie_release_date, 
-                            movie_delete_ind
+                    sql_client = """ 
+                        INSERT INTO client(
+                        client_ln, client_fn, client_mi, client_email, client_cn, client_province, client_city, client_barangay, client_street
                         )
-                        VALUES (%s, %s, %s, %s)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
                     """
-                    #edit sql code later
+                    values_client = [client_ln, client_fn, client_mi, client_email, client_cn, client_province, client_city, client_barangay, client_street]
+                    db.modifydatabase(sql_client,values_client)
 
-                    values = [client_ln, client_fn, client_mi, client_email, client_cn, province, city, barangay, street, patient_m, patient_sex, patient_breed, patient_bd, patient_idiosync, patient_color]
+                    db.cursor.execute("SELECT lastval();")
+                    client_id = db.cursor.fetchone()[0]
 
-                    db.modifydatabase(sql, values)
+                    sql_patient = """
+                        INSERT INTO patient(
+                        patient_m, patient_sex, patient_breed, patient_bd, patient_idiosync, patient_color, client_id
+                        )
+                        VALUES(%s,%s,%s,%s,%s,%s,%s)
+                    """
+                    values_patient = [patient_m, patient_sex, patient_breed, patient_bd, patient_idiosync, patient_color, client_id]
+                    db.modifydatabase(sql_patient, values_patient)  
+
                     # If this is successful, we want the successmodal to show
-                    patientprofile_feedback_message = "Patient profile has been saved successfully."
-                    okay_href = '/home' #go back to homepage
+                    modal_text = "Patient profile has been saved successfully."
+                    modal_href = '/home' #go back to homepage
                     modal_open = True 
-            
-            return [alert_color, alert_text, alert_open, modal_open]
+            print(client_ln, client_fn, client_mi, client_email, client_cn, client_province, client_city, client_barangay, client_street, patient_m, patient_sex, patient_breed, patient_bd, patient_idiosync, patient_color, alert_color, alert_text, alert_open, modal_open, modal_text, modal_href)
+            return [alert_color, alert_text, alert_open, modal_open, modal_text, modal_href]
 
         else: # Callback was not triggered by desired triggers
             raise PreventUpdate
-
     else:
         raise PreventUpdate
     
@@ -421,28 +428,33 @@ def manage_vaccine_line_item(add_click, delete_click):
         if len(vaccine_line_items) < add_click:
             i = len(vaccine_line_items)
             vaccine_line_items.extend([
-                html.Div(style={'height':'5px'}),
-                dbc.Row([
-                    dbc.Col(
-                        dcc.Dropdown(
-                            id={"type": "vaccine_list_patient", "index": i},
-                            placeholder='Select Vaccine',
-                            searchable=True,
-                            options=[],
-                            value=None,
-                        )
-                    ),
-                    dbc.Col(
-                        dmc.DatePicker(
-                            id={"type": "vaccine_date", "index": i},
-                            placeholder="Select Date",
-                            value=datetime.datetime.now().date(),
-                            inputFormat='MMM DD, YYYY',
-                            dropdownType='modal',
+                html.Div([
+                    html.Div(style={'height':'5px'}),
+                    dbc.Row([
+                        dbc.Col(
+                            dcc.Dropdown(
+                                id={"type": "patient_vaccine", "index": i},
+                                placeholder='Select Vaccine',
+                                searchable=True,
+                                options=[],
+                                value=None,
+                            )
                         ),
-                    ),
-                ]),
-                html.Div(style={'height':'5px'}),
+                        dbc.Col(
+                            dbc.Input(id={"type": "vaccine_dose", "index": i}, type='text', placeholder='Enter Dose')
+                        ),
+                        dbc.Col(
+                            dmc.DatePicker(
+                                id={"type": "vaccine_date", "index": i},
+                                placeholder="Select Date",
+                                value=datetime.datetime.now().date(),
+                                inputFormat='MMM DD, YYYY',
+                                dropdownType='modal',
+                            ),
+                        ),
+                    ]),
+                    html.Div(style={'height':'5px'}),        
+                ])
             ]) 
 
     elif triggered_id and "vaccine-deletebutton" in triggered_id:
@@ -472,28 +484,33 @@ def manage_deworming_line_item(add_click, delete_click):
         if len(deworming_line_items) < add_click:
             i = len(deworming_line_items)
             deworming_line_items.extend([
-                html.Div(style={'height':'5px'}),
-                dbc.Row([
-                    dbc.Col(
-                        dcc.Dropdown(
-                            id={"type": "deworming_list_patient", "index": i},
-                            placeholder='Select Deworming',
-                            searchable=True,
-                            options=[],
-                            value=None,
-                        )
-                    ),
-                    dbc.Col(
-                        dmc.DatePicker(
-                            id={"type": "deworming_date", "index": i},
-                            placeholder="Select Date",
-                            value=datetime.datetime.now().date(),
-                            inputFormat='MMM DD, YYYY',
-                            dropdownType='modal',
+                html.Div([
+                    html.Div(style={'height':'5px'}),
+                    dbc.Row([
+                        dbc.Col(
+                            dcc.Dropdown(
+                                id={"type": "patient_deworming", "index": i},
+                                placeholder='Select Deworming Medicine Used',
+                                searchable=True,
+                                options=[],
+                                value=None,
+                            )
                         ),
-                    ),
-                ]),
-                html.Div(style={'height':'5px'}),
+                        dbc.Col(
+                            dbc.Input(id={"type": "deworm_dose", "index": i}, type='text', placeholder='Enter Dose')
+                        ),
+                        dbc.Col(
+                            dmc.DatePicker(
+                                id={"type": "deworming_date", "index": i},
+                                placeholder="Select Date",
+                                value=datetime.datetime.now().date(),
+                                inputFormat='MMM DD, YYYY',
+                                dropdownType='modal',
+                            ),
+                        ),
+                    ]),
+                    html.Div(style={'height':'5px'}),    
+                ])
             ]) 
 
     elif triggered_id and "deworming-deletebutton" in triggered_id:
@@ -508,11 +525,11 @@ def manage_deworming_line_item(add_click, delete_click):
 
 @app.callback(
     [
-        Output({"type": "vaccine_list_patient", "index": MATCH}, "options"),
+        Output({"type": "patient_vaccine", "index": MATCH}, "options"),
     ],
     [
         Input('url', 'pathname'),
-        Input({"type": "vaccine_list_patient", "index": MATCH}, "value"),
+        Input({"type": "patient_vaccine", "index": MATCH}, "value"),
     ]
 )
 def newpatient_loadvaccines(pathname, searchterm):
@@ -542,11 +559,11 @@ def newpatient_loadvaccines(pathname, searchterm):
 
 @app.callback(
     [
-        Output({"type": "deworming_list_patient", "index": MATCH}, 'options'),
+        Output({"type": "patient_deworming", "index": MATCH}, 'options'),
     ],
     [
         Input('url', 'pathname'),
-        Input({"type": "deworming_list_patient", "index": MATCH}, 'value'),
+        Input({"type": "patient_deworming", "index": MATCH}, 'value'),
     ]
 )
 def newpatient_loaddeworm(pathname, searchterm):
