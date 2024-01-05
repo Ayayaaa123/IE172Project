@@ -26,7 +26,7 @@ layout = html.Div(
                                 dbc.Button(
                                     "Add New Patient",
                                     color="secondary",
-                                    href='/newrecord/patient'
+                                    href='/newrecord/newpatient'
                                 )
                             ]
                         ),

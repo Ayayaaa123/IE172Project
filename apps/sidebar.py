@@ -49,8 +49,8 @@ sidebar = dbc.Nav(
             [
                 dbc.AccordionItem( #indent needs to be fixed or uncomment ln 10889 in bootstrap.css
                     [
-                        dbc.NavLink("Add New Patient", href="/newrecord/patient", active="exact", className="active-link", style=subelement_style),
-                        dbc.NavLink("Add New Visit", href="/newrecord/visit", active="exact", className="active-link", style=subelement_style),
+                        dbc.NavLink("New Patient", href="/newrecord/newpatient", active="exact", className="active-link", style=subelement_style),
+                        dbc.NavLink("Existing Patient", href="/newrecord/existingpatient", active="exact", className="active-link", style=subelement_style),
                     ],
                     #title="Add New Record", 
                     id="add-new-link",

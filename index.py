@@ -8,7 +8,7 @@ import pandas as pd
 import webbrowser
 from app import app
 from apps import sidebar as sb
-from apps.records import patient, record, recordlist
+from apps.records import existingpatient, newpatient, viewrecords
 
 CONTENT_STYLE = {
     "margin-left": "18rem",
@@ -46,12 +46,12 @@ def displaypage(pathname):
         if eventid == "url":
             if pathname == "/" or pathname == "/home":
                 returnlayout = "This is the homepage"
-            elif pathname == "/newrecord" or pathname == "/newrecord/patient":
-                returnlayout = patient.layout
-            elif pathname == "/newrecord/visit":
-                returnlayout = record.layout
+            elif pathname == "/newrecord" or pathname == "/newrecord/newpatient":
+                returnlayout = newpatient.layout
+            elif pathname == "/newrecord/existingpatient":
+                returnlayout = existingpatient.layout
             elif pathname == "/viewrecord":
-                returnlayout = recordlist.layout
+                returnlayout = viewrecords.layout
             elif pathname == "/newuser":
                 returnlayout = "Create new users here"
             elif pathname == "/viewuser":
