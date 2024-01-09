@@ -56,6 +56,8 @@ def displaypage(pathname):
                 returnlayout = "Create new users here"
             elif pathname == "/viewuser":
                 returnlayout = "View existing users here"
+            elif pathname == "/managedata":
+                returnlayout = "Manage the lists of veterinarian, clinician, clinical exam types, lab exam types, vaccines, and deworming medicines here"
             elif pathname == "/newreport":
                 returnlayout = "Generate reports here"
             elif pathname == "/viewreport":

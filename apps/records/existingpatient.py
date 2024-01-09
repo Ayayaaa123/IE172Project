@@ -162,12 +162,9 @@ def existingpatient_loadvet(pathname, searchterm):
         values = []
         cols = ['vet_id', 'vet_name']
         if searchterm:
-            sql += """ AND ( 
-                vet_ln ILIKE %s 
-                OR vet_fn ILIKE %s
-                );
+            sql += """ AND vet_name ILIKE %s
             """
-            values = [f"%{searchterm}%", f"%{searchterm}%"]
+            values = [f"%{searchterm}%"]
     else:
         raise PreventUpdate  
      
@@ -297,10 +294,12 @@ def manage_vaccine_line_item(addclick, deleteclick):
                                 searchable=True,
                                 options=[],
                                 value=None,
-                            )
+                            ),
+                            width = 4,
                         ),
                         dbc.Col(
-                            dbc.Input(id={"type": "vaccine_dose_existingpatient", "index": i}, type='text', placeholder='Enter Dose')
+                            dbc.Input(id={"type": "vaccine_dose_existingpatient", "index": i}, type='text', placeholder='Enter Dose'),
+                            width = 2,
                         ),
                         dbc.Col(
                             dmc.DatePicker(
@@ -309,6 +308,16 @@ def manage_vaccine_line_item(addclick, deleteclick):
                                 inputFormat='MMM DD, YYYY',
                                 dropdownType='modal',
                             ),
+                            width = 3,
+                        ),
+                        dbc.Col(
+                            dmc.DatePicker(
+                                id={"type": "vaccine_expdate_existingpatient", "index": i},
+                                placeholder="Select Expiration Date",
+                                inputFormat='MMM DD, YYYY',
+                                dropdownType='modal',
+                            ),
+                            width = 3,
                         ),
                     ]),
                     html.Div(style={'height':'5px'}),        
@@ -352,10 +361,12 @@ def manage_deworming_line_item(addclick, deleteclick):
                                 searchable=True,
                                 options=[],
                                 value=None,
-                            )
+                            ),
+                            width = 4,
                         ),
                         dbc.Col(
-                            dbc.Input(id={"type": "deworm_dose_existingpatient", "index": i}, type='text', placeholder='Enter Dose')
+                            dbc.Input(id={"type": "deworm_dose_existingpatient", "index": i}, type='text', placeholder='Enter Dose'),
+                            width = 2,
                         ),
                         dbc.Col(
                             dmc.DatePicker(
@@ -364,6 +375,16 @@ def manage_deworming_line_item(addclick, deleteclick):
                                 inputFormat='MMM DD, YYYY',
                                 dropdownType='modal',
                             ),
+                            width = 3,
+                        ),
+                        dbc.Col(
+                            dmc.DatePicker(
+                                id={"type": "deworming_expdate_existingpatient", "index": i},
+                                placeholder="Select Expiration Date",
+                                inputFormat='MMM DD, YYYY',
+                                dropdownType='modal',
+                            ),
+                            width = 3,
                         ),
                     ]),
                     html.Div(style={'height':'5px'}),    
