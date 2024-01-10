@@ -8,7 +8,7 @@ import pandas as pd
 import webbrowser
 from app import app
 from apps import sidebar as sb
-from apps.records import existingpatient, newpatient, viewrecords
+from apps.records import existingpatient, newpatient, viewrecords, editrecords
 
 CONTENT_STYLE = {
     "margin-left": "18rem",
@@ -52,6 +52,8 @@ def displaypage(pathname):
                 returnlayout = existingpatient.layout
             elif pathname == "/viewrecord":
                 returnlayout = viewrecords.layout
+            elif pathname == "/editrecord":
+                returnlayout = editrecords.layout
             elif pathname == "/newuser":
                 returnlayout = "Create new users here"
             elif pathname == "/viewuser":

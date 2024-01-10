@@ -42,7 +42,7 @@ layout = html.Div(
                                                 dbc.Input(
                                                     type='text',
                                                     id='recordlist_filter',
-                                                    placeholder='Client Name'
+                                                    placeholder='Client/Patient Name'
                                                 ),
                                                 width=5
                                             ),
@@ -80,28 +80,56 @@ layout = html.Div(
     ],
     [
         Input('url', 'pathname'),
+        Input('recordlist_filter', 'value'),
         #Input('recordlist_filter','value'),
     ]
 )
 
-def viewrecord_loadpatientlist(pathname):
+def viewrecord_loadpatientlist(pathname, searchterm):
     if pathname == '/viewrecord':
         # Obtain records from DB through SQL
         # What information do we need to see
-        sql = """SELECT patient_id, patient_m, client_ln, client_fn, client_mi, client_cn
+        sql = """
+            SELECT 
+                patient_m,
+                COALESCE(client_ln, '') || ', ' || COALESCE (client_fn, '') || ' ' || COALESCE (client_mi, '') AS client_name,
+                client_cn,
+                patient_id
             FROM patient p
                 INNER JOIN client c on p.client_id = c.client_id
             WHERE NOT patient_delete_ind
+            ORDER BY patient_id ASC
         """
         values = []
         #cols = ['Patient ID', 'Patient Name']
-        cols = ['Patient ID', 'Patient Name', 'Client Last Name','Client First Name', 'Client MI', 'Contact Number']
-        df = db.querydatafromdatabase(sql, values, cols)
-
-        # Create html element to return to the div
-
-        table = dbc.Table.from_dataframe(df, striped=True, bordered=True, hover=True, size='sm' )
-        return [table]
+        cols = ['Patient Name', 'Client Name', 'Contact Number', 'ID']
         
+        if searchterm:
+            sql += """ AND (
+                patient_m ILIKE %s 
+                OR client_ln ILIKE %s 
+                OR client_fn ILIKE %s
+                );
+            """
+            values = [f"%{searchterm}%", f"%{searchterm}%", f"%{searchterm}%"]
+        
+        df = db.querydatafromdatabase(sql, values, cols)
+        
+        if df.shape:
+            buttons = []
+            for patient_id in df['ID']:
+                buttons += [
+                    html.Div(
+                        dbc.Button('Edit', href=f'/editrecord?mode=edit&id={patient_id}', size='sm', color='success'),
+                        style = {'text-align':'center'}
+                    )
+                ]
+
+            df['Action'] = buttons
+            df = df[['Patient Name', 'Client Name', 'Contact Number', 'Action']] 
+
+            table = dbc.Table.from_dataframe(df, striped=True, bordered=True, hover=True, size='sm', style={'text-align': 'center'})
+            return [table]
+
     else:
         raise PreventUpdate

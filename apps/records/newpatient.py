@@ -148,8 +148,8 @@ layout = html.Div(
                                         dcc.Dropdown(
                                             id='patient_sex',
                                             options=[
-                                                {'label':'Male', 'value':'male'},
-                                                {'label':'Female', 'value':'female'},
+                                                {'label':'Male', 'value':'Male'},
+                                                {'label':'Female', 'value':'Female'},
                                             ],
                                             placeholder='Select Sex',
                                             style={'width':'86.5%'},
