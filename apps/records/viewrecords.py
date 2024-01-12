@@ -98,7 +98,6 @@ def viewrecord_loadpatientlist(pathname, searchterm):
             FROM patient p
                 INNER JOIN client c on p.client_id = c.client_id
             WHERE NOT patient_delete_ind
-            ORDER BY patient_id ASC
         """
         values = []
         #cols = ['Patient ID', 'Patient Name']
