@@ -23,15 +23,15 @@ import pandas as pd
 #     )
 #     return db
 
-# def getdblocation():
-#     db = psycopg2.connect(
-#         host='localhost',
-#         database='172vetmed',
-#         user='postgres',
-#         port=5432,
-#         password='colline'
-#     )
-#     return db
+def getdblocation():
+    db = psycopg2.connect(
+        host='localhost',
+        database='vetmed12',
+        user='postgres',
+        port=5432,
+        password='colline'
+    )
+    return db
 
 def modifydatabase(sql,values):
     db = getdblocation()

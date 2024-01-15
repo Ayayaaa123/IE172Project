@@ -98,6 +98,8 @@ sidebar = dbc.Nav(
         html.Br(),
         
         dbc.NavLink("Help", href="/help", active="exact", className="active-link", style=mainelement_style),
+
+        dbc.NavLink("Logout", href = "/logout", active="exact", className="active-link", style=mainelement_style), 
     ],
     vertical=True,
     pills=True,
