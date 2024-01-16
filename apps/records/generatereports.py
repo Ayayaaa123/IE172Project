@@ -69,7 +69,7 @@ def reportdetails(reporttype):
                         dbc.CardHeader(html.H2("Number of Visits per Purpose per Period")),
                         dbc.CardBody([
                             dbc.Row([
-                                dbc.Col(html.H3("Select Time Period"), width=6),
+                                dbc.Col(html.H3("Select Time Period"), width=3),
                                 dbc.Col(
                                     dcc.Dropdown(
                                         id='visitspurpose_timeperiod',
@@ -80,7 +80,7 @@ def reportdetails(reporttype):
                                             {'label':'Custom', 'value':'custom'},
                                         ],
                                     ),
-                                    width=6,
+                                    width=9,
                                 ),
                             ]),
                             dcc.Store(id='visitspurpose_customdate_store'),
@@ -105,8 +105,58 @@ def reportdetails(reporttype):
                 html.Br(),
             ])
         ])
-    else:
-        raise PreventUpdate
+    if 'monthlyunresolvedproblems' in reporttype:
+        inputs.extend([
+            html.Div([
+                dbc.Card(
+                    [
+                        dbc.CardHeader(html.H2("Monthly Number of Unresolved Problems")),
+                        dbc.CardBody([
+                        ]),
+                    ],
+                ),
+                html.Br(),
+            ])
+        ])
+    if 'labexamstypeperiod' in reporttype:
+        inputs.extend([
+            html.Div([
+                dbc.Card(
+                    [
+                        dbc.CardHeader(html.H2("Number of Lab Exams per Type per Period")),
+                        dbc.CardBody([
+                        ]),
+                    ],
+                ),
+                html.Br(),
+            ])
+        ])
+    if 'lengthofprocessing' in reporttype:
+        inputs.extend([
+            html.Div([
+                dbc.Card(
+                    [
+                        dbc.CardHeader(html.H2("Length of Processing")),
+                        dbc.CardBody([
+                        ]),
+                    ],
+                ),
+                html.Br(),
+            ])
+        ])
+    if 'vaccinedewormingadministeredperiod' in reporttype:
+        inputs.extend([
+            html.Div([
+                dbc.Card(
+                    [
+                        dbc.CardHeader(html.H2("Number of Vaccine/Deworming Administered per Period")),
+                        dbc.CardBody([
+                        ]),
+                    ],
+                ),
+                html.Br(),
+            ])
+        ])
     
     return inputs
                     
