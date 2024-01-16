@@ -40,9 +40,14 @@ line_style = {
 
 sidebar = dbc.Nav(
     [      
-        dbc.NavLink(html.Img(src="assets/logo.webp", height="100px"), href="/home", active="exact", className="logo-link"),
+        dbc.NavLink(html.Img(src="assets/logo.webp", height="100px"), href="/home", active="exact", className=subelement_style),
         html.Br(),
         
+        dbc.Nav(
+            [
+                dbc.NavLink("Home Page", href="/home", active="exact", className="active-link", style=subelement_style),
+            ],
+        ),
         html.H2("Patient Records", className="h2-normal", style=mainelement_style),
         html.Hr(style=line_style),
         dbc. Accordion(

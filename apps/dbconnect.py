@@ -22,7 +22,7 @@ import pandas as pd
 #         password='quick126'
 #     )
 #     return db
-
+'''
 def getdblocation():
     db = psycopg2.connect(
         host='localhost',
@@ -30,6 +30,16 @@ def getdblocation():
         user='postgres',
         port=5432,
         password='colline'
+    )
+    return db
+'''
+def getdblocation():
+    db = psycopg2.connect(
+        host='localhost',
+        database='vetmed33',
+        user='postgres',
+        port=5432,
+        password='sabinobacay080901'
     )
     return db
 

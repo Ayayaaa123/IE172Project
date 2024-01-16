@@ -9,7 +9,7 @@ import webbrowser
 from app import app
 from apps import sidebar as sb
 from apps import login, signup
-from apps.records import existingpatient, newpatient, viewrecords, editrecords, viewusers, newusers, generatereports, editusers
+from apps.records import existingpatient, newpatient, viewrecords, editrecords, viewusers, newusers, generatereports, editusers, home
 
 CONTENT_STYLE = {
     "margin-left": "18rem",
