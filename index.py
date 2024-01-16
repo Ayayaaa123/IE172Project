@@ -88,7 +88,7 @@ def displaypage(pathname, sessionlogout, userid):
                         sessionlogout = True
 
                 elif pathname == "/" or pathname == "/home":
-                    returnlayout = "This is the homepage"
+                    returnlayout = home.layout
                 elif pathname == "/newrecord" or pathname == "/newrecord/newpatient":
                     returnlayout = newpatient.layout
                 elif pathname == "/newrecord/existingpatient":
