@@ -25,9 +25,9 @@ layout = html.Div([
                             #html.H2(f"Visits for {datetime.now().strftime('%B %d, %Y')}")
                             html.H2("Record Visits", className = "flex-grow-1"),
                             html.Div([
-                                dbc.Button("Visits for Returning Patient",id = "re_patient_button",className = "me-2",n_clicks = 0),
-                                dbc.Button("Visits for New Patient",id = "new_patient_button",n_clicks = 0),
-                            ], className = "ml-2 d-flex")
+                                dbc.Button("Returning Patient",id = "re_patient_button",className = "me-2",n_clicks = 0),
+                                dbc.Button("New Patient",id = "new_patient_button",n_clicks = 0),
+                            ], className = "ml-2 d-flex"),
                         ], className = "d-flex align-items-center justify-content-between")
                 ),
 
@@ -58,117 +58,147 @@ layout = html.Div([
 
                     ], id = 'for_returning_patients'),
                     
-                    dbc.Row([dbc.Col(html.H4("Owner Information"), width = 3)], id = 'owner_info1'),
+                    dbc.Row([
+                        dbc.Col(html.H4("Client Information"), width=3),
+                        dbc.Col(
+                            dcc.Dropdown(
+                                id="clientlist",
+                                placeholder="Search Client from database if available",
+                                searchable=True,
+                                options=[],
+                                value=None,
+                            ), width=5,),
+                    ], className = 'mb-3', id = 'owner_info1'),
 
                     dbc.Row([
 
                         dbc.Col(
                             [
                                 dbc.Label("Last Name"),
-                                dbc.Input(id='client_ln', type='text', placeholder='Enter Last Name', style={'width':'80%'})
+                                dbc.Input(id='client_ln', type='text', placeholder='Enter Last Name', style={'width':'100%'})
                             ],
-                            width=3
+                            width=2
                         ),
 
                         dbc.Col(
                             [
                                 dbc.Label("First Name"),
-                                dbc.Input(id='client_fn', type='text', placeholder='Enter First Name', style={'width':'80%'})
+                                dbc.Input(id='client_fn', type='text', placeholder='Enter First Name', style={'width':'100%'})
                             ],
-                            width=3
+                            width=2
                         ),
 
                         dbc.Col(
                             [
                                 dbc.Label("Middle Initial"),
-                                dbc.Input(id='client_mi', type='text', placeholder='Enter Middle Initial', style={'width':'80%'})
+                                dbc.Input(id='client_mi', type='text', placeholder='Enter MI', style={'width':'100%'})
                             ],
-                            width=3
+                            width=2
                         ),
 
                         dbc.Col(
                             [
-                                dbc.Label("Suffix (N/A if none)"),
-                                dbc.Input(id='client_suffix', type='text', placeholder='Enter Suffix', style={'width':'80%'})
+                                dbc.Label("Suffix"),
+                                dbc.Input(id='client_suffix', type='text', placeholder='N/A if none', style={'width':'75%'})
                             ],
-                            width=3
+                            width=2
                         ),
 
-                    ], className="mb-3", id = 'owner_info2'), # end of row for owner name
-
-                    dbc.Row([
-                            
                         dbc.Col(
                             [
                                 dbc.Label("Email Address"),
-                                dbc.Input(id='client_email', type='text', placeholder='Enter Email Address', style={'width':'80%'})
+                                dbc.Input(id='client_email', type='text', placeholder='Enter Email Address', style={'width':'100%'})
                             ],
-                            width=3
+                            width=2
                         ),
 
                         dbc.Col(
                             [
                                 dbc.Label("Contact Number"),
-                                dbc.Input(id='client_cn', type='text', placeholder='Enter Contact Number', style={'width':'80%'})
+                                dbc.Input(id='client_cn', type='text', placeholder='Enter Contact Number', style={'width':'100%'})
                             ],
-                            width=3
+                            width=2
                         ),
+
+                    ], className="mb-3", id = 'owner_info2'), # end of row for owner name
+
+                    dbc.Row([      
 
                         dbc.Col(
                             [
-                                dbc.Label("Province"),
-                                dbc.Input(id='client_province', type='text', placeholder='Enter Province', style={'width':'80%'})
+                                dbc.Label("House Number"),
+                                dbc.Input(id='client_house_no', type='text', placeholder='Enter House Number', style={'width':'100%'})
                             ],
-                            width=3
-                        ),
-
-                        dbc.Col(
-                            [
-                                dbc.Label("City"),
-                                dbc.Input(id='client_city', type='text', placeholder='Enter City', style={'width':'80%'})
-                            ],
-                            width=3
-                        ),
-                    ], className="mb-3", id = 'owner_info3'), # end of row of email address, contact num, province
-
-                    dbc.Row([
-                            
-                        dbc.Col(
-                            [
-                                dbc.Label("Barangay"),
-                                dbc.Input(id='client_barangay', type='text', placeholder='Enter Barangay', style={'width':'80%'})
-                            ],
-                            width=3
+                            width=2
                         ),
 
                         dbc.Col(
                             [
                                 dbc.Label("Street"),
-                                dbc.Input(id='client_street', type='text', placeholder='Enter Street', style={'width':'80%'})
+                                dbc.Input(id='client_street', type='text', placeholder='Enter Street', style={'width':'100%'})
                             ],
-                            width=3
+                            width = 3
+                        ),
+                            
+                        dbc.Col(
+                            [
+                                dbc.Label("Barangay"),
+                                dbc.Input(id='client_barangay', type='text', placeholder='Enter Barangay', style={'width':'100%'})
+                            ],
+                            width=2
                         ),
 
                         dbc.Col(
                             [
-                                dbc.Label("House Number"),
-                                dbc.Input(id='client_house_no', type='text', placeholder='Enter House Number', style={'width':'80%'})
+                                dbc.Label("City"),
+                                dbc.Input(id='client_city', type='text', placeholder='Enter City', style={'width':'100%'})
+                            ],
+                            width=2
+                        ),                    
+
+                        dbc.Col(
+                            [
+                                dbc.Label("Province"),
+                                dbc.Input(id='client_province', type='text', placeholder='Enter Province', style={'width':'100%'})
                             ],
                             width=3
-                        ), 
+                        ),
+                    ], className="mb-4", id = 'owner_info3'), # end of row of email address, contact num, province
 
-                    ], className="mb-4", id = 'owner_info4'), # end of address row part 2
-
-                    dbc.Row([dbc.Col(html.H4("Patient Information"), width = 3)], id = 'patient_info1'),   
+                    dbc.Row([dbc.Col(html.H4("Patient Information"), width = 3)], className = 'mb-3', id = 'patient_info1'),   
 
                     dbc.Row([
                             
                         dbc.Col(
                             [
                                 dbc.Label("Name"),
-                                dbc.Input(id='patient_m', type='text', placeholder='Enter Patient Name', style={'width':'75%'})
+                                dbc.Input(id='patient_m', type='text', placeholder='Enter Patient Name', style={'width':'100%'})
                             ],
-                            width=3
+                            width=2
+                        ),
+
+                        dbc.Col(
+                            [
+                                dbc.Label("Animal Type"),
+                                dbc.Input(id='patient_type', type='text', placeholder='Ex: Dog or Cat', style={'width':'100%'})
+                            ],
+                            width=2
+                        ),
+                        
+                        dbc.Col(
+                            [
+                                dbc.Label("Breed"),
+                                dbc.Input(id='patient_breed', type='text', placeholder='Enter Breed', style={'width':'100%'})
+                            ],
+                            width=2
+                        ),
+
+                        dbc.Col(
+                            [
+                                dbc.Label("Color Markings"),
+                                dbc.Input(id='patient_color', type='text', placeholder='Enter Color Markings', style={'width':'100%'})
+                            ],
+                            width=2
                         ),
 
                         dbc.Col(
@@ -181,30 +211,11 @@ layout = html.Div([
                                         {'label':'Female', 'value':'Female'},
                                     ],
                                     placeholder='Select Sex',
-                                    style={'width':'86.5%'},
+                                    style={'width':'100%'},
                                 ),
                             ],
-                            width=3
+                            width=2 
                         ),
-
-                        dbc.Col(
-                            [
-                                dbc.Label("Type"),
-                                dbc.Input(id='patient_type', type='text', placeholder='Enter Type', style={'width':'75%'})
-                            ],
-                            width=3
-                        ),
-                        
-                        dbc.Col(
-                            [
-                                dbc.Label("Breed"),
-                                dbc.Input(id='patient_breed', type='text', placeholder='Enter Breed', style={'width':'75%'})
-                            ],
-                            width=3
-                        ),
-                    ], className="mb-3", id = 'patient_info2'), # end of row for name, sex, breed
-
-                    dbc.Row([
                             
                         dbc.Col(
                             [
@@ -212,28 +223,23 @@ layout = html.Div([
                                 dmc.DatePicker(
                                     id='patient_bd',
                                     placeholder="Select Birthdate",
-                                    style={'width':'75%'},
+                                    style={'width':'100%'},
                                     inputFormat='MMM DD, YYYY',
                                     dropdownType='modal',
                                 ),
                             ],
-                            width=3
+                            width=2
                         ),
+                    ], className="mb-3", id = 'patient_info2'), # end of row for name, sex, breed
+
+                    dbc.Row([
 
                         dbc.Col(
                             [
                                 dbc.Label("Idiosyncrasies"),
-                                dbc.Input(id='patient_idiosync', type='text', placeholder='Enter Idiosyncrasies', style={'width':'75%'})
+                                dbc.Input(id='patient_idiosync', type='text', placeholder='Enter Idiosyncrasies', style={'width':'100%'})
                             ],
-                            width=3
-                        ),
-
-                        dbc.Col(
-                            [
-                                dbc.Label("Color Markings"),
-                                dbc.Input(id='patient_color', type='text', placeholder='Enter Color Markings', style={'width':'75%'})
-                            ],
-                            width=3
+                            width=12
                         ),
                     ], className="mb-3", id = 'patient_info3'), # end of row for birthdate, idiosyncrasies, color markings
 
@@ -241,11 +247,11 @@ layout = html.Div([
 
                     dbc.Row([ #Select Veterinarian
                             
-                        dbc.Col(html.H4("Select Veterinarian"), width=3),
+                        dbc.Col(html.H4("Veterinarian Assigned"), width=3),
 
                         dbc.Col(
                             dcc.Dropdown(
-                                id="vetlist_existingpatient",
+                                id="vetlist",
                                 placeholder="Select Veterinarian",
                                 searchable=True,
                                 options=[],
@@ -260,7 +266,7 @@ layout = html.Div([
                         dbc.Col(html.H4("Visit Date"), width=3),
                         dbc.Col(
                                 dmc.DatePicker(
-                                id='visitdate_existingpatient',
+                                id='visitdate',
                                 placeholder="Select Visit Date",
                                 value=datetime.now().date(),
                                 inputFormat='MMM DD, YYYY',
@@ -305,69 +311,8 @@ layout = html.Div([
 ])
 
 
+
 #LAYOUT CALLBACKS
-@app.callback( # for visit record visibility depending on patient
-    [
-        Output('for_returning_patients','style'),
-        Output('owner_info1', 'style'),
-        Output('owner_info2', 'style'),
-        Output('owner_info3', 'style'),
-        Output('owner_info4', 'style'),
-        Output('patient_info1', 'style'),
-        Output('patient_info2', 'style'),
-        Output('patient_info3', 'style'),
-        Output('visitpurpose','options')
-    ],
-    [
-        Input('new_patient_button', 'n_clicks'),
-        Input('re_patient_button', 'n_clicks'),
-    ],
-)
-
-def visibility(new_patient_clicks, re_patient_clicks):
-    ctx = dash.callback_context
-
-    if not ctx.triggered:
-        return ({'display':''},{'display': 'none'},{'display': 'none'},{'display': 'none'},{'display': 'none'},{'display': 'none'},{'display': 'none'},{'display': 'none'}, dash.no_update)
-    
-    button_id = ctx.triggered[0]['prop_id'].split('.')[0]
-
-    default_options = [
-        {"label": "New Problem", "value": "new_problem"},
-        {"label": "Follow up to a Problem", "value": "follow_up"},
-        {"label": "Vaccination", "value": "vaccination"},
-        {"label": "Deworming", "value": "deworming"}
-    ]
-
-    if button_id == 'new_patient_button':
-        options = [
-            {"label": "New Problem", "value": "new_problem"},
-            {"label": "Vaccination", "value": "vaccination"},
-            {"label": "Deworming", "value": "deworming"}
-        ]
-        return ({'display': 'none'},{'display':''},{'display':''},{'display':''},{'display':''},{'display':''},{'display':''},{'display':''}, options)
-    elif button_id == 're_patient_button':
-        return ({'display':''},{'display': 'none'},{'display': 'none'},{'display': 'none'},{'display': 'none'},{'display': 'none'},{'display': 'none'},{'display': 'none'}, default_options)
-    else:
-        return ({'display':''},{'display': 'none'},{'display': 'none'},{'display': 'none'},{'display': 'none'},{'display': 'none'},{'display': 'none'},{'display': 'none'}, default_options)
-
-@app.callback( # to make the new and follow up problem options mutually exclusive
-    Output('visitpurpose','value'),
-    Input('visitpurpose','value')
-)
-
-def update_checklist(selected_options):
-    if selected_options is None:
-        return []
-    
-    last_option = selected_options[-1] if selected_options else None
-    
-    if last_option in ['new_problem', 'follow_up']:
-        mutually_exclusive_option = 'follow_up' if last_option == 'new_problem' else 'new_problem'
-        if mutually_exclusive_option in selected_options:
-            selected_options.remove(mutually_exclusive_option)
-
-    return selected_options
 
 @app.callback( #callback to add inputs depending on the selected visit purpose
     Output("visitinputs", "children"),
@@ -406,7 +351,7 @@ def update_additional_inputs(_, selected_services):
                                     dbc.Col([
                                         dbc.Label("Vaccine Medication"),
                                         dcc.Dropdown(
-                                            id={"type": "patient_vaccine", "index": 1},
+                                            id="vaccine_name",
                                             placeholder='Select Vaccine',
                                             searchable=True,
                                             options=[],
@@ -416,13 +361,24 @@ def update_additional_inputs(_, selected_services):
                                     ),
                                     dbc.Col([
                                         dbc.Label("Vaccine Dosage"),
-                                        dbc.Input(id={"type": "vaccine_dose", "index": 1}, type='text', placeholder='Enter Dose')],
-                                        width = 2,
-                                    ),
+                                        dbc.Col(
+                                            dcc.Dropdown(
+                                                id="vaccine_dose",
+                                                options=[
+                                                    {'label':'1st', 'value':'resolved'},
+                                                    {'label':'2nd', 'value':'ongoing'},
+                                                    {'label':'3rd', 'value':'pending_diagnosis'},
+                                                    {'label':'4th', 'value':'follow_up'},
+                                                    {'label':'Booster', 'value':'critical_condition'},
+                                                ],
+                                                placeholder='Enter Dose',
+                                            ),
+                                        ),
+                                    ], width = 2,),  
                                     dbc.Col([
                                         dbc.Label("Date Administered"),
                                         dmc.DatePicker(
-                                            id={"type": "vaccine_date", "index": 1},
+                                            id={"type": "vaccine_date", "index": 0},
                                             placeholder="Select Date Administered",
                                             inputFormat='MMM DD, YYYY',
                                             dropdownType='modal',
@@ -432,7 +388,7 @@ def update_additional_inputs(_, selected_services):
                                     dbc.Col([
                                         dbc.Label("Vaccine Expiration"),
                                         dmc.DatePicker(
-                                            id={"type": "vaccine_expdate", "index": 1},
+                                            id={"type": "vaccine_expdate", "index": 0},
                                             placeholder="Select Expiration Date",
                                             inputFormat='MMM DD, YYYY',
                                             dropdownType='modal',
@@ -473,7 +429,7 @@ def update_additional_inputs(_, selected_services):
                                 dbc.Col([
                                     dbc.Label("Deworming Medication"),
                                     dcc.Dropdown(
-                                        id={"type": "patient_deworming", "index": 1},
+                                        id="deworm_name",
                                         placeholder='Select Deworming Medication',
                                         searchable=True,
                                         options=[],
@@ -483,9 +439,20 @@ def update_additional_inputs(_, selected_services):
                                 ),
                                 dbc.Col([
                                     dbc.Label("Deworming Dosage"),
-                                    dbc.Input(id={"type": "deworm_dose", "index": 1}, type='text', placeholder='Enter Dose')],
-                                    width = 2,
-                                ),
+                                    dbc.Col(
+                                        dcc.Dropdown(
+                                            id="deworm_dose",
+                                            options=[
+                                                {'label':'1st', 'value':'resolved'},
+                                                {'label':'2nd', 'value':'ongoing'},
+                                                {'label':'3rd', 'value':'pending_diagnosis'},
+                                                {'label':'4th', 'value':'follow_up'},
+                                                {'label':'Booster', 'value':'critical_condition'},
+                                            ],
+                                            placeholder='Enter Dose',
+                                        ),
+                                    ),
+                                ], width = 2,),   
                                 dbc.Col([
                                     dbc.Label("Date Administered"),
                                     dmc.DatePicker(
@@ -526,22 +493,12 @@ def update_additional_inputs(_, selected_services):
                             html.Div([
                                 html.Div("Problem Status", className = 'me-2', style = {'white-space': 'nowrap','flex': '0 0 auto'}),
                                 dcc.Dropdown(
-                                    id='newproblem_status',
-                                    options=[
-                                        {'label':'Resolved', 'value':'resolved'},
-                                        {'label':'Ongoing', 'value':'ongoing'},
-                                        {'label':'Pending Diagnosis', 'value':'pending_diagnosis'},
-                                        {'label':'For Follow-Up', 'value':'follow_up'},
-                                        {'label':'Critical Condition', 'value':'critical_condition'},
-                                        {'label':'For Surgery', 'value':'for_surgery'},
-                                        {'label':'Post Surgery', 'value':'post_surgery'},
-                                        {'label':'Under Observation', 'value':'under_observation'},
-                                        {'label':'Deceased', 'value':'deceased'},
-                                        {'label':'Unknown', 'value':'unknown'},
-                                        {'label':'Waiting For Test Results', 'value':'pending_testresults'},
-                                    ],
-                                    placeholder='Select Problem Status',
-                                    style = {'flex': '1'}
+                                    id = "problem_status",
+                                    placeholder = "Select Problem Status",
+                                    searchable = True,
+                                    options = [],
+                                    value = None,
+                                    style = {'flex': '1'},
                                 ),
                             ], className = "d-flex align-items-center", style = {'flex-grow': '1'}),
                         ], className = "d-flex align-items-center justify-content-between")
@@ -650,7 +607,7 @@ def update_additional_inputs(_, selected_services):
                                             [
                                                 dbc.Label("Clinical Exam Type"),
                                                 dcc.Dropdown(
-                                                    id={"type": "newclinicalexamlist", "index": 1},
+                                                    id= "clinical_exam_list",
                                                     placeholder="Select Clinical Exam Type",
                                                     searchable=True,
                                                     options=[],
@@ -676,7 +633,7 @@ def update_additional_inputs(_, selected_services):
                                             [
                                                 dbc.Label("Clinician"),
                                                 dcc.Dropdown(
-                                                    id={"type": "newclinicianlist", "index": 1},
+                                                    id="clinician_list",
                                                     placeholder="Select Clinician",
                                                     searchable=True,
                                                     options=[],
@@ -819,22 +776,12 @@ def update_additional_inputs(_, selected_services):
                             html.Div([
                                 html.Div("Problem Status", className = 'me-2', style = {'white-space': 'nowrap','flex': '0 0 auto'}),
                                 dcc.Dropdown(
-                                    id='newproblem_status',
-                                    options=[
-                                        {'label':'Resolved', 'value':'resolved'},
-                                        {'label':'Ongoing', 'value':'ongoing'},
-                                        {'label':'Pending Diagnosis', 'value':'pending_diagnosis'},
-                                        {'label':'For Follow-Up', 'value':'follow_up'},
-                                        {'label':'Critical Condition', 'value':'critical_condition'},
-                                        {'label':'For Surgery', 'value':'for_surgery'},
-                                        {'label':'Post Surgery', 'value':'post_surgery'},
-                                        {'label':'Under Observation', 'value':'under_observation'},
-                                        {'label':'Deceased', 'value':'deceased'},
-                                        {'label':'Unknown', 'value':'unknown'},
-                                        {'label':'Waiting For Test Results', 'value':'pending_testresults'},
-                                    ],
-                                    placeholder='Select Problem Status',
-                                    style = {'flex': '1'}
+                                    id = "problem_status",
+                                    placeholder = "Select Problem Status",
+                                    searchable = True,
+                                    options = [],
+                                    value = None,
+                                    style = {'flex': '1'},
                                 ),
                             ], className = "d-flex align-items-center", style = {'flex-grow': '1'}),
                         ], className = "d-flex align-items-center justify-content-between")
@@ -844,7 +791,7 @@ def update_additional_inputs(_, selected_services):
                             dbc.Col(html.H3("Problem"), width=2),
                             dbc.Col(
                                 dcc.Dropdown(
-                                    id="followupproblem",
+                                    id="problem_list",
                                     placeholder="Select Problem",
                                     searchable=True,
                                     options=[],
@@ -947,7 +894,7 @@ def update_additional_inputs(_, selected_services):
                                             [
                                                 dbc.Label("Clinical Exam Type"),
                                                 dcc.Dropdown(
-                                                    id={"type": "newclinicalexamlist", "index": 1},
+                                                    id="clinical_exam_list",
                                                     placeholder="Select Clinical Exam Type",
                                                     searchable=True,
                                                     options=[],
@@ -973,7 +920,7 @@ def update_additional_inputs(_, selected_services):
                                             [
                                                 dbc.Label("Clinician"),
                                                 dcc.Dropdown(
-                                                    id={"type": "newclinicianlist", "index": 1},
+                                                    id = "clinician_list",
                                                     placeholder="Select Clinician",
                                                     searchable=True,
                                                     options=[],
@@ -1117,6 +1064,68 @@ def update_additional_inputs(_, selected_services):
         ]),
     return inputs
 
+@app.callback( # for visit record visibility depending on patient
+    [
+        Output('for_returning_patients','style'),
+        Output('owner_info1', 'style'),
+        Output('owner_info2', 'style'),
+        Output('owner_info3', 'style'),
+        Output('patient_info1', 'style'),
+        Output('patient_info2', 'style'),
+        Output('patient_info3', 'style'),
+        Output('visitpurpose','options')
+    ],
+    [
+        Input('new_patient_button', 'n_clicks'),
+        Input('re_patient_button', 'n_clicks'),
+    ],
+)
+
+def visibility(new_patient_clicks, re_patient_clicks):
+    ctx = dash.callback_context
+
+    if not ctx.triggered:
+        return ({'display':''},{'display': 'none'},{'display': 'none'},{'display': 'none'},{'display': 'none'},{'display': 'none'},{'display': 'none'}, dash.no_update)
+    
+    button_id = ctx.triggered[0]['prop_id'].split('.')[0]
+
+    default_options = [
+        {"label": "New Problem", "value": "new_problem"},
+        {"label": "Follow up to a Problem", "value": "follow_up"},
+        {"label": "Vaccination", "value": "vaccination"},
+        {"label": "Deworming", "value": "deworming"}
+    ]
+
+    if button_id == 'new_patient_button':
+        options = [
+            {"label": "New Problem", "value": "new_problem"},
+            {"label": "Vaccination", "value": "vaccination"},
+            {"label": "Deworming", "value": "deworming"}
+        ]
+        return ({'display': 'none'},{'display':''},{'display':''},{'display':''},{'display':''},{'display':''},{'display':''}, options)
+    elif button_id == 're_patient_button':
+        return ({'display':''},{'display': 'none'},{'display': 'none'},{'display': 'none'},{'display': 'none'},{'display': 'none'},{'display': 'none'}, default_options)
+    else:
+        return ({'display':''},{'display': 'none'},{'display': 'none'},{'display': 'none'},{'display': 'none'},{'display': 'none'},{'display': 'none'}, default_options)
+
+@app.callback( # to make the new and follow up problem options mutually exclusive
+    Output('visitpurpose','value'),
+    Input('visitpurpose','value')
+)
+
+def update_checklist(selected_options):
+    if selected_options is None:
+        return []
+    
+    last_option = selected_options[-1] if selected_options else None
+    
+    if last_option in ['new_problem', 'follow_up']:
+        mutually_exclusive_option = 'follow_up' if last_option == 'new_problem' else 'new_problem'
+        if mutually_exclusive_option in selected_options:
+            selected_options.remove(mutually_exclusive_option)
+
+    return selected_options
+
 vaccine_lineitem_homepage = []
 
 @app.callback( #callback for adding a row for vaccines administered
@@ -1149,7 +1158,7 @@ def manage_vaccine_line_item(addclick, deleteclick, existing_items):
                     dbc.Row([
                         dbc.Col(
                             dcc.Dropdown(
-                                id={"type": "patient_vaccine", "index": i},
+                                id={"type": "vaccine_name", "index": i},
                                 placeholder='Select Vaccine',
                                 searchable=True,
                                 options=[],
@@ -1158,7 +1167,17 @@ def manage_vaccine_line_item(addclick, deleteclick, existing_items):
                             width = 4,
                         ),
                         dbc.Col(
-                            dbc.Input(id={"type": "vaccine_dose", "index": i}, type='text', placeholder='Enter Dose'),
+                            dcc.Dropdown(
+                                id={"type": "vaccine_dose", "index": i},
+                                options=[
+                                        {'label':'1st', 'value':'1st'},
+                                        {'label':'2nd', 'value':'2nd'},
+                                        {'label':'3rd', 'value':'3rd'},
+                                        {'label':'4th', 'value':'4th'},
+                                        {'label':'Booster', 'value':'Booster'},
+                                ],
+                                placeholder='Enter Dose',
+                            ),
                             width = 2,
                         ),
                         dbc.Col(
@@ -1224,7 +1243,7 @@ def manage_deworm_line_item(addclick, deleteclick, existing_items):
                     dbc.Row([
                         dbc.Col(
                             dcc.Dropdown(
-                                id={"type": "patient_deworming", "index": i},
+                                id={"type": "deworm_name", "index": i},
                                 placeholder='Select Deworming Medication',
                                 searchable=True,
                                 options=[],
@@ -1233,7 +1252,17 @@ def manage_deworm_line_item(addclick, deleteclick, existing_items):
                             width = 4,
                         ),
                         dbc.Col(
-                            dbc.Input(id={"type": "deworm_dose", "index": i}, type='text', placeholder='Enter Dose'),
+                            dcc.Dropdown(
+                                id={"type": "deworm_dose", "index": i},
+                                options=[
+                                        {'label':'1st', 'value':'1st'},
+                                        {'label':'2nd', 'value':'2nd'},
+                                        {'label':'3rd', 'value':'3rd'},
+                                        {'label':'4th', 'value':'4th'},
+                                        {'label':'Booster', 'value':'Booster'},
+                                ],
+                                placeholder='Enter Dose',
+                            ),
                             width = 2,
                         ),
                         dbc.Col(
@@ -1296,7 +1325,7 @@ def manage_clinical_exam_content(addclick, deleteclick):
                             dbc.Col([
                                     dbc.Label("Clinical Exam Type"),
                                     dcc.Dropdown(
-                                        id={"type": "newclinicalexamlist", "index": i},
+                                        id={"type": "clinical_exam_list", "index": i},
                                         placeholder="Select Clinical Exam Type",
                                         searchable=True,
                                         options=[],
@@ -1316,7 +1345,7 @@ def manage_clinical_exam_content(addclick, deleteclick):
                             dbc.Col([
                                     dbc.Label("Clinician"),
                                     dcc.Dropdown(
-                                        id={"type": "newclinicianlist", "index": i},
+                                        id={"type": "clinician_list", "index": i},
                                         placeholder="Select Clinician",
                                         searchable=True,
                                         options=[],
@@ -1473,7 +1502,7 @@ def manage_labresult_content(addclick, deleteclick, existing_items):
                         dbc.Col([
                             dbc.Label("Lab Exam Type"),
                             dcc.Dropdown(
-                            id={"type": "newlabexamlist", "index": i},
+                            id={"type": "lab_exam_list", "index": i},
                             placeholder="Select Laboratory Exam Type",
                             searchable=True,
                             options=[],
@@ -1499,7 +1528,7 @@ def manage_labresult_content(addclick, deleteclick, existing_items):
                         dbc.Col([
                             dbc.Label("Veterinarian In Charge"),
                             dcc.Dropdown(
-                                id={"type": "vetexaminerlist", "index": i},
+                                id={"type": "veterinarian_list", "index": i},
                                 placeholder="Select Veterinary Examiner",
                                 searchable=True,
                                 options=[],
@@ -1575,38 +1604,69 @@ def manage_labreq_content(addclick, deleteclick):
     return [lab_request_lineitem]
 
 
+
 #FUNCTIONAL CALLBACKS
 
-app.callback( #callback for list of existing patients in the database
+@app.callback( #callback for list of problem status
     [
-        Output('patientlist', 'options'),
+        Output('problem_status', 'options'),
     ],
     [
         Input('url', 'pathname'),
-        Input('patientlist', 'value'),
+        Input('problem_status', 'value'),
     ]
 )
-def existingpatient_loadpatient(pathname, searchterm):
-    if pathname == "/home" or "/" and not searchterm:
+def problemstatuslist(pathname, searchterm):
+    if pathname == "/home"  and not searchterm:
         sql = """ 
             SELECT 
-                patient_id,
-                COALESCE(client_fn, '') || ' ' || COALESCE(client_mi, '') || ' ' || COALESCE(client_ln, '') || ', ' || COALESCE(client_suffix, '') AS client_name,
-                COALESCE(patient_m, '') || ' - ' || COALESCE(client_ln, '') || ', ' || COALESCE(client_fn, '') || ' ' || COALESCE(client_mi, '') AS patient_name
+                problem_status_id,
+                problem_status_m AS problem_status_name
             FROM 
-                patient
-            INNER JOIN 
-                client ON patient.client_id = client.client_id  
+                problem_status
             WHERE 
-                NOT patient_delete_ind 
-                AND NOT client_delete_ind 
+                NOT problem_status_delete_ind 
             """
         values = []
-        cols = ['patient_id', 'patient_name']
+        cols = ['problem_status_id', 'problem_status_name']
         if searchterm:
             sql += """ AND (
-                patient_m ILIKE %s 
-                OR client_ln ILIKE %s 
+                problem_status_m ILIKE %s
+                );
+            """
+            values = [f"%{searchterm}%", f"%{searchterm}%", f"%{searchterm}%"]
+    else:
+        raise PreventUpdate  
+     
+    result = db.querydatafromdatabase(sql, values, cols)
+    options = [{'label': row['problem_status_name'], 'value': row['problem_status_id']} for _, row in result.iterrows()]
+    return options, 
+
+@app.callback( #callback for list of existing clients in the database
+    [
+        Output('clientlist', 'options'),
+    ],
+    [
+        Input('url', 'pathname'),
+        Input('clientlist', 'value'),
+    ]
+)
+def clientlist(pathname, searchterm):
+    if pathname == "/home"  and not searchterm:
+        sql = """ 
+            SELECT 
+                client_id,
+                COALESCE(client_fn, '') || ' ' || COALESCE(client_mi, '') || ' ' || COALESCE(client_ln, '') || ' ' || COALESCE(client_suffix, '') AS client_name
+            FROM 
+                client
+            WHERE 
+                NOT client_delete_ind 
+            """
+        values = []
+        cols = ['client_id', 'client_name']
+        if searchterm:
+            sql += """ AND (
+                client_ln ILIKE %s 
                 OR client_fn ILIKE %s
                 );
             """
@@ -1615,9 +1675,457 @@ def existingpatient_loadpatient(pathname, searchterm):
         raise PreventUpdate  
      
     result = db.querydatafromdatabase(sql, values, cols)
-    options = [{'label': row['patient_name'], 'value': row['patient_id']} for _, row in result.iterrows()]
+    options = [{'label': row['client_name'], 'value': row['client_id']} for _, row in result.iterrows()]
     return options, 
 
+@app.callback( #callback for list of existing patients in the database
+    [
+        Output('patientlist', 'options'),
+    ],
+    [
+        Input('url', 'pathname'),
+        Input('clientlist', 'value'),
+        Input('patientlist', 'value'),
+    ]
+)
+def patientlist(pathname, selected_client_id, searchterm):
+    if pathname == "/home" and not searchterm:
+        sql = """ 
+            SELECT 
+                patient_id,
+                COALESCE(patient_m, '') ||' - ' || COALESCE(patient_type,'') || ' (' || COALESCE(patient_color, '')|| ')' AS patient_name
+            FROM 
+                patient
+            WHERE 
+                NOT patient_delete_ind
+            """
+        values = []
 
+        if selected_client_id:
+            sql += 'AND client_id = %s'
+            values.append(selected_client_id)
 
+        if searchterm:
+            sql += """ AND (
+                patient_m ILIKE %s 
+                OR patient_type ILIKE %s 
+                OR patient_color ILIKE %s
+                );
+            """
+            values.extend([f"%{searchterm}%", f"%{searchterm}%", f"%{searchterm}%"])
 
+        cols = ['patient_id', 'patient_name']
+        result = db.querydatafromdatabase(sql, values, cols)
+        options = [{'label': row['patient_name'], 'value': row['patient_id']} for _, row in result.iterrows()]
+        return options, 
+    else:
+        raise PreventUpdate  
+
+@app.callback(#list of veterinarians for fixed card
+    [
+        Output("vetlist", 'options'),
+    ],
+    [
+        Input('url', 'pathname'),
+        Input("vetlist", 'value'),
+    ]
+)
+def vetlist(pathname, searchterm):
+    if pathname == "/home" and not searchterm:
+        sql = """ 
+            SELECT 
+                vet_id,
+                COALESCE(vet_ln, '') || ' ' || COALESCE(vet_fn, '') || ' ' || COALESCE(vet_mi, '') AS vet_name
+            FROM 
+                vet 
+            WHERE 
+                NOT vet_delete_ind 
+            """
+        values = []
+        cols = ['vet_id', 'vet_name']
+        if searchterm:
+            sql += """ AND vet_name ILIKE %s
+            """
+            values = [f"%{searchterm}%"]
+    else:
+        raise PreventUpdate  
+     
+    result = db.querydatafromdatabase(sql, values, cols)
+    options = [{'label': row['vet_name'], 'value': row['vet_id']} for _, row in result.iterrows()]
+    return options,    
+
+@app.callback(#list of veterinarians for variable card
+    [
+        Output({"type": "veterinarian_list", "index": MATCH}, 'options'),
+    ],
+    [
+        Input('url', 'pathname'),
+        Input({"type": "veterinarian_list", "index": MATCH}, 'value'),
+    ]
+)
+def vetlist(pathname, searchterm):
+    if pathname == "/home" and not searchterm:
+        sql = """ 
+            SELECT 
+                vet_id,
+                COALESCE(vet_ln, '') || ' ' || COALESCE(vet_fn, '') || ' ' || COALESCE(vet_mi, '') AS vet_name
+            FROM 
+                vet 
+            WHERE 
+                NOT vet_delete_ind 
+            """
+        values = []
+        cols = ['vet_id', 'vet_name']
+        if searchterm:
+            sql += """ AND vet_name ILIKE %s
+            """
+            values = [f"%{searchterm}%"]
+    else:
+        raise PreventUpdate  
+     
+    result = db.querydatafromdatabase(sql, values, cols)
+    options = [{'label': row['vet_name'], 'value': row['vet_id']} for _, row in result.iterrows()]
+    return options,    
+      
+@app.callback( #list of vaccines on the fixed card
+    [
+        Output("vaccine_name", "options"),
+    ],
+    [
+        Input('url', 'pathname'),
+        Input("vaccine_name", "value"),
+    ]
+)
+def vaccinelistfixed(pathname, searchterm):
+    if pathname == "/home" and not searchterm:
+        sql = """ 
+            SELECT 
+                vacc_m_id,
+                vacc_m
+            FROM 
+                vacc_m 
+            WHERE 
+                NOT vacc_m_delete_ind 
+            """
+        values = []
+        cols = ['vacc_id', 'vacc_m']
+        if searchterm:
+            sql += """ AND vacc_m ILIKE %s
+            """
+            values = [f"%{searchterm}%"]
+    else:
+        raise PreventUpdate  
+     
+    result = db.querydatafromdatabase(sql, values, cols)
+    options = [{'label': row['vacc_m'], 'value': row['vacc_id']} for _, row in result.iterrows()]
+    return options, 
+
+@app.callback( #list of deworming on the fixed card
+    [
+        Output("deworm_name", 'options'),
+    ],
+    [
+        Input('url', 'pathname'),
+        Input("deworm_name", 'value'),
+    ]
+)
+def dewormlistfixed(pathname, searchterm):
+    if pathname == "/home" and not searchterm:
+        sql = """ 
+            SELECT 
+                deworm_m_id,
+                deworm_m
+            FROM 
+                deworm_m
+            WHERE 
+                NOT deworm_m_delete_ind 
+            """
+        values = []
+        cols = ['deworm_id', 'deworm_m']
+        if searchterm:
+            sql += """ AND deworm_m ILIKE %s
+            """
+            values = [f"%{searchterm}%"]
+    else:
+        raise PreventUpdate  
+     
+    result = db.querydatafromdatabase(sql, values, cols)
+    options = [{'label': row['deworm_m'], 'value': row['deworm_id']} for _, row in result.iterrows()]
+    return options,     
+
+@app.callback( #list of vaccines on the variable card
+    [
+        Output({"type": "vaccine_name", "index": MATCH}, "options"),
+    ],
+    [
+        Input('url', 'pathname'),
+        Input({"type": "vaccine_name", "index": MATCH}, "value"),
+    ]
+)
+def vaccinelistvariable(pathname, searchterm):
+    if pathname == "/home" and not searchterm:
+        sql = """ 
+            SELECT 
+                vacc_m_id,
+                vacc_m
+            FROM 
+                vacc_m 
+            WHERE 
+                NOT vacc_m_delete_ind 
+            """
+        values = []
+        cols = ['vacc_id', 'vacc_m']
+        if searchterm:
+            sql += """ AND vacc_m ILIKE %s
+            """
+            values = [f"%{searchterm}%"]
+    else:
+        raise PreventUpdate  
+     
+    result = db.querydatafromdatabase(sql, values, cols)
+    options = [{'label': row['vacc_m'], 'value': row['vacc_id']} for _, row in result.iterrows()]
+    return options, 
+
+@app.callback( #list of deworming on the variable card
+    [
+        Output({"type": "deworm_name", "index": MATCH}, 'options'),
+    ],
+    [
+        Input('url', 'pathname'),
+        Input({"type": "deworm_name", "index": MATCH}, 'value'),
+    ]
+)
+def dewormlistvariable(pathname, searchterm):
+    if pathname == "/home" and not searchterm:
+        sql = """ 
+            SELECT 
+                deworm_m_id,
+                deworm_m
+            FROM 
+                deworm_m
+            WHERE 
+                NOT deworm_m_delete_ind 
+            """
+        values = []
+        cols = ['deworm_id', 'deworm_m']
+        if searchterm:
+            sql += """ AND deworm_m ILIKE %s
+            """
+            values = [f"%{searchterm}%"]
+    else:
+        raise PreventUpdate  
+     
+    result = db.querydatafromdatabase(sql, values, cols)
+    options = [{'label': row['deworm_m'], 'value': row['deworm_id']} for _, row in result.iterrows()]
+    return options,     
+
+@app.callback( #list of clinical exam on fixed card
+    [
+        Output('clinical_exam_list', 'options'),
+    ],
+    [
+        Input('url', 'pathname'),
+        Input('clinical_exam_list', 'value'),
+    ]
+)
+def clinicalexamlistfixed(pathname, searchterm):
+    if pathname == "/home"  and not searchterm:
+        sql = """ 
+            SELECT 
+                clinical_exam_type_id,
+                clinical_exam_type_m AS clinical_exam_type_name
+            FROM 
+                clinical_exam_type
+            WHERE 
+                NOT clinical_exam_type_delete_ind 
+            """
+        values = []
+        cols = ['clinical_exam_type_id', 'clinical_exam_type_name']
+        if searchterm:
+            sql += """ AND (
+                clinical_exam_type_m ILIKE %s
+                );
+            """
+            values = [f"%{searchterm}%", f"%{searchterm}%", f"%{searchterm}%"]
+    else:
+        raise PreventUpdate  
+     
+    result = db.querydatafromdatabase(sql, values, cols)
+    options = [{'label': row['clinical_exam_type_name'], 'value': row['clinical_exam_type_id']} for _, row in result.iterrows()]
+    return options
+
+@app.callback( #list of clinical exam on variable card
+    [
+        Output({"type": "clinical_exam_list", "index": MATCH}, 'options'),
+    ],
+    [
+        Input('url', 'pathname'),
+        Input({"type": "clinical_exam_list", "index": MATCH}, 'value'),
+    ]
+)
+def clinicalexamlistvariable(pathname, searchterm):
+    if pathname == "/home"  and not searchterm:
+        sql = """ 
+            SELECT 
+                clinical_exam_type_id,
+                clinical_exam_type_m AS clinical_exam_type_name
+            FROM 
+                clinical_exam_type
+            WHERE 
+                NOT clinical_exam_type_delete_ind 
+            """
+        values = []
+        cols = ['clinical_exam_type_id', 'clinical_exam_type_name']
+        if searchterm:
+            sql += """ AND (
+                clinical_exam_type_m ILIKE %s
+                );
+            """
+            values = [f"%{searchterm}%", f"%{searchterm}%", f"%{searchterm}%"]
+    else:
+        raise PreventUpdate  
+     
+    result = db.querydatafromdatabase(sql, values, cols)
+    options = [{'label': row['clinical_exam_type_name'], 'value': row['clinical_exam_type_id']} for _, row in result.iterrows()]
+    return options, 
+
+@app.callback( #list of clinicians on fixed card
+    [
+        Output('clinician_list', 'options'),
+    ],
+    [
+        Input('url', 'pathname'),
+        Input('clinician_list', 'value'),
+    ]
+)
+def clinicianlistfixed(pathname, searchterm):
+    if pathname == "/home"  and not searchterm:
+        sql = """ 
+            SELECT 
+                clinician_id,
+                COALESCE(clinician_fn, '') || ' ' || COALESCE(clinician_mi, '') || ' ' || COALESCE(clinician_ln, '') || ' ' || COALESCE(clinician_suffix, '') AS clinician_name
+            FROM 
+                clinician
+            WHERE 
+                NOT clinician_delete_ind 
+            """
+        values = []
+        cols = ['clinician_id', 'clinician_name']
+        if searchterm:
+            sql += """ AND (
+                clinician_m ILIKE %s
+                );
+            """
+            values = [f"%{searchterm}%", f"%{searchterm}%", f"%{searchterm}%"]
+    else:
+        raise PreventUpdate  
+     
+    result = db.querydatafromdatabase(sql, values, cols)
+    options = [{'label': row['clinician_name'], 'value': row['clinician_id']} for _, row in result.iterrows()]
+    return options, 
+
+@app.callback( #list of clinicians on variable card
+    [
+        Output({"type": "clinician_list", "index": MATCH}, 'options'),
+    ],
+    [
+        Input('url', 'pathname'),
+        Input({"type": "clinician_list", "index": MATCH}, 'value'),
+    ]
+)
+def clinicianlistfixed(pathname, searchterm):
+    if pathname == "/home"  and not searchterm:
+        sql = """ 
+            SELECT 
+                clinician_id,
+                COALESCE(clinician_fn, '') || ' ' || COALESCE(clinician_mi, '') || ' ' || COALESCE(clinician_ln, '') || ' ' || COALESCE(clinician_suffix, '') AS clinician_name
+            FROM 
+                clinician
+            WHERE 
+                NOT clinician_delete_ind 
+            """
+        values = []
+        cols = ['clinician_id', 'clinician_name']
+        if searchterm:
+            sql += """ AND (
+                clinician_m ILIKE %s
+                );
+            """
+            values = [f"%{searchterm}%", f"%{searchterm}%", f"%{searchterm}%"]
+    else:
+        raise PreventUpdate  
+     
+    result = db.querydatafromdatabase(sql, values, cols)
+    options = [{'label': row['clinician_name'], 'value': row['clinician_id']} for _, row in result.iterrows()]
+    return options, 
+
+@app.callback( #list of laboratory exam on variable card
+    [
+        Output({"type": "lab_exam_list", "index": MATCH}, 'options'),
+    ],
+    [
+        Input('url', 'pathname'),
+        Input({"type": "lab_exam_list", "index": MATCH}, 'value'),
+    ]
+)
+def labexamlistvariable(pathname, searchterm):
+    if pathname == "/home"  and not searchterm:
+        sql = """ 
+            SELECT 
+                lab_exam_type_id,
+                lab_exam_type_m AS lab_exam_type_name
+            FROM 
+                lab_exam_type
+            WHERE 
+                NOT lab_exam_type_delete_ind 
+            """
+        values = []
+        cols = ['lab_exam_type_id', 'lab_exam_type_name']
+        if searchterm:
+            sql += """ AND (
+                lab_exam_type_m ILIKE %s
+                );
+            """
+            values = [f"%{searchterm}%", f"%{searchterm}%", f"%{searchterm}%"]
+    else:
+        raise PreventUpdate  
+     
+    result = db.querydatafromdatabase(sql, values, cols)
+    options = [{'label': row['lab_exam_type_name'], 'value': row['lab_exam_type_id']} for _, row in result.iterrows()]
+    return options, 
+
+@app.callback( #list of problems
+    [
+        Output('problem_list', 'options'),
+    ],
+    [
+        Input('url', 'pathname'),
+        Input('problem_list', 'value'),
+    ]
+)
+
+def problem_list(pathname, searchterm):
+    if pathname == "/home"  and not searchterm:
+        sql = """ 
+            SELECT 
+                problem_id,
+                problem_chief_complaint AS problem_name
+            FROM 
+                problem
+            WHERE 
+                NOT problem_delete_ind 
+            """
+        values = []
+        cols = ['problem_id', 'problem_name']
+        if searchterm:
+            sql += """ AND (
+                problem_m ILIKE %s
+                );
+            """
+            values = [f"%{searchterm}%", f"%{searchterm}%", f"%{searchterm}%"]
+    else:
+        raise PreventUpdate  
+     
+    result = db.querydatafromdatabase(sql, values, cols)
+    options = [{'label': row['problem_name'], 'value': row['problem_id']} for _, row in result.iterrows()]
+    return options, 
