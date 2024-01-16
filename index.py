@@ -9,7 +9,7 @@ import webbrowser
 from app import app
 from apps import sidebar as sb
 from apps import login, signup
-from apps.records import existingpatient, newpatient, viewrecords, editrecords, viewusers, newusers, generatereports
+from apps.records import existingpatient, newpatient, viewrecords, editrecords, viewusers, newusers, generatereports, editusers
 
 CONTENT_STYLE = {
     "margin-left": "18rem",
@@ -98,9 +98,11 @@ def displaypage(pathname, sessionlogout, userid):
                 elif pathname == "/editrecord":
                     returnlayout = editrecords.layout
                 elif pathname == "/newuser":
-                    returnlayout = newusers.layout
+                    returnlayout = "Parang same sa Sign Up page, tanggalin na ba?"
                 elif pathname == "/viewuser":
                     returnlayout = viewusers.layout
+                elif pathname == "/edituser":
+                    returnlayout = editusers.layout
                 elif pathname == "/managedata":
                     returnlayout = "Manage the lists of veterinarian, clinician, clinical exam types, lab exam types, vaccines, and deworming medicines here"
                 elif pathname == "/newreport":
