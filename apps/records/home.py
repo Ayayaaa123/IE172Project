@@ -16,7 +16,7 @@ from urllib.parse import urlparse, parse_qs
 
 
 layout = html.Div([
-        html.H1("Homepage muna"),
+        #html.H1("Homepage"),
         html.Br(),
         dbc.Card( # Main Visits Info
             [
@@ -25,8 +25,8 @@ layout = html.Div([
                             #html.H2(f"Visits for {datetime.now().strftime('%B %d, %Y')}")
                             html.H2("Record Visits", className = "flex-grow-1"),
                             html.Div([
-                                dbc.Button("Visits for Returning Patient",id = "re_patient_button",className = "me-2",n_clicks = 0),
-                                dbc.Button("Visits for New Patient",id = "new_patient_button",n_clicks = 0),
+                                dbc.Button("Returning Patient",id = "re_patient_button",className = "me-2",n_clicks = 0),
+                                dbc.Button("New Patient",id = "new_patient_button",n_clicks = 0),
                             ], className = "ml-2 d-flex")
                         ], className = "d-flex align-items-center justify-content-between")
                 ),
