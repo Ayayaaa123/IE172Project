@@ -34,8 +34,6 @@ app.layout = html.Div(
         # we will not use them but if you have roles, you can use it
         dcc.Store(id='currentrole', data=-1, storage_type='session'),
         
-        
-        
         html.Div(
             sb.sidebar,
             id='sidebar_div'
@@ -98,7 +96,7 @@ def displaypage(pathname, sessionlogout, userid):
                 elif pathname == "/editrecord":
                     returnlayout = editrecords.layout
                 elif pathname == "/newuser":
-                    returnlayout = "Parang same sa Sign Up page, tanggalin na ba?"
+                    returnlayout = signup.layout
                 elif pathname == "/viewuser":
                     returnlayout = viewusers.layout
                 elif pathname == "/edituser":

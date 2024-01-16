@@ -43,36 +43,27 @@ sidebar = dbc.Nav(
         dbc.NavLink(html.Img(src="assets/logo.webp", height="100px"), href="/home", active="exact", className=subelement_style),
         html.Br(),
         
-        dbc.Nav(
-            [
-                dbc.NavLink("Home Page", href="/home", active="exact", className="active-link", style=subelement_style),
-            ],
-        ),
+        # dbc.Nav(
+        #     [
+        #         dbc.NavLink("Home Page", href="/home", active="exact", className="active-link", style=subelement_style),
+        #     ],
+        # ),
         html.H2("Patient Records", className="h2-normal", style=mainelement_style),
         html.Hr(style=line_style),
-        dbc. Accordion(
-            [
-                dbc.AccordionItem( #indent needs to be fixed or uncomment ln 10889 in bootstrap.css
-                    [
-                        dbc.NavLink("New Patient", href="/newrecord/newpatient", active="exact", className="active-link", style=subelement_style),
-                        dbc.NavLink("Existing Patient", href="/newrecord/existingpatient", active="exact", className="active-link", style=subelement_style),
-                    ],
-                    #title="Add New Record", 
-                    id="add-new-link",
-                ),
-                
-        #         dbc.AccordionItem(
+        # dbc. Accordion(
+        #     [
+        #         dbc.AccordionItem( #indent needs to be fixed or uncomment ln 10889 in bootstrap.css
         #             [
-        #                 dbc.NavLink("Patient Records", href="/viewrecord/patient", active="exact", className="active-link", style=subelement_style),
-        #                 dbc.NavLink("Visit Records", href="/viewrecord/visit", active="exact", className="active-link", style=subelement_style),
+        #                 dbc.NavLink("New Patient", href="/newrecord/newpatient", active="exact", className="active-link", style=subelement_style),
+        #                 dbc.NavLink("Existing Patient", href="/newrecord/existingpatient", active="exact", className="active-link", style=subelement_style),
         #             ],
-        #             title="View Records", 
+        #             #title="Add New Record", 
         #             id="add-new-link",
         #         ),
-            ],
-            className="custom-accordion",
-            start_collapsed=True,
-        ), 
+        #     ],
+        #     className="custom-accordion",
+        #     start_collapsed=True,
+        # ), 
         
         dbc.Nav(
             [
