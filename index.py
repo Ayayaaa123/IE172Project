@@ -9,7 +9,7 @@ import webbrowser
 from app import app
 from apps import sidebar as sb
 from apps import login, signup
-from apps.records import existingpatient, newpatient, viewrecords, editrecords, viewusers, newusers, generatereports, editusers, home_reCreP, home_reCnewP, home_newCnewP, managedata
+from apps.records import existingpatient, newpatient, viewrecords, editrecords, viewusers, newusers, generatereports, editusers, home_reCreP, home_reCnewP, home_newCnewP, managedata, help
 
 CONTENT_STYLE = {
     "margin-left": "18rem",
@@ -107,7 +107,7 @@ def displaypage(pathname, sessionlogout, userid):
                 elif pathname == "/newreport":
                     returnlayout = generatereports.layout
                 elif pathname == "/help":
-                    returnlayout = "For any concerns, please contact __ "
+                    returnlayout = help.layout
                 else:
                     returnlayout = "error404"
             # return [returnlayout]
