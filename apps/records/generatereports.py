@@ -14,23 +14,6 @@ from dash import ALL, MATCH
 from urllib.parse import urlparse, parse_qs
 import plotly.graph_objs as go
 import plotly.express as px
-import zipfile
-import io
-import plotly.io as pio
-import xlsxwriter
-
-
-figures_and_tables = {}
-
-
-def table_to_dataframe(table_children):
-    if table_children is None or not table_children:
-        return pd.DataFrame()
-    
-    headers = [cell['props']['children'] for cell in table_children[0] if cell and 'props' in cell and 'children' in cell['props']]
-    data = [[cell['props']['children'] for cell in row if cell and 'props' in cell and 'children' in cell['props']] for row in table_children[1:]]
-    df = pd.DataFrame(data, columns=headers)
-    return df
 
 
 layout = html.Div(
@@ -66,14 +49,6 @@ layout = html.Div(
                 ),
             ]
         ),
-        html.Br(),
-        dbc.Button(
-            "Save",
-            id = 'savebutton',
-            n_clicks = 0, 
-            className='custom-submitbutton',
-        ),
-        dcc.Download(id="savefiles")
     ]
 )
 
@@ -475,7 +450,6 @@ def generatevisitpurpose(reporttype, timeperiod, stored_custom_dates):
         
 
         if df.shape[0]:
-            figures_and_tables['visitpurpose'] = {'figure': figure, 'table': table}
             return [table,figure]
         else:
             return ['No records to display', 'No figure to display']
@@ -542,7 +516,6 @@ def generateunresolvedproblems(reporttype, selected_year):
                 
 
                 if df.shape[0]:
-                    figures_and_tables['unresolvedproblems'] = {'figure': figure, 'table': table}
                     return [table, figure]
                 else:
                     return ['No records to display', 'No figure to display']
@@ -686,7 +659,6 @@ def generatelabexams(reporttype, timeperiod, stored_custom_dates):
         
 
         if df.shape[0]:
-            figures_and_tables['labexams'] = {'figure': figure, 'table': table}
             return [table,figure]
         else:
             return ['No records to display', 'No figure to display']
@@ -751,7 +723,6 @@ def generateunresolvedproblems(reporttype):
                 
 
             if df.shape[0]:
-                figures_and_tables['processing'] = {'figure': figure, 'table': table}
                 return [table, figure]
             else:
                 return ['No records to display', 'No figure to display']
@@ -921,42 +892,8 @@ def generatelabexams(reporttype, timeperiod, stored_custom_dates):
         
 
         if df.shape[0]:
-            figures_and_tables['vaccinesdeworming'] = {'figure': figure, 'table': table}
             return [table,figure]
         else:
             return ['No records to display', 'No figure to display']
     else:
         raise PreventUpdate
-
-
-
-# @app.callback( #to make the save button work and download the figures and tables generated
-#     Output('savefiles', 'data'),
-#     Input('savebutton', 'n_clicks'),
-# )
-# def save_reports(n_clicks):
-#     if n_clicks:
-#         with io.BytesIO() as output:
-#             with zipfile.ZipFile(output, "w", compression=zipfile.ZIP_DEFLATED) as zf:
-#                 for report_name, data in figures_and_tables.items():
-#                     # Save the figure as a PNG image
-#                     if data["figure"]:
-#                         img_data = pio.to_image(data["figure"], format="png")
-#                         img_filename = f"{report_name}_figure.png"
-#                         zf.writestr(img_filename, img_data)
-
-#                     # Extract data from dbc.Table as DataFrame
-#                     if data["table"]:
-#                         table_data = table_to_dataframe(data["table"].children[1:])
-
-#                         # Save the table as an Excel file
-#                         if not table_data.empty:
-#                             with pd.ExcelWriter(zf.open(f"{report_name}_table.xlsx", "w"), engine="xlsxwriter") as writer:
-#                                 table_data.to_excel(writer, index=False)
-#                                 writer.close()
-
-#         output.seek(0)
-#         return dcc.send_file(output, filename="reports_data.zip")
-
-#     else:
-#         raise PreventUpdate
