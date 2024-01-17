@@ -150,7 +150,7 @@ def routelogin(logintime, userid):
     if ctx.triggered:
         if userid > 0:
         # if userid and userid.startswith('USER'):
-            url = '/home'
+            url = '/home_reCreP'
         else:
             url = '/'
     else:
