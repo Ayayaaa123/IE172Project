@@ -13,7 +13,7 @@ from datetime import datetime, timedelta
 from dash import ALL, MATCH
 from urllib.parse import urlparse, parse_qs
 import plotly.graph_objs as go
-
+import plotly.express as px
 
 layout = html.Div(
     [
@@ -24,7 +24,7 @@ layout = html.Div(
                 dbc.CardHeader(
                     [
                         dbc.Row([
-                            dbc.Col(html.H2("Select the Type of Report:"), width=6),
+                            dbc.Col(html.H2("Select the Type of Report:"), width=3),
                             dbc.Col(
                                 dcc.Dropdown(
                                     id='reporttype',
@@ -38,7 +38,7 @@ layout = html.Div(
                                     placeholder="Select Type of Report",
                                     multi=True,
                                 ),
-                                width=6,
+                                width=9,
                             ),
                         ]),
                     ]
@@ -47,7 +47,15 @@ layout = html.Div(
                     html.Div(id='reportdetails')
                 ),
             ]
-        )
+        ),
+        html.Br(),
+        dbc.Button(
+            "Save",
+            id = 'savebutton',
+            n_clicks = 0, 
+            className='custom-submitbutton',
+        ),
+        dcc.Download(id="savefiles")
     ]
 )
 
@@ -112,6 +120,32 @@ def reportdetails(reporttype):
                     [
                         dbc.CardHeader(html.H2("Monthly Number of Unresolved Problems")),
                         dbc.CardBody([
+                            dbc.Row([
+                                dbc.Col(html.H3("Select Year"), width=3),
+                                dbc.Col(
+                                    dcc.Dropdown(
+                                        options=[{'label':x, 'value': x} for x in range(datetime.now().year, 2009, -1)],
+                                        id='unresolvedproblems_selectedyear',
+                                        searchable=True,
+                                        placeholder="Select Year",
+                                    ),
+                                    width=9,
+                                ),
+                            ]),
+                            html.Br(),
+                            html.Div([
+                                dcc.Loading(
+                                    id="unresolvedproblems_loading",
+                                    type="circle",
+                                    children=[
+                                        dcc.Graph(id='unresolvedproblems_graphgenerated')
+                                    ],
+                                ),
+                            ],
+                            style={'width':'100%',"border": "3px #5c5c5c solid",} 
+                            ),
+                            html.Br(),
+                            html.Div(id='unresolvedproblems_reportgenerated')
                         ]),
                     ],
                 ),
@@ -125,6 +159,37 @@ def reportdetails(reporttype):
                     [
                         dbc.CardHeader(html.H2("Number of Lab Exams per Type per Period")),
                         dbc.CardBody([
+                            dbc.Row([
+                                dbc.Col(html.H3("Select Time Period"), width=3),
+                                dbc.Col(
+                                    dcc.Dropdown(
+                                        id='labexams_timeperiod',
+                                        options=[
+                                            {'label':'Today', 'value':'today'},
+                                            {'label':'This Week (Last 7 Days)', 'value':'thisweek'},
+                                            {'label':'This Month', 'value':'thismonth'},
+                                            {'label':'Custom', 'value':'custom'},
+                                        ],
+                                    ),
+                                    width=9,
+                                ),
+                            ]),
+                            dcc.Store(id='labexams_customdate_store'),
+                            html.Div(id='labexams_customdate'),
+                            html.Br(),
+                            html.Div([
+                                dcc.Loading(
+                                    id="labexams_loading",
+                                    type="circle",
+                                    children=[
+                                        dcc.Graph(id='labexams_graphgenerated')
+                                    ],
+                                ),
+                            ],
+                            style={'width':'100%',"border": "3px #5c5c5c solid",} 
+                            ),
+                            html.Br(),
+                            html.Div(id='labexams_reportgenerated')
                         ]),
                     ],
                 ),
@@ -162,7 +227,7 @@ def reportdetails(reporttype):
                     
 
 
-@app.callback( #callback if customdate
+@app.callback( #callback if customdate (visitpurpose)
     Output('visitspurpose_customdate', 'children'),
     Input('visitspurpose_timeperiod', 'value'),
 )
@@ -202,7 +267,7 @@ def visitspurpose_customdate(selectedperiod):
   
     return additionalinput
 
-@app.callback(
+@app.callback( #callback to store custom date (visit purpose)
     Output('visitspurpose_customdate_store', 'data'),
     Input('visitspurpose_startdate', 'value'),
     Input('visitspurpose_enddate', 'value'),
@@ -244,33 +309,85 @@ def generatevisitpurpose(reporttype, timeperiod, stored_custom_dates):
             start_date = ""
             end_date = ""
 
+        values = []
+        
         sql = """
         SELECT
-            COUNT(*) FILTER (WHERE visit_for_vacc = true) AS vacc_count,
-            COUNT(*) FILTER (WHERE visit_for_deworm = true) AS deworm_count,
-            COUNT(*) FILTER (WHERE visit_for_problem = true) AS problem_count
+            'Vaccine' AS visit_purpose,
+            COUNT(*) AS count
         FROM 
             visit
+        WHERE visit_for_vacc = true
         """
-        values = []
 
         if timeperiod == "today" or timeperiod == "thisweek" or timeperiod == "thismonth" or (timeperiod == "custom" and (startdate and enddate != None)):
-            sql += "WHERE (visit_date BETWEEN %s AND %s)"
+            sql += """
+                    AND visit_date BETWEEN %s AND %s
+                UNION
+                SELECT
+                    'Deworming' AS visit_purpose,
+                    COUNT(*) AS count
+                FROM 
+                    visit
+                WHERE visit_for_deworm = true
+            """
             values += [f"{start_date}", f"{end_date}"]
+        else:
+            sql += """
+                UNION
+                SELECT
+                    'Deworming' AS visit_purpose,
+                    COUNT(*) AS count
+                FROM 
+                    visit
+                WHERE visit_for_deworm = true
+            """
+        
+        if timeperiod == "today" or timeperiod == "thisweek" or timeperiod == "thismonth" or (timeperiod == "custom" and (startdate and enddate != None)):
+            sql += """
+                AND visit_date BETWEEN %s AND %s
+                UNION
+                SELECT
+                    'Problem' AS visit_purpose,
+                    COUNT(*) AS count
+                FROM 
+                    visit
+                WHERE visit_for_problem = true
+            """
+            values += [f"{start_date}", f"{end_date}"]
+        else:
+            sql += """
+                UNION
+                SELECT
+                    'Problem' AS visit_purpose,
+                    COUNT(*) AS count
+                FROM 
+                    visit
+                WHERE visit_for_problem = true
+            """
             
-        cols = ['Vaccine', 'Deworming', 'Problem']
+        if timeperiod == "today" or timeperiod == "thisweek" or timeperiod == "thismonth" or (timeperiod == "custom" and (startdate and enddate != None)):
+            sql += """
+                AND visit_date BETWEEN %s AND %s
+                ;
+            """
+            values += [f"{start_date}", f"{end_date}"]
+        else:
+            sql += ";"
+
+        cols = ['Visit Purpose', 'Count']
 
         df = db.querydatafromdatabase(sql, values, cols)
 
-        traces = {}
-        for column in df.columns:
-            traces[f'tracebar_{column}'] = go.Bar(
-                x=[column],
-                y=[df.iloc[0][column]],
-                name=column
-            )
-            
-        data = list(traces.values())
+        num_visit_purpose = len(df['Visit Purpose'])
+        colors = px.colors.qualitative.Set1[:num_visit_purpose]
+
+        bar_trace = go.Bar(
+                    x=df['Visit Purpose'],
+                    y=df['Count'],
+                    name='Count of Visit Purpose',
+                    marker=dict(color=colors)
+                )
 
         layout = go.Layout(
             xaxis={'title': "Visit Purpose"},
@@ -284,7 +401,213 @@ def generatevisitpurpose(reporttype, timeperiod, stored_custom_dates):
             dragmode='zoom',
         )
 
-        figure = {'data':data, 'layout':layout}
+        figure = {'data':[bar_trace], 'layout':layout}
+
+        table = dbc.Table.from_dataframe(df,striped=True,bordered=True,hover=True,size='sm')
+        
+
+        if df.shape[0]:
+            return [table,figure]
+        else:
+            return ['No records to display', 'No figure to display']
+    else:
+        raise PreventUpdate
+    
+
+
+@app.callback( #callback to generate report 2
+    Output('unresolvedproblems_reportgenerated', 'children'),
+    Output('unresolvedproblems_graphgenerated', 'figure'),
+    Input('reporttype', 'value'),
+    Input('unresolvedproblems_selectedyear', 'value')
+)
+def generateunresolvedproblems(reporttype, selected_year):
+    if 'monthlyunresolvedproblems' in reporttype:
+        if selected_year:
+            sql = """
+            SELECT 
+                TO_CHAR(problem_date_created, 'Month') AS month,
+                COUNT(*) AS new_problems,
+                SUM(CASE WHEN problem_date_resolved IS NULL THEN 1 ELSE 0 END) AS unresolved_problems
+            FROM
+                problem
+            WHERE
+                EXTRACT(YEAR FROM problem_date_created) = %s
+            GROUP BY
+                TO_CHAR(problem_date_created, 'Month')
+            ORDER BY
+                MIN(problem_date_created);
+            """
+            values = [f"{selected_year}"]
+
+            cols = ['Month', 'New Problems', 'Unresolved Problems']
+
+            df = db.querydatafromdatabase(sql, values, cols)
+
+            num_month = len(df['Month'])
+            colors = px.colors.qualitative.Set1[:num_month]
+        
+            bar_trace = go.Bar(
+                    x=df['Month'],
+                    y=df['Unresolved Problems'],
+                    name='Number of Unresolved Problems',
+                    marker=dict(color=colors)
+                )
+
+            layout = go.Layout(
+                xaxis={'title': "Month"},
+                yaxis={'title': "Unresolved Problems"},
+                barmode='group',
+                height = 500,
+                width = 1500,
+                margin={'b': 50, 't': 20, 'l': 175},
+                hovermode='closest',
+                autosize=False,
+                dragmode='zoom',
+            )
+
+            figure = {'data':[bar_trace], 'layout':layout}
+
+            table = dbc.Table.from_dataframe(df,striped=True,bordered=True,hover=True,size='sm')
+            
+
+            if df.shape[0]:
+                return [table, figure]
+            else:
+                return ['No records to display', 'No figure to display']
+        else:
+            raise PreventUpdate
+        
+
+@app.callback( #callback if customdate (labexams)
+    Output('labexams_customdate', 'children'),
+    Input('labexams_timeperiod', 'value'),
+)
+def labexams_customdate(selectedperiod):
+    additionalinput = []
+    if selectedperiod and 'custom' in selectedperiod:
+        additionalinput.extend([
+            html.Div([
+                dbc.Row([
+                    dbc.Col([
+                        dbc.Label("Start Date"),
+                        dmc.DatePicker(
+                            id='labexams_startdate',
+                            placeholder="Select Start Date",
+                            inputFormat='MMM DD, YYYY',
+                            dropdownType='modal',
+                        ),
+                    ],
+                        width=6,
+                    ),
+                    dbc.Col([
+                        dbc.Label("End Date"),
+                        dmc.DatePicker(
+                            id='labexams_enddate',
+                            placeholder="Select End Date",
+                            inputFormat='MMM DD, YYYY',
+                            dropdownType='modal',
+                        ),
+                    ],
+                        width=6,
+                    ),
+                ])
+            ])
+        ])
+    if selectedperiod and not 'custom' in selectedperiod:
+        additionalinput = []
+  
+    return additionalinput
+
+
+@app.callback( #callback to store custom date (labexams)
+    Output('labexams_customdate_store', 'data'),
+    Input('labexams_startdate', 'value'),
+    Input('labexams_enddate', 'value'),
+)
+def store_customdates_labexams(start_date, end_date):
+    return {'start_date':start_date, 'end_date':end_date}
+
+
+
+@app.callback ( #callback to generate report 3
+    Output('labexams_reportgenerated', 'children'),
+    Output('labexams_graphgenerated', 'figure'),
+    Input('reporttype', 'value'),
+    Input('labexams_timeperiod', 'value'),
+    Input('labexams_customdate_store', 'data')
+)
+def generatelabexams(reporttype, timeperiod, stored_custom_dates):
+    if 'labexamstypeperiod' in reporttype:
+        start_date = ""
+        end_date = ""
+        startdate = None
+        enddate = None
+        if timeperiod == "today":
+            start_date =  datetime.now().strftime("%Y-%m-%d")
+            end_date =  datetime.now().strftime("%Y-%m-%d")
+        elif timeperiod == "thisweek":
+            start_date = (datetime.now() - timedelta(days = 6)).strftime("%Y-%m-%d")
+            end_date = datetime.now().strftime("%Y-%m-%d")
+        elif timeperiod == "thismonth":
+            start_date = datetime.now().replace(day=1).strftime("%Y-%m-%d")
+            end_date = datetime.now().strftime("%Y-%m-%d")
+        elif timeperiod == "custom":
+            if stored_custom_dates:
+                startdate = stored_custom_dates.get('start_date', '')
+                enddate = stored_custom_dates.get('end_date', '')
+                if startdate and enddate != None:
+                    start_date = datetime.strptime(startdate, "%Y-%m-%d").strftime("%Y-%m-%d")
+                    end_date = datetime.strptime(enddate, "%Y-%m-%d").strftime("%Y-%m-%d")
+        else:
+            start_date = ""
+            end_date = ""
+
+        sql = """
+        SELECT
+            lab_exam_type.lab_exam_type_m,
+            COUNT(lab_exam.lab_exam_type_id) AS exam_count
+        FROM
+            lab_exam
+        INNER JOIN 
+            lab_exam_type ON lab_exam.lab_exam_type_id = lab_exam_type.lab_exam_type_id
+        WHERE lab_exam_from_vetmed = 'true'
+        """
+        values = []
+
+        if timeperiod == "today" or timeperiod == "thisweek" or timeperiod == "thismonth" or (timeperiod == "custom" and (startdate and enddate != None)):
+            sql += "AND lab_exam_modified_date between %s and %s"
+            values += [f"{start_date}", f"{end_date}"]
+            
+        sql += "GROUP BY lab_exam_type.lab_exam_type_id, lab_exam_type.lab_exam_type_m;"
+
+        cols = ['Lab Exam Type', 'Count']
+
+        df = db.querydatafromdatabase(sql, values, cols)
+
+        num_lab_exam_types = len(df['Lab Exam Type'])
+        colors = px.colors.qualitative.Set1[:num_lab_exam_types]
+
+        bar_trace = go.Bar(
+                    x=df['Lab Exam Type'],
+                    y=df['Count'],
+                    name='Count of Lab Exam Type',
+                    marker=dict(color=colors)
+                )
+
+        layout = go.Layout(
+            xaxis={'title': "Lab Exam Type"},
+            yaxis={'title': "Count"},
+            barmode='group',
+            height = 500,
+            width = 1500,
+            margin={'b': 50, 't': 20, 'l': 175},
+            hovermode='closest',
+            autosize=False,
+            dragmode='zoom',
+        )
+
+        figure = {'data':[bar_trace], 'layout':layout}
 
         table = dbc.Table.from_dataframe(df,striped=True,bordered=True,hover=True,size='sm')
         

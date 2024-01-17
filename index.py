@@ -105,10 +105,8 @@ def displaypage(pathname, sessionlogout, userid):
                     returnlayout = "Manage the lists of veterinarian, clinician, clinical exam types, lab exam types, vaccines, and deworming medicines here"
                 elif pathname == "/newreport":
                     returnlayout = generatereports.layout
-                elif pathname == "/viewreport":
-                    returnlayout = "View previously generated reports here"
                 elif pathname == "/help":
-                    returnlayout = "The user manual can be found here"
+                    returnlayout = "For any concerns, please contact __ "
                 else:
                     returnlayout = "error404"
             # return [returnlayout]
