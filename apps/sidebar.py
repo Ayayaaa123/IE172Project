@@ -88,7 +88,6 @@ sidebar = dbc.Nav(
         dbc.Nav(
             [
                 dbc.NavLink("Generate Report", href="/newreport", active="exact", className="active-link", style=subelement_style),
-                dbc.NavLink("View Generated Reports", href="/viewreport", active="exact", className="active-link", style=subelement_style),
             ]
         ),
         html.Br(),
