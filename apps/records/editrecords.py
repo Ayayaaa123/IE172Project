@@ -17,7 +17,6 @@ from urllib.parse import urlparse, parse_qs
 layout = html.Div(
     [
         html.H1(id='patientname'),
-        html.Hr(),
         dbc.Card(
             [
                 dbc.CardHeader(
@@ -212,10 +211,61 @@ layout = html.Div(
             ],
             style={'width':'100%'}
         ), # end of card for patient information 
-        dbc.Table(
-            id='vaccine-table', 
-        ),   
         html.Br(),
+
+        dbc.Row(
+            [
+                dbc.Col(
+                    dbc.Card(
+                        [
+                            dbc.CardHeader(
+                                [
+                                    html.H4('Vaccine History')
+                                ]
+                            ),
+                            dbc.CardBody(
+                                [
+                                    html.Div(  # create section to show list of records
+                                        [
+                                            dbc.Table(
+                                                id='vaccine-table', style={'text-align': 'center'}
+                                            ),   
+                                        ]
+                                    )
+                                ]
+                            )
+                        ]
+                    ),
+                    width=6  
+                ), #vaccine history
+
+                dbc.Col(
+                    dbc.Card(
+                        [
+                            dbc.CardHeader(
+                                [
+                                    html.H4('Deworming History')
+                                ]
+                            ),
+                            dbc.CardBody(
+                                [
+                                    html.Div(  # create section to show list of records
+                                        [
+                                            dbc.Table(
+                                                id='deworming-table', style={'text-align': 'center'}
+                                            ),   
+                                        ]
+                                    )
+                                ]
+                            )
+                        ]
+                    ),
+                    width=6  
+                ),#deworming history
+            ]
+        ), 
+        html.Br(), 
+       
         dbc.Button(
             'Save',
             id = 'profile_save',
@@ -319,7 +369,7 @@ def vaccine_table(url_search):
         WHERE patient.patient_id = %s
         """
         values = [patient_id]
-        col = ['Vaccine Name', 'Vaccine Dose', 'Date Administered', 'Expiration Date']
+        col = ['Vaccine Name', 'Dose', 'Date Administered', 'Expiration Date']
         df = db.querydatafromdatabase(sql, values, col)
 
         table_rows = []
@@ -339,5 +389,44 @@ def vaccine_table(url_search):
     else:
         raise PreventUpdate
 
-        
+@app.callback(
+    Output('deworming-table', 'children'),
+    Input('url', 'search'),
+)
 
+def deworm_table(url_search):
+    parsed = urlparse(url_search)
+    query_patient_id = parse_qs(parsed.query)
+
+    if 'id' in query_patient_id:
+        patient_id = query_patient_id['id'][0]
+        sql = """
+        SELECT 
+            deworm_m, deworm_dose, deworm_administered, deworm_exp
+        FROM 
+            deworm
+        INNER JOIN visit ON deworm.visit_id = visit.visit_id
+        INNER JOIN patient ON visit.patient_id = patient.patient_id
+        INNER JOIN deworm_m ON deworm.deworm_m_id = deworm_m.deworm_m_id
+        WHERE patient.patient_id = %s 
+        """
+        values = [patient_id]
+        col = ['Medicine Name', 'Dose', 'Date Administered', 'Expiration Date']
+        df = db.querydatafromdatabase(sql, values, col)
+
+        table_rows = []
+        for i in range(len(df)):
+            row = [
+                html.Td(df.iloc[i][col]) for col in df.columns
+            ]
+            table_rows.append(html.Tr(row))
+
+        header = [html.Th(col) for col in df.columns]
+        header = html.Tr(header)
+
+        table = [html.Thead(header), html.Tbody(table_rows)]
+
+        return table
+
+    else:
+        raise PreventUpdate
