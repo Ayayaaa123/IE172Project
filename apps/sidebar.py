@@ -8,6 +8,7 @@ import pandas as pd
 import webbrowser
 from app import app
 
+
 SIDEBAR_STYLE = {
     "position": "fixed",
     "top": 0,
@@ -18,11 +19,13 @@ SIDEBAR_STYLE = {
     "background-color": "#333",
 }
 
+
 mainelement_style = {
     "font-size": "1.5rem",
     "color": "#fff",
     "margin-bottom": "0",
 }
+
 
 subelement_style = {
     "font-size": "0.93rem",
@@ -31,18 +34,21 @@ subelement_style = {
     "margin-bottom": "0",
 }
 
+
 line_style = {
-    "border-bottom":"2px solid white", 
-    "margin-top":"0", 
+    "border-bottom":"2px solid white",
+    "margin-top":"0",
     "margin-bottom":"0",
 }
+
+
 
 
 sidebar = dbc.Nav(
     [      
         dbc.NavLink(html.Img(src="assets/logo.webp", height="100px"), href="/home_reCreP", active="exact", className=subelement_style),
         html.Br(),
-        
+       
         # dbc.Nav(
         #     [
         #         dbc.NavLink("Home Page", href="/home", active="exact", className="active-link", style=subelement_style),
@@ -57,32 +63,46 @@ sidebar = dbc.Nav(
         #                 dbc.NavLink("New Patient", href="/newrecord/newpatient", active="exact", className="active-link", style=subelement_style),
         #                 dbc.NavLink("Existing Patient", href="/newrecord/existingpatient", active="exact", className="active-link", style=subelement_style),
         #             ],
-        #             #title="Add New Record", 
+        #             #title="Add New Record",
         #             id="add-new-link",
         #         ),
         #     ],
         #     className="custom-accordion",
         #     start_collapsed=True,
-        # ), 
-        
+        # ),
+       
         dbc.Nav(
             [
                 dbc.NavLink("View Records", href="/viewrecord", active="exact", className="active-link", style=subelement_style),
             ],
         ),
         html.Br(),
-        
+       
         html.H2("User Management", className="h2-normal", style=mainelement_style),
         html.Hr(style=line_style),
         dbc.Nav(
             [
-                dbc.NavLink("New User", href="/newuser", active="exact", className="active-link", style=subelement_style),
+                # dbc.NavLink("New User", href="/newuser", active="exact", className="active-link", style=subelement_style),
                 dbc.NavLink("View Users", href="/viewuser", active="exact", className="active-link", style=subelement_style),
                 dbc.NavLink("Manage Data", href="/managedata", active="exact", className="active-link", style=subelement_style),
             ]
         ),
+        dbc. Accordion(
+            [
+                dbc.AccordionItem( #indent needs to be fixed or uncomment ln 10889 in bootstrap.css
+                    [
+                        dbc.NavLink("New Clinician", href="/managedata/newclinicians", active="exact", className="active-link", style=subelement_style),
+                        dbc.NavLink("View Clinicians", href="/managedata/existingclinicians", active="exact", className="active-link", style=subelement_style),
+                    ],
+                    #title="Add New Record",
+                    id="add-new-link",
+                ),
+            ],
+            className="custom-accordion",
+            start_collapsed=True,
+        ),
         html.Br(),
-        
+       
         html.H2("Reports", className="h2-normal", style=mainelement_style),
         html.Hr(style=line_style),
         dbc.Nav(
@@ -91,10 +111,11 @@ sidebar = dbc.Nav(
             ]
         ),
         html.Br(),
-        
+       
         dbc.NavLink("Help", href="/help", active="exact", className="active-link", style=mainelement_style),
 
-        dbc.NavLink("Logout", href = "/logout", active="exact", className="active-link", style=mainelement_style), 
+
+        dbc.NavLink("Logout", href = "/logout", active="exact", className="active-link", style=mainelement_style),
     ],
     vertical=True,
     pills=True,
