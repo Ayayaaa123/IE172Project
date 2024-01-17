@@ -23,6 +23,151 @@ layout = html.Div(
                         [
                             dbc.CardHeader(
                                 [
+                                    html.H4('List of Clinical Exam Types')
+                                ]
+                            ),
+                            dbc.CardBody(
+                                [
+                                    html.Hr(),
+                                    html.Div(  # create section to show list of records
+                                        [
+                                            html.Div(
+                                                dbc.Form(
+                                                    dbc.Row(
+                                                        [
+                                                            dbc.Label("Search", width=2),  # search
+                                                            dbc.Col(
+                                                                dbc.Input(
+                                                                    type='text',
+                                                                    id='clinicallist_filter',
+                                                                    placeholder='Clinical Exam'
+                                                                ),
+                                                                width=5
+                                                            ),
+                                                        ],
+                                                        className='mb-3'  # need to edit this
+                                                    )
+                                                )
+                                            ),
+                                            html.Div(
+                                                "Table will go here.",
+                                                id='managedata_clinicallist'
+                                            ),
+                                            html.Div(  # add new clinical form
+                                                [
+                                                    dbc.Form(
+                                                        dbc.Row(
+                                                            [
+                                                                dbc.Label("Add Here", width=2),  # search
+                                                                dbc.Col(
+                                                                    dbc.Input(
+                                                                        type='text',
+                                                                        id='clinical_add',
+                                                                        placeholder='Clinical Exam'
+                                                                    ),
+                                                                    width=5
+                                                                ),
+                                                            ],
+                                                            className='mb-3'
+                                                        )
+                                                    ),
+                                                    dbc.Button(
+                                                        "Add",
+                                                        color="secondary",
+                                                        id='clinical_addbtn',
+                                                        n_clicks=0,  # initialization
+                                                        className='custom-submitbutton',
+                                                    )
+                                                ]
+                                            ),
+                                        ]
+                                    )
+                                ]
+                            )
+                        ]
+                    ),
+                    width=6  
+                ),
+                dbc.Col(
+                    dbc.Card(
+                        [
+                            dbc.CardHeader(
+                                [
+                                    html.H4('List of Laboratory Exam Types')
+                                ]
+                            ),
+                            dbc.CardBody(
+                                [
+                                    html.Hr(),
+                                    html.Div(  # create section to show list of records
+                                        [
+                                            html.Div(
+                                                dbc.Form(
+                                                    dbc.Row(
+                                                        [
+                                                            dbc.Label("Search", width=2),  # search
+                                                            dbc.Col(
+                                                                dbc.Input(
+                                                                    type='text',
+                                                                    id='labexamlist_filter',
+                                                                    placeholder='Laboratory Exam Type'
+                                                                ),
+                                                                width=5
+                                                            ),
+                                                        ],
+                                                        className='mb-3'  # need to edit this
+                                                    )
+                                                )
+                                            ),
+                                            html.Div(
+                                                "Table will go here.",
+                                                id='managedata_labexamlist'
+                                            ),
+                                            html.Div(  # add new labexam form
+                                                [
+                                                    dbc.Form(
+                                                        dbc.Row(
+                                                            [
+                                                                dbc.Label("Add Here", width=2),  # search
+                                                                dbc.Col(
+                                                                    dbc.Input(
+                                                                        type='text',
+                                                                        id='labexam_add',
+                                                                        placeholder='Laboratory Exam Type'
+                                                                    ),
+                                                                    width=5
+                                                                ),
+                                                            ],
+                                                            className='mb-3'
+                                                        )
+                                                    ),
+                                                    dbc.Button(
+                                                        "Add",
+                                                        color="secondary",
+                                                        id='labexam_addbtn',
+                                                        n_clicks=0,  # initialization
+                                                        className='custom-submitbutton',
+                                                    )
+                                                ]
+                                            ),
+                                        ]
+                                    )
+                                ]
+                            )
+                        ]
+                    ),
+                    width=6  
+                ),
+            ]
+        ), #clinical and lab row ends here
+        html.Div('', style={'margin-bottom': '40px'}),
+        dbc.Row(
+            [
+                dbc.Col(
+                    dbc.Card(
+                        [
+                            dbc.CardHeader(
+                                [
                                     html.H4('List of Vaccines')
                                 ]
                             ),
@@ -58,7 +203,7 @@ layout = html.Div(
                                                     dbc.Form(
                                                         dbc.Row(
                                                             [
-                                                                dbc.Label("Add Vaccine", width=2),  # search
+                                                                dbc.Label("Add Here", width=2),  # search
                                                                 dbc.Col(
                                                                     dbc.Input(
                                                                         type='text',
@@ -68,7 +213,7 @@ layout = html.Div(
                                                                     width=5
                                                                 ),
                                                             ],
-                                                            className='mb-3'  # need to edit this
+                                                            className='mb-3'  
                                                         )
                                                     ),
                                                     dbc.Button(
@@ -86,7 +231,7 @@ layout = html.Div(
                             )
                         ]
                     ),
-                    width=6  # Adjust the width as needed
+                    width=6  
                 ),  # card for vaccine ends here
 
                 dbc.Col(
@@ -129,7 +274,7 @@ layout = html.Div(
                                                     dbc.Form(
                                                         dbc.Row(
                                                             [
-                                                                dbc.Label("Add Deworming Medicine", width=3),
+                                                                dbc.Label("Add Here", width=3),
                                                                 dbc.Col(
                                                                     dbc.Input(
                                                                         type='text',
@@ -139,7 +284,7 @@ layout = html.Div(
                                                                     width=5
                                                                 ),
                                                             ],
-                                                            className='mb-3'  # need to edit this
+                                                            className='mb-3'  
                                                         )
                                                     ),
                                                     dbc.Button(
@@ -157,14 +302,130 @@ layout = html.Div(
                             )
                         ]
                     ),
-                    width=6  # Adjust the width as needed
+                    width=6  
                 )  # end of deworm here
             ]
-        )
+        ) # row of vacc and deworm ends here
     ]
 )
 
+@app.callback(
+    [
+        Output('managedata_clinicallist', 'children'),
+    ],
+    [
+        Input('url', 'pathname'),
+        Input('clinicallist_filter', 'value'),
+        Input('clinical_addbtn', 'n_clicks'),
+    ],
+    [
+        State('clinical_add', 'value'),
+    ]
+)
 
+def managedata_clinicallist(pathname, searchterm, n_clicks, new_clinical):
+    if pathname == '/managedata':
+        # Obtain records from DB through SQL
+        if n_clicks > 0 and new_clinical:
+            sql = """
+                INSERT INTO clinical_exam_type (clinical_exam_type_m)
+                VALUES (%s)
+            """
+            values = [new_clinical]
+            db.modifydatabase(sql, values)
+
+
+        sql = """
+            SELECT
+                clinical_exam_type_m
+            FROM clinical_exam_type
+            WHERE NOT clinical_exam_type_delete_ind
+        """
+        values = []
+        cols = ['Clinical Exam Type']
+
+
+        if searchterm:
+            sql += """ AND (
+                clinical_exam_type_m LIKE %s
+                );
+                """
+            values = [f"%{searchterm}%"]
+
+
+
+        df = db.querydatafromdatabase(sql, values, cols)
+
+
+        df = df[['Clinical Exam Type']]
+
+
+        table = dbc.Table.from_dataframe(df, striped=True, bordered=True, hover=True, size='sm',
+                                         style={'text-align': 'center'})
+        return [table]
+
+
+    else:
+        raise PreventUpdate
+    
+@app.callback(
+    [
+        Output('managedata_labexamlist', 'children'),
+    ],
+    [
+        Input('url', 'pathname'),
+        Input('labexamlist_filter', 'value'),
+        Input('labexam_addbtn', 'n_clicks'),
+    ],
+    [
+        State('labexam_add', 'value'),
+    ]
+)
+
+def managedata_clinicallist(pathname, searchterm, n_clicks, new_labexam):
+    if pathname == '/managedata':
+        # Obtain records from DB through SQL
+        if n_clicks > 0 and new_labexam:
+            sql = """
+                INSERT INTO lab_exam_type (lab_exam_type_m)
+                VALUES (%s)
+            """
+            values = [new_labexam]
+            db.modifydatabase(sql, values)
+
+
+        sql = """
+            SELECT
+                lab_exam_type_m
+            FROM lab_exam_type
+            WHERE NOT lab_exam_type_delete_ind
+        """
+        values = []
+        cols = ['Laboratory Exam Type']
+
+
+        if searchterm:
+            sql += """ AND (
+                lab_exam_type_m LIKE %s
+                );
+                """
+            values = [f"%{searchterm}%"]
+
+
+
+        df = db.querydatafromdatabase(sql, values, cols)
+
+
+        df = df[['Laboratory Exam Type']]
+
+
+        table = dbc.Table.from_dataframe(df, striped=True, bordered=True, hover=True, size='sm',
+                                         style={'text-align': 'center'})
+        return [table]
+
+
+    else:
+        raise PreventUpdate
 
 @app.callback(
     [

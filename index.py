@@ -54,12 +54,9 @@ app.layout = html.Div(
     [
         Output('page-content', 'children'),
         Output('sessionlogout', 'data'),
-        Output('sidebar_div', 'className'), # navbar changed to sidebar haha tama ba??
+        Output('sidebar_div', 'className'), 
     ],
     [
-        # If the path (i.e. part after the website name; 
-        # in url = youtube.com/watch, path = '/watch') changes, 
-        # the callback is triggered
         Input('url', 'pathname')
     ],
     [
