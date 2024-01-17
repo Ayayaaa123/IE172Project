@@ -69,7 +69,7 @@ layout = html.Div(
                                 dbc.Col(
                                     [
                                         # dbc.InputGroupText("@"), dbc.Input(placeholder='Enter Username')
-                                        dbc.Label("Username/Username"),
+                                        dbc.Label("Email/Username"),
                                         dbc.Input(id='vet_email', type='text', placeholder='Enter Email Address', style={'width':'80%'}),
                                         # dbc.FormText(
                                         #     "example@gmail.com",
