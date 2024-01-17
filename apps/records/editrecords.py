@@ -211,7 +211,10 @@ layout = html.Div(
                 ) 
             ],
             style={'width':'100%'}
-        ), # end of card for patient information    
+        ), # end of card for patient information 
+        dbc.Table(
+            id='vaccine-table', 
+        ),   
         html.Br(),
         dbc.Button(
             'Save',
@@ -293,3 +296,48 @@ def initial_values(url_search):
     
     else:
         raise PreventUpdate
+    
+
+@app.callback(
+    Output('vaccine-table', 'children'),
+    Input('url', 'search'),
+)
+def vaccine_table(url_search):
+    parsed = urlparse(url_search)
+    query_patient_id = parse_qs(parsed.query)
+
+    if 'id' in query_patient_id:
+        patient_id = query_patient_id['id'][0]
+        sql = """
+        SELECT 
+            vacc_m, vacc_dose, vacc_date_administered, vacc_exp
+        FROM 
+            vacc
+        INNER JOIN visit ON vacc.visit_id = visit.visit_id
+        INNER JOIN patient ON visit.patient_id = patient.patient_id
+        INNER JOIN vacc_m ON vacc.vacc_m_id = vacc_m.vacc_m_id
+        WHERE patient.patient_id = %s
+        """
+        values = [patient_id]
+        col = ['Vaccine Name', 'Vaccine Dose', 'Date Administered', 'Expiration Date']
+        df = db.querydatafromdatabase(sql, values, col)
+
+        table_rows = []
+        for i in range(len(df)):
+            row = [
+                html.Td(df.iloc[i][col]) for col in df.columns
+            ]
+            table_rows.append(html.Tr(row))
+
+        header = [html.Th(col) for col in df.columns]
+        header = html.Tr(header)
+
+        table = [html.Thead(header), html.Tbody(table_rows)]
+
+        return table
+
+    else:
+        raise PreventUpdate
+
+        
+
