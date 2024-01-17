@@ -13,7 +13,7 @@ layout = html.Div(
     [
         dbc.Card(
             [
-                dbc.CardImg(src="assets/logo.webp", top=True, style={'width': '200px', 'height': 'auto', 'margin': 'auto'}),
+                dbc.CardImg(src="assets/logo.webp", top=True, style={'width': '200px', 'height': 'auto', 'margin-left': '24rem', 'margin-right':'0rem'}),
            
                 dbc.CardBody(
                     [  
@@ -45,14 +45,14 @@ layout = html.Div(
                                 ),
                             ],
                             className="mb-3",
-                    ),
-                    dbc.Button('Login', color="secondary", id='login_loginbtn'),
-                    html.Hr(),
-                    html.A('No Account Yet? Signup Here', href='/signup'),
-                ]
-            ),
-        ],
-        style={'max-width': '1024px', 'margin': 'auto', 'border': 0}
+                        ),
+                        dbc.Button('Login', color="secondary", id='login_loginbtn'),
+                        html.Hr(),
+                        html.A('No Account Yet? Signup Here', href='/signup'),
+                    ],   
+                ),
+            ],
+        style={'max-width': '1024px', 'margin-left': '10rem', 'margin-right':'0rem', 'border': 0}
         ),
     ]
 )
