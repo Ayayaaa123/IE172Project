@@ -46,7 +46,7 @@ line_style = {
 
 sidebar = dbc.Nav(
     [      
-        dbc.NavLink(html.Img(src="assets/logo.webp", height="100px"), href="/home_reCreP", active="exact", className=subelement_style),
+        dbc.NavLink(html.Img(src="assets/logo.webp", height="100px"), href="/home_reCreP", active="exact", className='logo-link'),
         html.Br(),
        
         # dbc.Nav(
