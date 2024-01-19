@@ -16,6 +16,10 @@ from urllib.parse import urlparse, parse_qs
 
 
 
+
+
+
+
 layout = html.Div(
     [
         html.H1("Edit Clinician Profile"),
@@ -55,7 +59,7 @@ layout = html.Div(
                                 ),
                                 dbc.Col(
                                     [
-                                        dbc.Label("Suffix (N/A if none)"),
+                                        dbc.Label("Suffix (leave blank if none)"),
                                         dbc.Input(id='clinician_suffix', type='text', placeholder='Enter Suffix', style={'width':'80%'})
                                        
                                     ],
@@ -124,9 +128,160 @@ layout = html.Div(
             backdrop='static' # dialog box does not go away if you click at the background
 
 
+
+
         )
     ]
 )
+
+
+# CALLBACK TO SAVE CHANGES
+@app.callback(
+    [
+        Output('editclinicianprofile_alert', 'color'),
+        Output('editclinicianprofile_alert', 'children'),
+        Output('editclinicianprofile_alert', 'is_open'),
+
+
+
+
+        Output('editclinicianprofile_successmodal', 'is_open'),
+        Output('editclinicianrprofile_feedback_message', 'children'),
+        Output('editclinicianprofile_btn_modal', 'href'),
+    ],
+   
+    [
+        Input('editclinician_savebtn', 'n_clicks'),
+        Input('editclinicianprofile_btn_modal', 'n_clicks')
+
+
+    ],
+
+
+    [
+        State('clinician_fn', 'value'),
+        State('clinician_ln', 'value'),
+        State('clinician_mi', 'value'),
+        State('clinician_suffix', 'value'),
+        State('clinician_email', 'value'),
+        State('clinician_cn', 'value'),
+        State('url', 'search'),
+    ]
+   
+)
+
+
+
+
+def save_clinician_profile(n_clicks_btn, n_clicks_modal, clinician_fn, clinician_ln, clinician_mi, clinician_suffix, clinician_email, clinician_cn, url_search):
+
+
+   
+    ctx = dash.callback_context # the ctx filter -- ensures that only a change in url will activate this callback
+    print("Triggered:", ctx.triggered)
+
+
+
+
+    if ctx.triggered:
+        eventid = ctx.triggered[0]['prop_id'].split('.')[0]
+        if eventid and 'editclinician_savebtn' in str(eventid):
+
+
+            # Set default outputs
+            alert_color = ''
+            alert_text = ''
+            alert_open = False
+            modal_open = False
+            modal_text = ''
+            modal_href = '#'
+
+
+
+
+            parsed = urlparse(url_search)
+            query_clinician_id = parse_qs(parsed.query)
+
+
+            if 'id' in query_clinician_id:
+                clinician_id = query_clinician_id['id'][0]
+            else:
+                # Handle the case when 'id' is not present in the URL
+                # raise an error, redirect, or handle it accordingly
+                raise PreventUpdate
+           
+            # check inputs if they have values
+            if not clinician_ln: # If vet_ln is blank, not vet_ln = True
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = "Check your inputs. Please supply last name."
+            elif not clinician_fn:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = "Check your inputs. Please supply first name."
+
+
+
+
+            elif not clinician_email:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = "Check your inputs. Please supply the vet's email."
+            elif not clinician_cn:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = "Check your inputs. Please supply the vet's contact number."
+
+
+
+
+            else: #all inputs are valid
+
+
+
+
+                #save to db
+                sql_clinician = """ UPDATE clinician
+                    SET
+                        clinician_ln = %s,
+                        clinician_fn = %s,
+                        clinician_mi = %s,
+                        clinician_suffix = %s,
+                        clinician_email = %s,
+                        clinician_cn= %s
+                    WHERE
+                        clinician_id = %s
+                    """
+                   
+                values_clinician = [clinician_ln, clinician_fn, clinician_mi, clinician_suffix, clinician_email, clinician_cn, clinician_id]
+                # print("values_vet:", values_vet)
+
+
+
+
+                db.modifydatabase(sql_clinician, values_clinician)
+               
+                modal_text = "Changes in Clinician's Profile has been saved successfully."
+                modal_href = 'managedata/existingclinicians' #go back to table
+                modal_open = True
+           
+            return [alert_color, alert_text, alert_open, modal_open, modal_text, modal_href]
+
+
+
+
+        else: # Callback was not triggered by desired triggers
+            raise PreventUpdate
+    else:
+        raise PreventUpdate
+
+
+
+
+
+
+
+
 
 
 #CALLBACK TO LOAD EDIT PAGE
@@ -147,6 +302,7 @@ def current_values(url_search):
     parsed = urlparse(url_search)
     query_clinician_id = parse_qs(parsed.query)
 
+
     if 'id' in query_clinician_id:
         clinician_id = query_clinician_id['id'][0]
         sql = """
@@ -157,6 +313,7 @@ def current_values(url_search):
         values = [clinician_id]
         col = ['clinician_fn', 'clinician_ln', 'clinician_mi', 'clinician_suffix', 'clinician_email', 'clinician_cn']
 
+
         df = db.querydatafromdatabase(sql, values, col)
        
         clinician_fn = df['clinician_fn'][0]
@@ -166,7 +323,9 @@ def current_values(url_search):
         clinician_email = df['clinician_email'][0]
         clinician_cn = df['clinician_cn'][0]
 
+
         print(clinician_fn, clinician_ln, clinician_mi, clinician_suffix, clinician_email, clinician_cn)
+
 
         return [clinician_fn, clinician_ln, clinician_mi, clinician_suffix, clinician_email, clinician_cn]
     else:
