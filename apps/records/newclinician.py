@@ -14,11 +14,15 @@ layout = html.Div(
     [
         dbc.Card(
             [
+                dbc.CardHeader(
+                    [
+                        html.H2("Create Clinician Profile")
+                    ]
+                ),
                 dbc.CardBody(
                     [
-                        html.H2('Create Clinicians Profile', style={'text-align': 'center'}),
-                        html.Hr(),
-                        dbc.Alert('Please supply the necessary details.', color="danger", id='signup_alert', is_open=False),
+                        # html.H2('Create Clinicians Profile', style={'text-align': 'center'}),
+                        dbc.Alert('Please supply the necessary details.', color="danger", id='cliniciansave_alert', is_open=False),
                        
                         dbc.InputGroup(
                             [
@@ -41,7 +45,7 @@ layout = html.Div(
                             [
                                 dbc.InputGroupText("Middle Initial"),
                                 dbc.Input(id='clinician_mi', type='text', placeholder="Enter MI"),
-                                dbc.InputGroupText("Suffix (N/A if none)"),
+                                dbc.InputGroupText("Suffix (leave blank if none)"),
                                 dbc.Input(id='clinician_suffix', type='text', placeholder="e.g. Jr."),
                             ],
                             className="mb-3",
@@ -88,23 +92,67 @@ layout = html.Div(
 
 
 
-# @app.callback(
-#     [
-#         Output('cliniciansubmit_modal', 'is_open'),
-#         Output('submit_confirmation', 'children')
-#     ],
-#     [
-#         Input('clinician_submitbtn', 'n_clicks')
-#     ],
-#     [
-#         State('clinician_fn', 'value'),
-#         State('clinician_ln', 'value'),
-#         State('clinician_mi', 'value'),
-#         State('clinician_suffix', 'value'),
-#         State('clinician_cn', 'value'),
-#         State('clinician_email', 'value'),
-#     ]
-# )
+# To save the user
+@app.callback(
+    [
+        Output('cliniciansave_alert', 'color'),
+        Output('cliniciansave_alert', 'children'),
+        Output('cliniciansave_alert', 'is_open'),
+        
+        Output('cliniciansubmit_modal', 'is_open')  
+    ],
+    [
+        Input('clinician_submitbtn', 'n_clicks'),
+    ],
+    [
+        State('clinician_fn', 'value'),
+        State('clinician_ln', 'value'),
+        State('clinician_mi', 'value'),
+        State('clinician_suffix', 'value'),
+        State('clinician_cn', 'value'),
+        State('clinician_email', 'value'),
+    ]
+)
+def save_clinician(submitbtn, clinician_fn, clinician_ln, clinician_mi, clinician_suffix, clinician_cn, clinician_email):
+    ctx = dash.callback_context
+    if ctx.triggered:
+        eventid = ctx.triggered[0]['prop_id'].split('.')[0]
+        if eventid == 'clinician_submitbtn' and submitbtn:
 
-# def saveclinician(clinician_submitbtn, n_clicks, clinician_fn, clinician_ln, clinician_mi, clinician_suffix, clinician_cn, clinician_email):
-#     if n_clicks:
+            alert_open = False
+            openmodal = False
+            alert_color = ''
+            alert_text = ''
+
+            if not clinician_ln: # If vet_ln is blank, not vet_ln = True
+                    alert_open = True
+                    alert_color = 'danger'
+                    alert_text = "Check your inputs. Please supply the clinician's last name."
+            elif not clinician_fn:
+                    alert_open = True
+                    alert_color = 'danger'
+                    alert_text = "Check your inputs. Please supply the clinician's first name."
+            elif not clinician_email:
+                    alert_open = True
+                    alert_color = 'danger'
+                    alert_text = "Check your inputs. Please supply the clinician's email."
+            elif not clinician_cn:
+                    alert_open = True
+                    alert_color = 'danger'
+                    alert_text = "Check your inputs. Please supply the clinician's contact number."
+
+            else:
+                sql = """INSERT INTO clinician (clinician_fn, clinician_ln, clinician_mi, clinician_suffix, clinician_cn, clinician_email)
+                    VALUES (%s, %s, %s, %s, %s, %s)"""  
+            
+                values = [clinician_fn, clinician_ln, clinician_mi, clinician_suffix, clinician_cn, clinician_email]
+                db.modifydatabase(sql, values)
+            
+                openmodal = True
+
+            return [alert_color, alert_text, alert_open, openmodal]
+    
+        else: 
+            raise PreventUpdate
+    else:
+        raise PreventUpdate
