@@ -82,7 +82,7 @@ sidebar = dbc.Nav(
         html.Hr(style=line_style),
         dbc.Nav(
             [
-                # dbc.NavLink("New User", href="/newuser", active="exact", className="active-link", style=subelement_style),
+                dbc.NavLink("New User", href="/newuser", active="exact", className="active-link", style=subelement_style),
                 dbc.NavLink("View Users", href="/viewuser", active="exact", className="active-link", style=subelement_style),
                 dbc.NavLink("Manage Data", href="/managedata", active="exact", className="active-link", style=subelement_style),
             ]

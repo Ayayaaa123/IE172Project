@@ -103,17 +103,16 @@ def loginprocess(loginbtn, sessionlogout_time,
                 NOT vet_delete_ind"""
            
             # we match the encrypted input to the encrypted password in the db
-            encrypt_string = lambda string: hashlib.sha256(string.encode('utf-8')).hexdigest()
+            #encrypt_string = lambda string: hashlib.sha256(string.encode('utf-8')).hexdigest()
            
-            values = [username, encrypt_string(password)]
+            # values = [username, encrypt_string(password)]
+            values = [username, password]
             cols = ['vet_id']
             df = db.querydatafromdatabase(sql, values, cols)
 
 
             print(f"SQL Query: {sql}")
             print(f"Values: {values}")
-
-
             print(f"Result DataFrame: {df}")
 
 

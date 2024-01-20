@@ -8,8 +8,8 @@ import pandas as pd
 import webbrowser
 from app import app
 from apps import sidebar as sb
-from apps import login, signup
-from apps.records import existingpatient, newpatient, viewclinicians, viewrecords, editrecords, viewusers, generatereports, editusers, home_reCreP, home_reCnewP, home_newCnewP, managedata, help, newclinician, editclinicians
+from apps import login
+from apps.records import existingpatient, newpatient, viewclinicians, viewrecords, editrecords, viewusers, generatereports, editusers, home_reCreP, home_reCnewP, home_newCnewP, managedata, help, newclinician, editclinicians, newuser
 
 CONTENT_STYLE = {
     "margin-left": "18rem",
@@ -73,7 +73,7 @@ def displaypage(pathname, sessionlogout, userid):
                 if pathname == '/':
                     returnlayout = login.layout
                 elif pathname == '/signup':
-                    returnlayout = signup.layout
+                    returnlayout = newuser.layout
                 else:
                     returnlayout = '404: request not found'
 
@@ -96,8 +96,8 @@ def displaypage(pathname, sessionlogout, userid):
                     returnlayout = viewrecords.layout
                 elif pathname == "/editrecord":
                     returnlayout = editrecords.layout
-                # elif pathname == "/newuser":
-                #     returnlayout = signup.layout
+                elif pathname == "/newuser":
+                    returnlayout = newuser.layout
                 elif pathname == "/viewuser":
                     returnlayout = viewusers.layout
                 elif pathname == "/edituser":
