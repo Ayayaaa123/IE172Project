@@ -39,7 +39,7 @@ layout = html.Div(
                             [
                                 dbc.InputGroupText("Middle Initial"),
                                 dbc.Input(id='vet_mi', type='text', placeholder="Enter MI"),
-                                dbc.InputGroupText("Suffix (N/A if none)"),
+                                dbc.InputGroupText("Suffix (leave blank if none)"),
                                 dbc.Input(id='vet_suffix', type='text', placeholder="e.g. Jr."),
                             ],
                             className="mb-3",
@@ -48,7 +48,7 @@ layout = html.Div(
                         dbc.InputGroup(
                             [
                                 dbc.InputGroupText("Contact Number"),
-                                dbc.Input(id='vet_cn', type='text', placeholder="Enter Contact Number"),
+                                dbc.Input(id='vet_cn', type='text', placeholder="09XXXXXXXXX"),
                             ],
                             className="mb-3",
                         ),
@@ -84,7 +84,7 @@ layout = html.Div(
                                 dbc.ModalHeader(dbc.ModalTitle("Account Saved")),
                                 dbc.ModalBody("Your Profile has been successfully created!", id='signup_confirmation', style={'font-size': '18px'}),
                                 dbc.ModalFooter(
-                                    dbc.Button("Okay", href='/')
+                                    dbc.Button("Okay", href='/viewuser')
                                 ),
                             ],
                             id="signup_modal",
@@ -134,9 +134,6 @@ def deactivatesignup(password, passwordconf):
 
     return [not enablebtn]
 
-
-
-
 # To save the user
 @app.callback(
     [
@@ -167,9 +164,9 @@ def saveuser(signup_signupbtn, vet_fn, vet_ln, vet_mi, vet_suffix, vet_cn, usern
             # This lambda fcn encrypts the password before saving it
             # for security purposes, not even database admins should see
             # user passwords
-            encrypt_string = lambda string: hashlib.sha256(string.encode('utf-8')).hexdigest()  
+            #encrypt_string = lambda string: hashlib.sha256(string.encode('utf-8')).hexdigest()  
            
-            values = [vet_fn, vet_ln, vet_mi, vet_suffix, vet_cn, username, encrypt_string(password)]
+            values = [vet_fn, vet_ln, vet_mi, vet_suffix, vet_cn, username, password]
             db.modifydatabase(sql, values)
            
             openmodal = True
