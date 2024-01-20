@@ -10886,7 +10886,7 @@ textarea.form-control-lg {
   color: #fff;
 }
 .custom-accordion .accordion-button::before {
-  content: "Clinicians";
+  content: "";
   font-size: 0.93rem;
   margin-left: 1em;
   color: #fff;

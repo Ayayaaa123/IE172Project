@@ -80,22 +80,40 @@ sidebar = dbc.Nav(
        
         html.H2("User Management", className="h2-normal", style=mainelement_style),
         html.Hr(style=line_style),
-        dbc.Nav(
+        # dbc.Nav(
+        #     [
+        #         dbc.NavLink("New User", href="/newuser", active="exact", className="active-link", style=subelement_style),
+        #         dbc.NavLink("View Users", href="/viewuser", active="exact", className="active-link", style=subelement_style),
+        #         dbc.NavLink("Manage Data", href="/managedata", active="exact", className="active-link", style=subelement_style),
+        #     ]
+        # ),
+         dbc. Accordion(
             [
-                dbc.NavLink("New User", href="/newuser", active="exact", className="active-link", style=subelement_style),
-                dbc.NavLink("View Users", href="/viewuser", active="exact", className="active-link", style=subelement_style),
-                dbc.NavLink("Manage Data", href="/managedata", active="exact", className="active-link", style=subelement_style),
-            ]
+                dbc.AccordionItem( #indent needs to be fixed or uncomment ln 10889 in bootstrap.css
+                    [
+                        dbc.NavLink("New User", href="/newuser", active="exact", className="active-link", style=subelement_style),
+                        dbc.NavLink("View Users", href="/viewuser", active="exact", className="active-link", style=subelement_style),
+                    ],
+                    title="Users",
+                    id="add-new-link",
+                ),
+            ],
+            className="custom-accordion",
+            start_collapsed=True,
         ),
+
+
+
         dbc. Accordion(
             [
                 dbc.AccordionItem( #indent needs to be fixed or uncomment ln 10889 in bootstrap.css
                     [
                         dbc.NavLink("New Clinician", href="/managedata/newclinicians", active="exact", className="active-link", style=subelement_style),
                         dbc.NavLink("View Clinicians", href="/managedata/existingclinicians", active="exact", className="active-link", style=subelement_style),
+                        dbc.NavLink("Other Data", href="/managedata", active="exact", className="active-link", style=subelement_style),
                     ],
-                    #title="Add New Record",
-                    id="add-new-link",
+                    title="Manage Data",
+                    id="add-second-link",
                 ),
             ],
             className="custom-accordion",
