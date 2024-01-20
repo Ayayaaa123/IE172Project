@@ -172,8 +172,35 @@ layout = html.Div(
             centered=True,
             id='edituserprofile_successmodal',
             backdrop='static' # dialog box does not go away if you click at the background
-
-
+        ),
+        html.Div(
+            [
+                dbc.Row(
+                    [
+                        dbc.Label("Delete Profile?", width=2),
+                        dbc.Col(
+                            dbc.Checklist(
+                                id='vetprofile_removerecord',
+                                options=[
+                                    {
+                                        'label': "Mark for Deletion",
+                                        'value': 1
+                                    }
+                                ],
+                                style={'fontWeight': 'bold'},
+                            ),
+                            width=5,
+                        ),
+                    ],
+                    className="mb-3"
+                ),
+                dbc.Row(
+                    [
+                        dbc.Label("Enter password to delete", width=2),
+                    ]
+                )
+            ],
+            id='vetprofile_removerecord_div'
         )
     ]
 )
@@ -232,22 +259,23 @@ def deactivatesave(password, passwordconf):
         State('vet_cn', 'value'),
         State('url', 'search'),
         State('vetuser_password', 'value'),
-        State('vetuser_passwordconf', 'value') 
+        State('vetuser_passwordconf', 'value'),
+        State('vetprofile_removerecord', 'value') #for delete
     ]
    
 )
 
 
-def save_user_profile(edituser_savebtn, n_clicks, vet_fn, vet_ln, vet_mi, vet_suffix, vet_email, vet_cn, url_search, password, passwordconf):
+def save_user_profile(edituser_savebtn, n_clicks, vet_fn, vet_ln, vet_mi, vet_suffix, vet_email, vet_cn, url_search, password, passwordconf, removerecord):
 #def save_user_profile(savebtn, n_clicks, vet_fn, vet_ln, vet_mi, vet_suffix, vet_email, vet_cn):
    
     ctx = dash.callback_context # the ctx filter -- ensures that only a change in url will activate this callback
-    print("Triggered:", ctx.triggered)
+    # print("Triggered:", ctx.triggered)
 
 
     if ctx.triggered:
         eventid = ctx.triggered[0]['prop_id'].split('.')[0]
-        if eventid and 'edituser_savebtn' in str(eventid):
+        if eventid and 'edituser_savebtn' in eventid:
         #if eventid and 'edituser_savebtn' in eventid:
             # savebtn condition checks if callback was activated by a click and not by having the save button appear in the layout
 
@@ -304,12 +332,14 @@ def save_user_profile(edituser_savebtn, n_clicks, vet_fn, vet_ln, vet_mi, vet_su
                         vet_suffix = %s,
                         vet_email = %s,
                         vet_cn= %s,
-                        vet_user_pw = %s
+                        vet_user_pw = %s,
+                        vet_delete_ind = %s
                     WHERE
                         vet_id = %s
                     """
-                   
-                values_vet = [vet_ln, vet_fn, vet_mi, vet_suffix, vet_email, vet_cn, password, vet_id]
+                
+                to_delete = bool(removerecord)   
+                values_vet = [vet_ln, vet_fn, vet_mi, vet_suffix, vet_email, vet_cn, password, to_delete, vet_id]
                 print("values_vet:", values_vet)
 
 
@@ -343,8 +373,6 @@ def save_user_profile(edituser_savebtn, n_clicks, vet_fn, vet_ln, vet_mi, vet_su
         Input('url', 'search'),
     ],
 )
-
-
 
 
 def current_values(url_search):

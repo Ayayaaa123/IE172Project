@@ -1,5 +1,5 @@
 from dash import dcc #interpreter recommended to replace 'import dash_core_components as dcc' with 'from dash import dcc'
-from dash import html #interpreter recommended to replace 'import dash_html_components as html' with 'from dash import html'
+from dash import html, dash_table #interpreter recommended to replace 'import dash_html_components as html' with 'from dash import html'
 import dash_bootstrap_components as dbc
 from dash import dash_table #interpreter recommended to replace 'import dash_table' with 'from dash import dash_table'
 import dash
@@ -10,6 +10,7 @@ import dash_mantine_components as dmc
 from app import app
 from apps import dbconnect as db
 import datetime
+import psycopg2
 from dash import ALL, MATCH
 from urllib.parse import urlparse, parse_qs
 
@@ -24,7 +25,7 @@ layout = html.Div(
     [
         html.H1("Edit Clinician Profile"),
         html.Hr(),
-        dbc.Alert(id='editclinicianprofile_alert', is_open=False), # For feedback purposes
+        dbc.Alert(id='editclinicianprofile_alert', is_open=False),
         dbc.Card(
             [
                 dbc.CardHeader(
@@ -39,111 +40,108 @@ layout = html.Div(
                                 dbc.Col(
                                     [
                                         dbc.Label("Last Name"),
-                                        dbc.Input(id='clinician_ln', type='text', placeholder='Enter Last Name', style={'width':'80%'})
+                                        dbc.Input(id='clinician_ln', type='text', placeholder='Enter Last Name', style={'width': '80%'})
                                     ],
                                     width=3
                                 ),
                                 dbc.Col(
                                     [
                                         dbc.Label("First Name"),
-                                        dbc.Input(id='clinician_fn', type='text', placeholder='Enter First Name', style={'width':'80%'})
+                                        dbc.Input(id='clinician_fn', type='text', placeholder='Enter First Name', style={'width': '80%'})
                                     ],
                                     width=3
                                 ),
                                 dbc.Col(
                                     [
                                         dbc.Label("Middle Initial"),
-                                        dbc.Input(id='clinician_mi', type='text', placeholder='Enter Middle Initial', style={'width':'80%'})
+                                        dbc.Input(id='clinician_mi', type='text', placeholder='Enter Middle Initial', style={'width': '80%'})
                                     ],
                                     width=3
                                 ),
                                 dbc.Col(
                                     [
                                         dbc.Label("Suffix (leave blank if none)"),
-                                        dbc.Input(id='clinician_suffix', type='text', placeholder='Enter Suffix', style={'width':'80%'})
-                                       
+                                        dbc.Input(id='clinician_suffix', type='text', placeholder='Enter Suffix', style={'width': '80%'})
                                     ],
                                     width=3
                                 ),
                             ],
                             className="mb-3",
-                        ), # end of row for owner name
+                        ),
                         dbc.Row(
                             [
                                 dbc.Col(
                                     [
-                                        # dbc.InputGroupText("@"), dbc.Input(placeholder='Enter Username')
                                         dbc.Label("Email"),
-                                        dbc.Input(id='clinician_email', type='text', placeholder='Enter Email Address', style={'width':'80%'}),
-                                        # dbc.FormText(
-                                        #     "example@gmail.com",
-                                        #     color = "secondary",
-                                        # )
+                                        dbc.Input(id='clinician_email', type='text', placeholder='Enter Email Address', style={'width': '80%'}),
                                     ],
                                     width=3
                                 ),
                                 dbc.Col(
                                     [
                                         dbc.Label("Contact Number"),
-                                        dbc.Input(id='clinician_cn', type='text', placeholder='Enter Contact Number', style={'width':'80%'})
+                                        dbc.Input(id='clinician_cn', type='text', placeholder='Enter Contact Number', style={'width': '80%'})
                                     ],
                                     width=3
                                 ),
                             ],
                             className="mb-3",
-                        ),  # end of row
+                        ),
                     ],
                 )
             ],
-            style={'width':'100%'}
-        ), # end
-       
+            style={'width': '100%'}
+        ),
         html.Br(),
         html.Br(),
         dbc.Button(
             'Save',
-            id = 'editclinician_savebtn',
-            n_clicks = 0, #initialization
+            id='editclinician_savebtn',
+            n_clicks=0,
             className='custom-submitbutton',
         ),
-        dbc.Modal( # dialog box for successful saving of profile
+        dbc.Modal(
             [
-                dbc.ModalHeader(
-                    html.H4('Save Success')
-                ),
-                dbc.ModalBody(
-                    'Clinician profile has been updated',
-                    id = 'editclinicianrprofile_feedback_message'
-                ),
+                dbc.ModalHeader(html.H4('Save Success')),
+                dbc.ModalBody('Clinician profile has been updated', id='editclinicianrprofile_feedback_message'),
                 dbc.ModalFooter(
-                    dbc.Button(
-                        "Okay",
-                        href = '/managedata/existingclinicians', # bring user back to table
-                        id = 'editclinicianprofile_btn_modal',
-                    )                    
+                    dbc.Button("Okay", href='/managedata/existingclinicians', id='editclinicianprofile_btn_modal')
                 )
             ],
             centered=True,
             id='editclinicianprofile_successmodal',
-            backdrop='static' # dialog box does not go away if you click at the background
-
-
-
-
-        )
+            backdrop='static'
+        ),
+        html.Div(
+            dbc.Row(
+                [
+                    dbc.Label("Delete Profile?", width=2),
+                    dbc.Col(
+                        dbc.Checklist(
+                            id='clinicianprofile_removerecord',
+                            options=[
+                                {
+                                    'label': "Mark for Deletion",
+                                    'value': 1
+                                }
+                            ],
+                            style={'fontWeight': 'bold'},
+                        ),
+                        width=5,
+                    ),
+                ],
+                className="mb-3",
+            ),
+        id='clinicianprofile_removerecord_div')
     ]
 )
 
-
-# CALLBACK TO SAVE CHANGES
+# CALLBACK TO SAVE CHANGES INCLUDING DELETE
 @app.callback(
     [
         Output('editclinicianprofile_alert', 'color'),
         Output('editclinicianprofile_alert', 'children'),
         Output('editclinicianprofile_alert', 'is_open'),
-
-
-
 
         Output('editclinicianprofile_successmodal', 'is_open'),
         Output('editclinicianrprofile_feedback_message', 'children'),
@@ -153,8 +151,6 @@ layout = html.Div(
     [
         Input('editclinician_savebtn', 'n_clicks'),
         Input('editclinicianprofile_btn_modal', 'n_clicks')
-
-
     ],
 
 
@@ -166,6 +162,7 @@ layout = html.Div(
         State('clinician_email', 'value'),
         State('clinician_cn', 'value'),
         State('url', 'search'),
+        State('clinicianprofile_removerecord', 'value') #for delete
     ]
    
 )
@@ -173,19 +170,14 @@ layout = html.Div(
 
 
 
-def save_clinician_profile(n_clicks_btn, n_clicks_modal, clinician_fn, clinician_ln, clinician_mi, clinician_suffix, clinician_email, clinician_cn, url_search):
-
-
-   
+def save_clinician_profile(n_clicks_btn, n_clicks_modal, clinician_fn, clinician_ln, clinician_mi, clinician_suffix, clinician_email, clinician_cn, url_search, removerecord):   
     ctx = dash.callback_context # the ctx filter -- ensures that only a change in url will activate this callback
-    print("Triggered:", ctx.triggered)
-
-
+    # print("Triggered:", ctx.triggered)
 
 
     if ctx.triggered:
         eventid = ctx.triggered[0]['prop_id'].split('.')[0]
-        if eventid and 'editclinician_savebtn' in str(eventid):
+        if eventid and 'editclinician_savebtn' in eventid:
 
 
             # Set default outputs
@@ -195,9 +187,6 @@ def save_clinician_profile(n_clicks_btn, n_clicks_modal, clinician_fn, clinician
             modal_open = False
             modal_text = ''
             modal_href = '#'
-
-
-
 
             parsed = urlparse(url_search)
             query_clinician_id = parse_qs(parsed.query)
@@ -236,28 +225,22 @@ def save_clinician_profile(n_clicks_btn, n_clicks_modal, clinician_fn, clinician
 
 
             else: #all inputs are valid
-
-
-
-
                 #save to db
                 sql_clinician = """ UPDATE clinician
-                    SET
-                        clinician_ln = %s,
-                        clinician_fn = %s,
-                        clinician_mi = %s,
-                        clinician_suffix = %s,
-                        clinician_email = %s,
-                        clinician_cn= %s
-                    WHERE
-                        clinician_id = %s
-                    """
-                   
-                values_clinician = [clinician_ln, clinician_fn, clinician_mi, clinician_suffix, clinician_email, clinician_cn, clinician_id]
+                                    SET
+                                        clinician_ln = %s,
+                                        clinician_fn = %s,
+                                        clinician_mi = %s,
+                                        clinician_suffix = %s,
+                                        clinician_email = %s,
+                                        clinician_cn= %s,
+                                        clinician_delete_ind = %s
+                                    WHERE
+                                        clinician_id = %s
+                                    """
+                to_delete = bool(removerecord) 
+                values_clinician = [clinician_ln, clinician_fn, clinician_mi, clinician_suffix, clinician_email, clinician_cn, to_delete, clinician_id]
                 # print("values_vet:", values_vet)
-
-
-
 
                 db.modifydatabase(sql_clinician, values_clinician)
                
@@ -266,8 +249,6 @@ def save_clinician_profile(n_clicks_btn, n_clicks_modal, clinician_fn, clinician
                 modal_open = True
            
             return [alert_color, alert_text, alert_open, modal_open, modal_text, modal_href]
-
-
 
 
         else: # Callback was not triggered by desired triggers
