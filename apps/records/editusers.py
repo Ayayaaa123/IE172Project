@@ -34,28 +34,28 @@ layout = html.Div(
                             [
                                 dbc.Col(
                                     [
-                                        dbc.Label("Last Name"),
+                                        dbc.Label("Last Name*", style={'font-weight': 'bold'}),
                                         dbc.Input(id='vet_ln', type='text', placeholder='Enter Last Name', style={'width':'80%'})
                                     ],
                                     width=3
                                 ),
                                 dbc.Col(
                                     [
-                                        dbc.Label("First Name"),
+                                        dbc.Label("First Name*", style={'font-weight': 'bold'}),
                                         dbc.Input(id='vet_fn', type='text', placeholder='Enter First Name', style={'width':'80%'})
                                     ],
                                     width=3
                                 ),
                                 dbc.Col(
                                     [
-                                        dbc.Label("Middle Initial"),
+                                        dbc.Label("Middle Initial", style={'font-weight': 'bold'}),
                                         dbc.Input(id='vet_mi', type='text', placeholder='Enter Middle Initial', style={'width':'80%'})
                                     ],
                                     width=3
                                 ),
                                 dbc.Col(
                                     [
-                                        dbc.Label("Suffix (N/A if none)"),
+                                        dbc.Label("Suffix (leave blank if none)", style={'font-weight': 'bold'}),
                                         dbc.Input(id='vet_suffix', type='text', placeholder='Enter Suffix', style={'width':'80%'})
                                        
                                     ],
@@ -69,8 +69,8 @@ layout = html.Div(
                                 dbc.Col(
                                     [
                                         # dbc.InputGroupText("@"), dbc.Input(placeholder='Enter Username')
-                                        dbc.Label("Email/Username"),
-                                        dbc.Input(id='vet_email', type='text', placeholder='Enter Email Address', style={'width':'80%'}),
+                                        dbc.Label("Email/Username*", style={'font-weight': 'bold'}),
+                                        dbc.Input(id='vet_email', type='text', placeholder='example@gmail.com', style={'width':'80%'}),
                                         # dbc.FormText(
                                         #     "example@gmail.com",
                                         #     color = "secondary",
@@ -80,8 +80,8 @@ layout = html.Div(
                                 ),
                                 dbc.Col(
                                     [
-                                        dbc.Label("Contact Number"),
-                                        dbc.Input(id='vet_cn', type='text', placeholder='Enter Contact Number', style={'width':'80%'})
+                                        dbc.Label("Contact Number*", style={'font-weight': 'bold'}),
+                                        dbc.Input(id='vet_cn', type='text', placeholder='09XXXXXXXXX', style={'width':'80%'})
                                     ],
                                     width=3
                                 ),
@@ -95,56 +95,56 @@ layout = html.Div(
         ), # end
        
         html.Br(),
-        # dbc.Card(
-        #     [
-        #         dbc.CardHeader(
-        #             [
-        #                 html.H2("Account Information")
-        #             ]
-        #         ),
-        #         dbc.CardBody(
-        #             [
-        #                 dbc.Row(
-        #                     [
-        #                         dbc.Col(
-        #                             [
-        #                                 dbc.Label("Username"),
-        #                                 dbc.Input(id='vet_user_name', type='text', placeholder='Create Account Username', style={'width':'75%'})
-        #                             ],
-        #                             width=3
-        #                         ),
-        #                     ],
-        #                     className="mb-3",
-        #                 ),
-        #                 dbc.Row(
-        #                     [
-        #                         dbc.Col(
-        #                             [
-        #                                 dbc.Label("Create Password"),
-        #                                 dbc.Input(id='vet_user_password', type='password', placeholder='Enter Password', style={'width':'75%'})
-        #                             ],
-        #                             width=3
-        #                         ),
-        #                     ],
-        #                     className = "mb-3",
-        #                 ),
-        #                 dbc.Row(
-        #                     [
-        #                         dbc.Col(
-        #                             [
-        #                                 dbc.Label("Confirm Password"),
-        #                                 dbc.Input(id='vet_user_confirm_password', type='password', placeholder='Re-Enter Password', style={'width':'75%'})
-        #                             ],
-        #                             width=3
-        #                         ),
-        #                     ],
-        #                     className = "mb-3",
-        #                 ),
-        #             ]
-        #         )
-        #     ]
+        dbc.Card(
+            [
+                dbc.CardHeader(
+                    [
+                        html.H2("Account Information")
+                    ]
+                ),
+                dbc.CardBody(
+                    [
+                        # dbc.Row(
+                        #     [
+                        #         dbc.Col(
+                        #             [
+                        #                 dbc.Label("Username"),
+                        #                 dbc.Input(id='vet_user_name', type='text', placeholder='Create Account Username', style={'width':'75%'})
+                        #             ],
+                        #             width=3
+                        #         ),
+                        #     ],
+                        #     className="mb-3",
+                        # ),
+                        dbc.Row(
+                            [
+                                dbc.Col(
+                                    [
+                                        dbc.Label("Enter or Create New Password*", style={'font-weight': 'bold'}),
+                                        dbc.Input(id='vetuser_password', type='password', placeholder='Enter Password', style={'width':'75%'})
+                                    ],
+                                    width=3
+                                ),
+                            ],
+                            className = "mb-3",
+                        ),
+                        dbc.Row(
+                            [
+                                dbc.Col(
+                                    [
+                                        dbc.Label("Confirm Password*", style={'font-weight': 'bold'}),
+                                        dbc.Input(id='vetuser_passwordconf', type='password', placeholder='Re-Enter Password', style={'width':'75%'})
+                                    ],
+                                    width=3
+                                ),
+                            ],
+                            className = "mb-3",
+                        ),
+                    ]
+                )
+            ]
        
-        # ),
+        ),
         html.Br(),
         dbc.Button(
             'Save',
@@ -179,6 +179,27 @@ layout = html.Div(
 )
 
 
+#CALLBACKS - DISABLE BUTTON, SAVE CHANGES, LOAD RECORD
+
+
+# disable the signup button if passwords do not match
+@app.callback(
+    [
+        Output('edituser_savebtn', 'disabled'),
+    ],
+    [
+        Input('vetuser_password', 'value'),
+        Input('vetuser_passwordconf', 'value'),
+    ]
+)
+
+def deactivatesave(password, passwordconf):
+   
+    # enable button if password exists and passwordconf exists
+    #  and password = passwordconf
+    enablebtn = password and passwordconf and password == passwordconf
+
+    return [not enablebtn]
 
 
 
@@ -210,12 +231,14 @@ layout = html.Div(
         State('vet_email', 'value'),
         State('vet_cn', 'value'),
         State('url', 'search'),
+        State('vetuser_password', 'value'),
+        State('vetuser_passwordconf', 'value') 
     ]
    
 )
 
 
-def save_user_profile(n_clicks_btn, n_clicks_modal, vet_fn, vet_ln, vet_mi, vet_suffix, vet_email, vet_cn, url_search):
+def save_user_profile(edituser_savebtn, n_clicks, vet_fn, vet_ln, vet_mi, vet_suffix, vet_email, vet_cn, url_search, password, passwordconf):
 #def save_user_profile(savebtn, n_clicks, vet_fn, vet_ln, vet_mi, vet_suffix, vet_email, vet_cn):
    
     ctx = dash.callback_context # the ctx filter -- ensures that only a change in url will activate this callback
@@ -280,12 +303,13 @@ def save_user_profile(n_clicks_btn, n_clicks_modal, vet_fn, vet_ln, vet_mi, vet_
                         vet_mi = %s,
                         vet_suffix = %s,
                         vet_email = %s,
-                        vet_cn= %s
+                        vet_cn= %s,
+                        vet_user_pw = %s
                     WHERE
                         vet_id = %s
                     """
                    
-                values_vet = [vet_ln, vet_fn, vet_mi, vet_suffix, vet_email, vet_cn, vet_id]
+                values_vet = [vet_ln, vet_fn, vet_mi, vet_suffix, vet_email, vet_cn, password, vet_id]
                 print("values_vet:", values_vet)
 
 
@@ -302,8 +326,6 @@ def save_user_profile(n_clicks_btn, n_clicks_modal, vet_fn, vet_ln, vet_mi, vet_
             raise PreventUpdate
     else:
         raise PreventUpdate
-
-
 
 
 
@@ -329,17 +351,10 @@ def current_values(url_search):
     parsed = urlparse(url_search)
     query_vet_id = parse_qs(parsed.query)
 
-
-
-
     if 'id' in query_vet_id:
         vet_id = query_vet_id['id'][0]
         sql = """
             SELECT vet_fn, vet_ln, vet_mi, vet_suffix,vet_email, vet_cn
-
-
-
-
             FROM vet
             WHERE vet_id = %s
         """
@@ -359,12 +374,7 @@ def current_values(url_search):
         vet_cn = df['vet_cn'][0]
 
 
-
-
         print(vet_fn, vet_ln, vet_mi, vet_suffix, vet_email, vet_cn)
-
-
-
 
         return [vet_fn, vet_ln, vet_mi, vet_suffix,vet_email, vet_cn]
    
