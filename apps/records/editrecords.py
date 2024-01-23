@@ -220,16 +220,14 @@ layout = html.Div(
                         [
                             dbc.CardHeader(
                                 [
-                                    html.H4('Vaccine History')
+                                    html.H2('Vaccine History')
                                 ]
                             ),
                             dbc.CardBody(
                                 [
                                     html.Div(  # create section to show list of records
                                         [
-                                            dbc.Table(
-                                                id='vaccine-table', style={'text-align': 'center'}
-                                            ),   
+                                            html.Div(id='vaccine-table'),   
                                         ]
                                     )
                                 ]
@@ -244,16 +242,14 @@ layout = html.Div(
                         [
                             dbc.CardHeader(
                                 [
-                                    html.H4('Deworming History')
+                                    html.H2('Deworming History')
                                 ]
                             ),
                             dbc.CardBody(
                                 [
                                     html.Div(  # create section to show list of records
                                         [
-                                            dbc.Table(
-                                                id='deworming-table', style={'text-align': 'center'}
-                                            ),   
+                                            html.Div(id='deworming-table'),   
                                         ]
                                     )
                                 ]
@@ -264,6 +260,25 @@ layout = html.Div(
                 ),#deworming history
             ]
         ), 
+        html.Br(),
+
+        dbc.Card(
+            [
+                dbc.CardHeader(
+                    [
+                        html.H2("Problem History")
+                    ]
+                ),
+                dbc.CardBody(
+                    [
+                        html.Div([
+                            html.Div(id='problem-table'),
+                        ])
+                    ]
+                )
+            ]
+        ),
+
         html.Br(), 
        
         dbc.Button(
@@ -360,7 +375,7 @@ def vaccine_table(url_search):
         patient_id = query_patient_id['id'][0]
         sql = """
         SELECT 
-            vacc_m, vacc_dose, vacc_date_administered, vacc_exp
+            vacc_m, vacc_dose, vacc_date_administered, vacc_exp, vacc_id, patient.patient_id
         FROM 
             vacc
         INNER JOIN visit ON vacc.visit_id = visit.visit_id
@@ -369,22 +384,25 @@ def vaccine_table(url_search):
         WHERE patient.patient_id = %s
         """
         values = [patient_id]
-        col = ['Vaccine Name', 'Dose', 'Date Administered', 'Expiration Date']
+        sql += "ORDER BY vacc_date_administered DESC"
+        col = ['Vaccine Name', 'Dose', 'Date Administered', 'Expiration Date', 'Vacc_ID', 'Patient_ID']
         df = db.querydatafromdatabase(sql, values, col)
 
-        table_rows = []
-        for i in range(len(df)):
-            row = [
-                html.Td(df.iloc[i][col]) for col in df.columns
-            ]
-            table_rows.append(html.Tr(row))
+        if df.shape:
+            buttons = []
+            for vacc_id, patient_id_query in zip(df['Vacc_ID'], df['Patient_ID']):
+                buttons += [
+                    html.Div(
+                        dbc.Button('Edit', href=f'/editvaccine?mode=edit&vacc_id={vacc_id}&patient_id={patient_id_query}', size='sm', color='success'),
+                        style = {'text-align':'center'}
+                    )
+                ]
 
-        header = [html.Th(col) for col in df.columns]
-        header = html.Tr(header)
+            df['Action'] = buttons
+            df = df[['Vaccine Name', 'Dose', 'Date Administered', 'Expiration Date', 'Action']] 
 
-        table = [html.Thead(header), html.Tbody(table_rows)]
-
-        return table
+            table = dbc.Table.from_dataframe(df, striped=True, bordered=True, hover=True, size='sm', style={'text-align': 'center'})
+            return [table]
 
     else:
         raise PreventUpdate
@@ -402,7 +420,7 @@ def deworm_table(url_search):
         patient_id = query_patient_id['id'][0]
         sql = """
         SELECT 
-            deworm_m, deworm_dose, deworm_administered, deworm_exp
+            deworm_m, deworm_dose, deworm_administered, deworm_exp, deworm_id, patient.patient_id
         FROM 
             deworm
         INNER JOIN visit ON deworm.visit_id = visit.visit_id
@@ -411,22 +429,71 @@ def deworm_table(url_search):
         WHERE patient.patient_id = %s 
         """
         values = [patient_id]
-        col = ['Medicine Name', 'Dose', 'Date Administered', 'Expiration Date']
+        sql += "ORDER BY deworm_administered DESC"
+        col = ['Medicine Name', 'Dose', 'Date Administered', 'Expiration Date', 'Deworm_ID', 'Patient_ID']
         df = db.querydatafromdatabase(sql, values, col)
 
-        table_rows = []
-        for i in range(len(df)):
-            row = [
-                html.Td(df.iloc[i][col]) for col in df.columns
-            ]
-            table_rows.append(html.Tr(row))
+        if df.shape:
+            buttons = []
+            for deworm_id, patient_id_query in zip(df['Deworm_ID'], df['Patient_ID']):
+                buttons += [
+                    html.Div(
+                        dbc.Button('Edit', href=f'/editdeworm?mode=edit&deworm_id={deworm_id}&patient_id={patient_id_query}', size='sm', color='success'),
+                        style = {'text-align':'center'}
+                    )
+                ]
 
-        header = [html.Th(col) for col in df.columns]
-        header = html.Tr(header)
+            df['Action'] = buttons
+            df = df[['Medicine Name', 'Dose', 'Date Administered', 'Expiration Date', 'Action']] 
 
-        table = [html.Thead(header), html.Tbody(table_rows)]
+            table = dbc.Table.from_dataframe(df, striped=True, bordered=True, hover=True, size='sm', style={'text-align': 'center'})
+            return [table]
 
-        return table
+    else:
+        raise PreventUpdate
+    
+
+@app.callback(
+    Output('problem-table', 'children'),
+    Input('url', 'search'),
+)
+
+def problem_table(url_search):
+    parsed = urlparse(url_search)
+    query_patient_id = parse_qs(parsed.query)
+
+    if 'id' in query_patient_id:
+        patient_id = query_patient_id['id'][0]
+        sql = """
+        SELECT DISTINCT
+            problem_chief_complaint, problem_diagnosis, problem_prescription, problem_client_educ, problem_status_m, problem_date_created, problem_date_resolved, problem.problem_id, patient.patient_id
+        FROM 
+            problem
+        INNER JOIN problem_status ON problem.problem_status_id = problem_status.problem_status_id
+        INNER JOIN visit ON problem.problem_id = visit.problem_id
+        INNER JOIN patient ON visit.patient_id = patient.patient_id
+        WHERE patient.patient_id = %s 
+        """
+        values = [patient_id]
+        sql += "ORDER BY problem.problem_id DESC"
+        col = ['Chief Complaint', 'Diagnosis', 'Prescription', 'Patient Instructions', 'Problem Status', 'Start Date', 'Resolved Date', 'Problem_ID', 'Patient_ID']
+        df = db.querydatafromdatabase(sql, values, col)
+
+        if df.shape:
+            buttons = []
+            for problem_id, patient_id_query in zip(df['Problem_ID'], df['Patient_ID']):
+                buttons += [
+                    html.Div(
+                        dbc.Button('Edit', href=f'/editproblem?mode=edit&problem_id={problem_id}&patient_id={patient_id_query}', size='sm', color='success'),
+                        style = {'text-align':'center'}
+                    )
+                ]
+
+            df['Action'] = buttons
+            df = df[['Chief Complaint', 'Diagnosis', 'Prescription', 'Patient Instructions', 'Problem Status', 'Start Date', 'Resolved Date', 'Action']] 
+
+            table = dbc.Table.from_dataframe(df, striped=True, bordered=True, hover=True, size='sm', style={'text-align': 'center'})
+            return [table]
 
     else:
         raise PreventUpdate
