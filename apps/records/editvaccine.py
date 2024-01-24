@@ -17,6 +17,8 @@ from urllib.parse import urlparse, parse_qs
 layout = html.Div(
     [
         dbc.Alert(id='vaccine_alert', is_open = False),
+        dbc.Nav(dbc.NavItem(dbc.NavLink("<  Return", active=True, href="", id="return-link", style={"font-size": "1.25rem", 'margin-left':0, 'font-weight': 'bold'}))),
+        html.Div(style={'margin-bottom':'1rem'}),
         html.H2("Vaccine Details"),
         html.Hr(),
         dbc.Form([
@@ -119,7 +121,7 @@ layout = html.Div(
             dbc.ModalHeader(html.H3('Save Success')),
             dbc.ModalFooter(
                 dbc.Button(
-                    "Proceed",
+                    "Return",
                     href="",
                     id="return-button",
                 )
@@ -133,7 +135,6 @@ layout = html.Div(
 )
 
 
-
 @app.callback(  
     Output("vaccine_namelist", "options"),
     Output('vaccine_namelist','value'),
@@ -142,11 +143,13 @@ layout = html.Div(
     Output('vaccine_expdate','value'),
     Output('vacc_fromvetmed','value'),
     Output('vacc_delete','value'),
+    Output('return-link', 'href'),
     Input('url','search'),
 )
 def initial_values(url_search):
     parsed = urlparse(url_search)
     query_ids = parse_qs(parsed.query)
+    patient_link= ""
 
     if 'vacc_id' in query_ids and 'patient_id' in query_ids:
         vaccine_id = query_ids.get('vacc_id', [None])[0]
@@ -184,7 +187,9 @@ def initial_values(url_search):
         vaccine_fromvetmed = df['vacc_from_vetmed'][0]
         vaccine_delete = df['vacc_delete_ind'][0]
 
-        return (options, vaccine_name, vaccine_dose, vaccine_dateadministered, vaccine_expdate, vaccine_fromvetmed, vaccine_delete)
+        patient_link = f'/editrecord?mode=edit&id={patient_id}'
+
+        return (options, vaccine_name, vaccine_dose, vaccine_dateadministered, vaccine_expdate, vaccine_fromvetmed, vaccine_delete, patient_link)
     else:
         raise PreventUpdate
     

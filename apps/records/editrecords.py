@@ -17,6 +17,8 @@ from urllib.parse import urlparse, parse_qs
 layout = html.Div(
     [
         html.H1(id='patientname'),
+        dbc.Nav(dbc.NavItem(dbc.NavLink("<  Return", active=True, href="/viewrecord", id="return-link", style={"font-size": "1.25rem", 'margin-left':0, 'font-weight': 'bold'}))),
+        html.Div(style={'margin-bottom':'1rem'}),
         dbc.Card(
             [
                 dbc.CardHeader(
