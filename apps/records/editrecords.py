@@ -16,8 +16,8 @@ from urllib.parse import urlparse, parse_qs
 
 layout = html.Div(
     [
-        html.H1(id='patientname'),
-        dbc.Nav(dbc.NavItem(dbc.NavLink("<  Return", active=True, href="/viewrecord", id="return-link", style={"font-size": "1.25rem", 'margin-left':0, 'font-weight': 'bold'}))),
+        dbc.Alert(id='profile_alert', is_open = False),
+        dbc.Nav(dbc.NavItem(dbc.NavLink("<  Return", active=True, href="/viewrecord", style={"font-size": "1.25rem", 'margin-left':0, 'font-weight': 'bold'}))),
         html.Div(style={'margin-bottom':'1rem'}),
         dbc.Card(
             [
@@ -53,7 +53,7 @@ layout = html.Div(
                                 ),
                                 dbc.Col(
                                     [
-                                        dbc.Label("Suffix (N/A if none)"),
+                                        dbc.Label("Suffix"),
                                         dbc.Input(id='client_suffix', type='text', placeholder='Enter Suffix', style={'width':'80%'})
                                     ],
                                     width=3
@@ -288,6 +288,20 @@ layout = html.Div(
             id = 'profile_save',
             n_clicks = 0,
             className='custom-submitbutton',
+        ),
+        dbc.Modal([
+            dbc.ModalHeader(html.H3('Save Success')),
+            dbc.ModalFooter(
+                dbc.Button(
+                    "Return",
+                    href="",
+                    id="profile_return-button",
+                )
+            )
+        ],
+        centered = True, 
+        id = 'profile_successmodal',
+        backdrop = 'static'
         )
     ]
 )
@@ -497,5 +511,172 @@ def problem_table(url_search):
             table = dbc.Table.from_dataframe(df, striped=True, bordered=True, hover=True, size='sm', style={'text-align': 'center'})
             return [table]
 
+    else:
+        raise PreventUpdate
+    
+
+
+@app.callback(
+    Output('profile_alert','color'),
+    Output('profile_alert','children'),
+    Output('profile_alert','is_open'),
+    Output('profile_successmodal', 'is_open'),
+    Output('profile_return-button', 'href'),
+    Input('profile_save', 'n_clicks'),
+    Input('url','search'),
+    Input('client_ln','value'),
+    Input('client_fn','value'),
+    Input('client_mi','value'),
+    Input('client_suffix','value'),
+    Input('client_email','value'),
+    Input('client_cn','value'),
+    Input('client_province','value'),
+    Input('client_city','value'),
+    Input('client_barangay','value'),
+    Input('client_street','value'),
+    Input('client_house_no','value'),
+    Input('patient_m','value'),
+    Input('patient_sex','value'),
+    Input('patient_type','value'),
+    Input('patient_breed','value'),
+    Input('patient_bd','value'),
+    Input('patient_idiosync','value'),
+    Input('patient_color','value'),
+)
+def save_patient_record(submitbtn, url_search, client_ln, client_fn, client_mi, client_suffix, client_email, client_cn, client_province, client_city, client_barangay, client_street,
+                        client_house_no, patient_m, patient_sex, patient_type, patient_breed, patient_bd, patient_idiosync, patient_color):
+    ctx = dash.callback_context
+    if ctx.triggered:
+        eventid = ctx.triggered[0]['prop_id'].split('.')[0]
+        if eventid == 'profile_save' and submitbtn:
+            parsed = urlparse(url_search)
+            query_ids = parse_qs(parsed.query)  
+
+            modified_date = datetime.datetime.now().strftime("%Y-%m-%d")
+
+            alert_open = False
+            modal_open = False
+            alert_color = ''
+            alert_text = ''
+            patient_link = ''
+
+            patient_id = query_ids.get('id', [None])[0]    
+
+            if not client_ln:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Check your inputs. Please enter client last name'
+            elif not client_fn:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Check your inputs. Please enter client first name'
+            elif not client_email:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Check your inputs. Please enter client email address'
+            elif not client_cn:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Check your inputs. Please enter client contact number'
+            elif not client_province:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Check your inputs. Please enter client province address'
+            elif not client_city:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Check your inputs. Please enter client city address' 
+            elif not client_barangay:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Check your inputs. Please enter client barangay address'
+            elif not client_street:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Check your inputs. Please enter client street address'
+            elif not client_house_no:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Check your inputs. Please enter client house number'
+            elif not patient_sex:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Check your inputs. Please select patient sex'
+            elif not patient_type:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Check your inputs. Please enter patient type'
+            elif not patient_breed:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Check your inputs. Please enter patient breed'
+            elif not patient_bd:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Check your inputs. Please select patient birthdate'
+            elif not patient_idiosync:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Check your inputs. Please enter patient idiosyncrasies'
+            elif not patient_color:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Check your inputs. Please enter patient color'
+            
+            else:
+                sql = """
+                    SELECT client.client_id
+                    FROM client
+                    INNER JOIN patient ON patient.client_id = client.client_id
+                    WHERE patient_id = %s
+                """
+                values = [patient_id]
+                cols = ['client_id']
+
+                client_id_df = db.querydatafromdatabase(sql, values, cols)
+                client_id = client_id_df.iloc[0, 0]
+                
+                sql = """
+                    UPDATE client
+                    SET 
+                        client_ln = %s,
+                        client_fn = %s,
+                        client_mi = %s,
+                        client_suffix = %s,
+                        client_email = %s,
+                        client_cn = %s,
+                        client_house_no = %s,
+                        client_street = %s,
+                        client_barangay = %s,
+                        client_city = %s,
+                        client_province = %s,
+                        client_modified_date = %s
+                    WHERE client_id = %s;
+
+                    UPDATE patient
+                    SET
+                        patient_m = %s,
+                        patient_type = %s,
+                        patient_color = %s,
+                        patient_breed = %s,
+                        patient_sex = %s,
+                        patient_bd = %s,
+                        patient_idiosync = %s,
+                        patient_modified_date = %s
+                    WHERE patient_id = %s;
+                """
+                values = [client_ln, client_fn, client_mi, client_suffix, client_email, client_cn, client_house_no, client_street, client_barangay, client_city, client_province, 
+                          modified_date, client_id, patient_m, patient_type, patient_color, patient_breed, patient_sex, patient_bd, patient_idiosync, modified_date, patient_id]
+                db.modifydatabase(sql, values)
+
+                modal_open = True
+
+                patient_link = f'/editrecord?mode=edit&id={patient_id}'
+
+            return [alert_color, alert_text, alert_open, modal_open, patient_link]
+        
+        else:
+            raise PreventUpdate
+        
     else:
         raise PreventUpdate

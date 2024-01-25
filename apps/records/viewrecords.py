@@ -111,7 +111,7 @@ def viewrecord_loadpatientlist(pathname, searchterm):
                 );
             """
             values = [f"%{searchterm}%", f"%{searchterm}%", f"%{searchterm}%"]
-        
+
         df = db.querydatafromdatabase(sql, values, cols)
         
         if df.shape:
