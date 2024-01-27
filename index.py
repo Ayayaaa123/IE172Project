@@ -84,9 +84,9 @@ def displaypage(pathname, sessionlogout, userid):
 
                 elif pathname == "/" or pathname == "/home_reCreP":
                     returnlayout = home_reCreP.layout
-                elif pathname == pathname == "/home_reCnewP":
+                elif pathname == "/home_reCnewP":
                     returnlayout = home_reCnewP.layout
-                elif pathname == pathname == "/home_newCnewP":
+                elif pathname == "/home_newCnewP":
                     returnlayout = home_newCnewP.layout
                 elif pathname == "/newrecord" or pathname == "/newrecord/newpatient":
                     returnlayout = newpatient.layout
@@ -139,4 +139,4 @@ def displaypage(pathname, sessionlogout, userid):
     
 if __name__ == "__main__":
     webbrowser.open("http://127.0.0.1:8050/", new=0, autoraise=True)
-    app.run_server(debug=False)
+    app.run_server(debug=True)

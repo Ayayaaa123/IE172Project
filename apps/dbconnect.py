@@ -36,7 +36,7 @@ def getdblocation():
 def getdblocation():
     db = psycopg2.connect(
         host='localhost',
-        database='vetmed33',
+        database='vetmed37',
         user='postgres',
         port=5432,
         password='sabinobacay080901'
@@ -60,3 +60,24 @@ def querydatafromdatabase(sql, values, dfcolumns=None):
         rows = pd.DataFrame(cur.fetchall(), columns=dfcolumns)
     db.close()
     return rows
+
+
+
+
+sql = """
+    select max(visit_id) + 1
+    from visit
+    """
+values = []
+df = querydatafromdatabase(sql,values)
+visit_id = df.loc[0,0]
+print(visit_id)
+
+sql = """
+    select min(visit_id)
+    from visit
+    """
+values = []
+df = querydatafromdatabase(sql,values)
+visit_id = df.loc[0,0]
+print(visit_id)

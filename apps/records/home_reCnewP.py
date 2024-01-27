@@ -16,175 +16,148 @@ from urllib.parse import urlparse, parse_qs
 
 
 layout = html.Div([
-        #html.H1("Homepage"),
         dbc.Alert(id = 'visitrecord_alert_reCnewP', is_open = False),
-        html.Br(),
-        dbc.Card( # Main Visits Info
-            [
-                dbc.CardHeader(
-                    html.Div([
-                            #html.H2(f"Visits for {datetime.now().strftime('%B %d, %Y')}")
-                            html.H2("Record Visits", className = "flex-grow-1"),
-                            html.Div([
-                                dbc.Button("Returning Patient", href= '/home_reCreP',className = "me-2",n_clicks = 0),
-                                dbc.Button("New Patient", href= '/home_reCnewP',n_clicks = 0),
-                            ], className = "ml-2 d-flex")
-                        ], className = "d-flex align-items-center justify-content-between"),
-                ),
-                dbc.CardBody([
-                    dbc.Row([
+        dbc.Card([ # Main Visits Info
+            dbc.CardHeader(
+                html.Div([
+                        html.H2("Record Visits", className = "flex-grow-1"),
                         html.Div([
-                            html.H4("Client Information", className = "flex-grow-1"),
-                            dcc.Dropdown(
-                                id="new_clientlist_reCnewP",
-                                placeholder="Search Client from database if available",
-                                searchable=True,
-                                options=[],
-                                value=None,
-                                style = {'width': '55%'},
-                                ),
-                            html.Div([
-                                dbc.Button("Returning Client", href= '/home_reCnewP',className = "me-2",n_clicks = 0), 
-                                dbc.Button("New Client", href= '/home_newCnewP',n_clicks = 0),
-                            ], className = "ml-2 d-flex")
-                        ], className = "d-flex align-items-center justify-content-between"),
-                    ], className = 'mb-3', id = 'owner_info1'),
-
-                    dbc.Row([dbc.Col(html.H4("Patient Information"), width = 3)], className = 'mb-3', id = 'patient_info1'),   
-
-                    dbc.Row([
-                            
-                        dbc.Col(
-                            [
-                                dbc.Label("Name"),
-                                dbc.Input(id='patient_m_reCnewP', type='text', placeholder='Enter Patient Name', style={'width':'100%'})
-                            ],
-                            width=2
-                        ),
-
-                        dbc.Col(
-                            [
-                                dbc.Label("Animal Type"),
-                                dbc.Input(id='patient_type_reCnewP', type='text', placeholder='Ex: Dog or Cat', style={'width':'100%'})
-                            ],
-                            width=2
-                        ),
-                        
-                        dbc.Col(
-                            [
-                                dbc.Label("Breed"),
-                                dbc.Input(id='patient_breed_reCnewP', type='text', placeholder='Enter Breed', style={'width':'100%'})
-                            ],
-                            width=2
-                        ),
-
-                        dbc.Col(
-                            [
-                                dbc.Label("Color Markings"),
-                                dbc.Input(id='patient_color_reCnewP', type='text', placeholder='Enter Color Markings', style={'width':'100%'})
-                            ],
-                            width=2
-                        ),
-
-                        dbc.Col(
-                            [
-                                dbc.Label("Sex"),
-                                dcc.Dropdown(
-                                    id='patient_sex_reCnewP',
-                                    options=[
-                                        {'label':'Male', 'value':'Male'},
-                                        {'label':'Female', 'value':'Female'},
-                                    ],
-                                    placeholder='Select Sex',
-                                    style={'width':'100%'},
-                                ),
-                            ],
-                            width=2 
-                        ),
-                            
-                        dbc.Col(
-                            [
-                                dbc.Label("Birthdate"),
-                                dmc.DatePicker(
-                                    id='patient_bd_reCnewP',
-                                    placeholder="Select Birthdate",
-                                    style={'width':'100%'},
-                                    inputFormat='MMM DD, YYYY',
-                                    dropdownType='modal',
-                                ),
-                            ],
-                            width=2
-                        ),
-                    ], className="mb-3", id = 'patient_info2'), # end of row for name, sex, breed
-
-                    dbc.Row([
-
-                        dbc.Col(
-                            [
-                                dbc.Label("Idiosyncrasies"),
-                                dbc.Input(id='patient_idiosync_reCnewP', type='text', placeholder='Enter Idiosyncrasies', style={'width':'100%'})
-                            ],
-                            width=12
-                        ),
-                    ], className="mb-3", id = 'patient_info3'), # end of row for birthdate, idiosyncrasies, color markings
-
-                    html.Br(),
-
-                    dbc.Row([ #Select Veterinarian
-                            
-                        dbc.Col(html.H4("Veterinarian Assigned"), width=3),
-
-                        dbc.Col(
-                            dcc.Dropdown(
-                                id="vetlist_reCnewP",
-                                placeholder="Select Veterinarian",
-                                searchable=True,
-                                options=[],
-                                value=None,
+                            dbc.Button("Returning Patient", href= '/home_reCreP',className = "me-2",n_clicks = 0),
+                            dbc.Button("New Patient", href= '/home_reCnewP',n_clicks = 0),
+                        ], className = "ml-2 d-flex")
+                    ], className = "d-flex align-items-center justify-content-between"),
+            ),
+            dbc.CardBody([
+                dbc.Row([ #Client information and Buttons
+                    html.Div([
+                        html.H4("Client Information", className = "flex-grow-1"),
+                        dcc.Dropdown(
+                            id="new_clientlist_reCnewP",
+                            placeholder="Search Client from database if available",
+                            searchable=True,
+                            options=[],
+                            value=None,
+                            style = {'width': '55%'},
                             ),
-                        ),
-                    ]),
+                        html.Div([
+                            dbc.Button("Returning Client", href= '/home_reCnewP',className = "me-2",n_clicks = 0), 
+                            dbc.Button("New Client", href= '/home_newCnewP',n_clicks = 0),
+                        ], className = "ml-2 d-flex")
+                    ], className = "d-flex align-items-center justify-content-between"),
+                ], className = 'mb-3'),
 
-                    html.Br(),
+                dbc.Row([dbc.Col(html.H4("Patient Information"), width = 3)], className = 'mb-3'),   
 
-                    dbc.Row([ #Visit Date
-                        dbc.Col(html.H4("Visit Date"), width=3),
-                        dbc.Col(
-                                dmc.DatePicker(
-                                id='visitdate_reCnewP',
-                                placeholder="Select Visit Date",
-                                value=datetime.now().date(),
+                dbc.Row([ #Name, Animal Type, breed, color, sex, bd
+                        
+                    dbc.Col(
+                        [
+                            dbc.Label("Name"),
+                            dbc.Input(id='patient_m_reCnewP', type='text', placeholder='Enter Patient Name', style={'width':'100%'})
+                        ],
+                        width=2
+                    ),
+
+                    dbc.Col(
+                        [
+                            dbc.Label("Animal Species"),
+                            dbc.Input(id='patient_species_reCnewP', type='text', placeholder='Ex: Dog or Cat', style={'width':'100%'})
+                        ],
+                        width=2
+                    ),
+                    
+                    dbc.Col(
+                        [
+                            dbc.Label("Breed"),
+                            dbc.Input(id='patient_breed_reCnewP', type='text', placeholder='Enter Breed', style={'width':'100%'})
+                        ],
+                        width=2
+                    ),
+
+                    dbc.Col(
+                        [
+                            dbc.Label("Color Markings"),
+                            dbc.Input(id='patient_color_reCnewP', type='text', placeholder='Enter Color Markings', style={'width':'100%'})
+                        ],
+                        width=2
+                    ),
+
+                    dbc.Col(
+                        [
+                            dbc.Label("Sex"),
+                            dcc.Dropdown(
+                                id='patient_sex_reCnewP',
+                                options=[
+                                    {'label':'Male', 'value':'Male'},
+                                    {'label':'Female', 'value':'Female'},
+                                ],
+                                placeholder='Select Sex',
+                                style={'width':'100%'},
+                            ),
+                        ],
+                        width=2 
+                    ),
+                        
+                    dbc.Col(
+                        [
+                            dbc.Label("Birthdate"),
+                            dmc.DatePicker(
+                                id='patient_bd_reCnewP',
+                                placeholder="Select Birthdate",
+                                style={'width':'100%'},
                                 inputFormat='MMM DD, YYYY',
                                 dropdownType='modal',
-                                ),
-                        ),    
-                    ]),
-                    
-                    html.Br(),
-                    
-                    dbc.Row([
-                        dbc.Col(html.H4("Visit Purpose"), width=3),
-                        dbc.Col(
-                            dbc.Checklist(
-                            options=[
-                                {"label": " New Problem", "style":{"flex-grow": 1}, "value": "new_problem"},
-                                {"label": " Follow up to a Problem", "style":{"flex-grow": 1}, "value": "follow_up"},
-                                {"label": " Vaccination", "style":{"flex-grow": 1}, "value": "vaccination"},
-                                {"label": " Deworming", "style":{"flex-grow": 1}, "value": "deworming"},
-                            ],
-                            id="visitpurpose_reCnewP",
-                            inline=True,
-                            style={"display": "flex", 
-                                "justify-content": "space-between", 
-                                "fontSize":"1.2rem",
-                                "align-items":"center"},
                             ),
-                            width=9,
-                        )
-                    ]),
+                        ],
+                        width=2
+                    ),
+                ], className="mb-3"),
+
+                dbc.Row([ # Idiosyncrasies
+
+                    dbc.Col(
+                        [
+                            dbc.Label("Idiosyncrasies"),
+                            dbc.Input(id='patient_idiosync_reCnewP', type='text', placeholder='Enter any common characteristics and/or behavior of the patient', style={'width':'100%'})
+                        ],
+                        width=12
+                    ),
+                ], className="mb-3", id = 'patient_info3'), # end of row for birthdate, idiosyncrasies, color markings
+
+                html.Br(),
+
+                dbc.Row([ #Select Veterinarian
+                        
+                    dbc.Col(html.H4("Veterinarian Assigned"), width=3),
+
+                    dbc.Col(
+                        dcc.Dropdown(
+                            id="vetlist_reCnewP",
+                            placeholder="Select Veterinarian",
+                            searchable=True,
+                            options=[],
+                            value=None,
+                        ),
+                    ),
                 ]),
-        html.Div(id="visitinputs_reCnewP"),
-    ]),
+
+                html.Br(),
+
+                dbc.Row([ #Visit Date
+                    dbc.Col(html.H4("Visit Date"), width=3),
+                    dbc.Col(
+                            dmc.DatePicker(
+                            id='visitdate_reCnewP',
+                            placeholder="Select Visit Date",
+                            value=datetime.now().date(),
+                            inputFormat='MMM DD, YYYY',
+                            dropdownType='modal',
+                            ),
+                    ),    
+                ]),
+                
+            ]),
+        ]),
     html.Br(),
     dbc.Button(
                 'Submit',
@@ -201,27 +174,133 @@ layout = html.Div([
 ])
 
 
-# SUBMISSION AND EDIT CALLBACKS
-'''
-@app.callback(
-        [
-            Output('visitrecord_alert_reCnewP','color'),
-            Output('visitrecord_alert_reCnewP','children'),
-            Output('visitrecord_alert_reCnewP','is_open'),
-            Output('visitrecord_successmodal_reCnewP','is_open'),
-        ],
-        [
-            Input('visitrecord_submit_reCnewP','n_clicks')
-        ],
-        [
-
-        ]
+#SAVE AND SUBMIT CALLBACKS
+@app.callback( # Submit Button for visit in reCreP
+    [
+        Output('visitrecord_alert_reCnewP','color'),
+        Output('visitrecord_alert_reCnewP','children'),
+        Output('visitrecord_alert_reCnewP','is_open'),
+        Output('visitrecord_successmodal_reCnewP','is_open'),
+        Output('re_clientlist_reCnewP', 'value'),
+        Output('patient_m_reCnewP','value'),
+        Output('patient_species_reCnewP','value'),
+        Output('patient_breed_reCnewP','value'),
+        Output('patient_color_reCnewP','value'),
+        Output('patient_sex_reCnewP','value'),
+        Output('patient_bd_reCnewP','value'),
+        Output('patient_idiosync_reCnewP','value'),
+        Output('vetlist_reCnewP','value'),
+        Output('visitdate_reCnewP', 'value'),
+    ],
+    [
+        Input('visitrecord_submit_reCnewP','n_clicks'),
+        Input('re_clientlist_reCnewP', 'value'),
+        Input('patient_m_reCnewP','value'),
+        Input('patient_species_reCnewP','value'),
+        Input('patient_breed_reCnewP','value'),
+        Input('patient_color_reCnewP','value'),
+        Input('patient_sex_reCnewP','value'),
+        Input('patient_bd_reCnewP','value'),
+        Input('patient_idiosync_reCnewP','value'),
+        Input('vetlist_reCnewP','value'),
+        Input('visitdate_reCnewP', 'value'),
+    ]
 )
+def visitrecord_save_reCnewP(submitbtn, client, p_name, p_species, p_breed, p_color, p_sex, p_bd, p_idiosync, vet, date):
+    ctx = dash.callback_context
+    
+    if ctx.triggered:
+        eventid = ctx.triggered[0]['prop_id'].split('.')[0]
+    
+        alert_open = False
+        modal_open = False
+        alert_color = ''
+        alert_text = ''
+        
+        if eventid == 'visitrecord_submit_reCnewP' and submitbtn:
+            
+            if not client:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Please choose a client'
+            elif not p_species:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Please enter the species of the patient'
+            elif not p_breed:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Please enter the breed of the patient'
+            elif not p_color:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Please enter the color or any color markings of the patient'
+            elif not p_sex:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Please select the breed of the patient'
+            elif not p_bd:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Please select the birth date of the patient'
+            elif not vet:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Please choose the Veterinarian assigned'
+            elif not date:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Please select the date of visit'
+            else:
+                sql = '''
+                INSERT INTO patient(
+                                    patient_m,
+                                    patient_species,
+                                    patient_color,
+                                    patient_breed,
+                                    patient_sex,
+                                    patient_bd,
+                                    patient_idiosync,
+                                    patient_delete_ind,
+                                    client_id
+                            )
+                            VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    '''
+                values = [p_name, p_species, p_color, p_breed, p_sex, p_bd, p_idiosync, False, client]
 
-def visitrecord_save(submitbtn):
-    ctx.dash.callback_context
-'''
+                db.modifydatabase(sql, values)
 
+                sql = """
+                    select max(patient_id)
+                    from patient
+                    """
+                values = []
+                df = db.querydatafromdatabase(sql,values)
+                patient = int(df.loc[0,0])
+
+                sql = '''
+                INSERT INTO visit(
+                                patient_id,
+                                vet_id,
+                                visit_delete_ind
+                            )
+                            VALUES(%s, %s, %s)
+                    '''
+                values = [patient, vet, False]
+
+                db.modifydatabase(sql, values)
+
+                modal_open = True
+            
+            if not all([client, p_species, p_color, p_breed, p_sex, p_bd, vet, date]):
+                return [alert_color, alert_text, alert_open, modal_open, client, p_name, p_species, p_breed, p_color, p_sex, p_bd, p_idiosync, vet, date]
+
+            return [alert_color, alert_text, alert_open, modal_open, None, None, None, None, None, None, None, None, None, datetime.now().date()]
+
+        else:
+            raise PreventUpdate
+    else:
+        raise PreventUpdate
 
 
 #LAYOUT CALLBACKS
@@ -1600,7 +1679,7 @@ def patientlist_reCnewP(pathname, selected_client_id, searchterm):
         sql = """ 
             SELECT 
                 patient_id,
-                COALESCE(patient_m, '') ||' - ' || COALESCE(patient_type,'') || ' (' || COALESCE(patient_color, '')|| ')' AS patient_name
+                COALESCE(patient_m, '') ||' - ' || COALESCE(patient_species,'') || ' (' || COALESCE(patient_color, '')|| ')' AS patient_name
             FROM 
                 patient
             WHERE 
@@ -1615,7 +1694,7 @@ def patientlist_reCnewP(pathname, selected_client_id, searchterm):
         if searchterm:
             sql += """ AND (
                 patient_m ILIKE %s 
-                OR patient_type ILIKE %s 
+                OR patient_species ILIKE %s 
                 OR patient_color ILIKE %s
                 );
             """
