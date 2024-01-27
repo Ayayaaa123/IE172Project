@@ -13,7 +13,7 @@ layout = html.Div(
     [
         dbc.Card(
             [
-                dbc.CardImg(src="assets/logo.webp", top=True, style={'width': '200px', 'height': 'auto', 'margin-left': '24rem', 'margin-right':'0rem'}),
+                dbc.CardImg(src="assets/logo.webp", top=True, style={'width': '200px', 'height': 'auto', 'margin': '0 auto'}),
            
                 dbc.CardBody(
                     [  
