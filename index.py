@@ -9,7 +9,7 @@ import webbrowser
 from app import app
 from apps import sidebar as sb
 from apps import login
-from apps.records import existingpatient, newpatient, viewclinicians, viewrecords, editrecords, editvaccine, editdeworm, viewusers, generatereports, editusers, home_reCreP, home_reCnewP, home_newCnewP, managedata, help, newclinician, editclinicians, newuser
+from apps.records import existingpatient, newpatient, viewclinicians, viewrecords, editrecords, editvaccine, editdeworm, viewusers, generatereports, editusers, home_visit, purpose, managedata, help, newclinician, editclinicians, newuser
 
 CONTENT_STYLE = {
     "margin-left": "18rem",
@@ -82,12 +82,10 @@ def displaypage(pathname, sessionlogout, userid):
                         returnlayout = login.layout
                         sessionlogout = True
 
-                elif pathname == "/" or pathname == "/home_reCreP":
-                    returnlayout = home_reCreP.layout
-                elif pathname == "/home_reCnewP":
-                    returnlayout = home_reCnewP.layout
-                elif pathname == "/home_newCnewP":
-                    returnlayout = home_newCnewP.layout
+                elif pathname == "/" or pathname == "/home_visit":
+                    returnlayout = home_visit.layout
+                elif pathname == "/purpose" or pathname == "/home_visit/purpose":
+                    returnlayout = purpose.layout
                 elif pathname == "/newrecord" or pathname == "/newrecord/newpatient":
                     returnlayout = newpatient.layout
                 elif pathname == "/newrecord/existingpatient":
@@ -143,4 +141,4 @@ def displaypage(pathname, sessionlogout, userid):
     
 if __name__ == "__main__":
     webbrowser.open("http://127.0.0.1:8050/", new=0, autoraise=True)
-    app.run_server(debug=True)
+    app.run_server(debug=False)

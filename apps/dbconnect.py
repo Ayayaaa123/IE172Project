@@ -36,7 +36,7 @@ def getdblocation():
 def getdblocation():
     db = psycopg2.connect(
         host='localhost',
-        database='vetmed37',
+        database='vetmed42',
         user='postgres',
         port=5432,
         password='sabinobacay080901'
@@ -65,19 +65,52 @@ def querydatafromdatabase(sql, values, dfcolumns=None):
 
 
 sql = """
-    select max(visit_id) + 1
+    select max(visit_id)
     from visit
     """
 values = []
 df = querydatafromdatabase(sql,values)
-visit_id = df.loc[0,0]
-print(visit_id)
+visit_id = int(df.loc[0,0])
 
 sql = """
-    select min(visit_id)
+    select patient_id, visit_date
     from visit
+    where visit_id = %s
     """
-values = []
-df = querydatafromdatabase(sql,values)
-visit_id = df.loc[0,0]
+values = [visit_id]
+col = ['patient_id', 'visit_date']
+df = querydatafromdatabase(sql, values, col)
+patient_id = int(df['patient_id'][0])
+visit_date = df['visit_date'][0]
+
 print(visit_id)
+print(patient_id)
+print(visit_date)
+
+sql = """
+    select problem_id
+    from visit
+    where visit_id = %s
+    """
+values = [visit_id]
+df = querydatafromdatabase(sql, values)
+problem_id = df.loc[0][0]
+if problem_id == None:
+    problem_id = 0
+else:
+    problem_id = int(problem_id)
+print(problem_id)
+
+sql = """
+    select note_have_been_tested
+    from note
+    where problem_id = %s
+    """
+values = [2]
+cols = ['result_id']
+df = querydatafromdatabase(sql, values, cols)
+for result in df['result_id']:
+    if result:
+        print("Yas")
+    else:
+        print('Naur')
