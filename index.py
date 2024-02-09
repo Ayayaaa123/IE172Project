@@ -9,7 +9,7 @@ import webbrowser
 from app import app
 from apps import sidebar as sb
 from apps import login
-from apps.records import existingpatient, newpatient, viewclinicians, viewrecords, editrecords, editvaccine, editdeworm, viewusers, generatereports, editusers, home_visit, purpose, managedata, help, newclinician, editclinicians, newuser
+from apps.records import clinicalname, labname, existingpatient, newpatient, viewclinicians, viewrecords, editrecords, editvaccine, editdeworm, viewusers, generatereports, editusers, home_visit, purpose, managedata, help, vaccname, dewormname, newclinician, editclinicians, newuser
 
 CONTENT_STYLE = {
     "margin-left": "18rem",
@@ -112,6 +112,14 @@ def displaypage(pathname, sessionlogout, userid):
                     returnlayout = viewclinicians.layout
                 elif pathname == "/editclinician":
                     returnlayout = editclinicians.layout
+                elif pathname == "/editclinicalexam":
+                    returnlayout = clinicalname.layout
+                elif pathname == "/editlabexamtype":
+                    returnlayout = labname.layout
+                elif pathname == "/editvaccinename":
+                    returnlayout = vaccname.layout
+                elif pathname == "/editdewormtype":
+                    returnlayout = dewormname.layout        
                 elif pathname == "/newreport":
                     returnlayout = generatereports.layout
                 elif pathname == "/help":
