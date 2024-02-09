@@ -337,37 +337,48 @@ def managedata_clinicallist(pathname, searchterm, n_clicks, new_clinical):
 
         sql = """
             SELECT
-                clinical_exam_type_m
+                clinical_exam_type_m,
+                clinical_exam_type_id
             FROM clinical_exam_type
             WHERE NOT clinical_exam_type_delete_ind
         """
         values = []
-        cols = ['Clinical Exam Type']
+        cols = ['Clinical Exam Type', 'ID']
 
 
         if searchterm:
             sql += """ AND (
-                clinical_exam_type_m LIKE %s
+                clinical_exam_type_m ILIKE %s
                 );
                 """
             values = [f"%{searchterm}%"]
-
-
-
         df = db.querydatafromdatabase(sql, values, cols)
 
 
-        df = df[['Clinical Exam Type']]
+        if df.shape:
+            buttons = []
+            for clinical_exam_type_id in df['ID']:
+                buttons += [
+                    html.Div(
+                        dbc.Button('Edit', href=f'/editclinicalexam?mode=edit&id={clinical_exam_type_id}', size='sm', color='success'),
+                        style = {'text-align':'center'}
+                    )
+                ]
+            df['Action'] = buttons
+            df = df[['Clinical Exam Type', 'Action']]
 
 
-        table = dbc.Table.from_dataframe(df, striped=True, bordered=True, hover=True, size='sm',
-                                         style={'text-align': 'center'})
-        return [table]
+            table = dbc.Table.from_dataframe(df, striped=True, bordered=True, hover=True, size='sm',
+                                            style={'text-align': 'center'})
+            return [table]
 
 
     else:
         raise PreventUpdate
-    
+
+
+
+## LAB EXAM TYPE
 @app.callback(
     [
         Output('managedata_labexamlist', 'children'),
@@ -382,7 +393,7 @@ def managedata_clinicallist(pathname, searchterm, n_clicks, new_clinical):
     ]
 )
 
-def managedata_clinicallist(pathname, searchterm, n_clicks, new_labexam):
+def managedata_labexamlist(pathname, searchterm, n_clicks, new_labexam):
     if pathname == '/managedata':
         # Obtain records from DB through SQL
         if n_clicks > 0 and new_labexam:
@@ -396,12 +407,13 @@ def managedata_clinicallist(pathname, searchterm, n_clicks, new_labexam):
 
         sql = """
             SELECT
-                lab_exam_type_m
+                lab_exam_type_m, 
+                lab_exam_type_id
             FROM lab_exam_type
             WHERE NOT lab_exam_type_delete_ind
         """
         values = []
-        cols = ['Laboratory Exam Type']
+        cols = ['Laboratory Exam Type', 'ID']
 
 
         if searchterm:
@@ -410,13 +422,21 @@ def managedata_clinicallist(pathname, searchterm, n_clicks, new_labexam):
                 );
                 """
             values = [f"%{searchterm}%"]
-
-
-
         df = db.querydatafromdatabase(sql, values, cols)
 
 
-        df = df[['Laboratory Exam Type']]
+
+        if df.shape:
+            buttons = []
+            for lab_exam_type_id in df['ID']:
+                buttons += [
+                    html.Div(
+                        dbc.Button('Edit', href=f'/editlabexamtype?mode=edit&id={lab_exam_type_id}', size='sm', color='success'),
+                        style = {'text-align':'center'}
+                    )
+                ]
+            df['Action'] = buttons
+            df = df[['Laboratory Exam Type', 'Action']]
 
 
         table = dbc.Table.from_dataframe(df, striped=True, bordered=True, hover=True, size='sm',
@@ -426,6 +446,9 @@ def managedata_clinicallist(pathname, searchterm, n_clicks, new_labexam):
 
     else:
         raise PreventUpdate
+
+
+# VACCINE LIST
 
 @app.callback(
     [
@@ -454,12 +477,13 @@ def managedata_vaccinelist(pathname, searchterm, n_clicks, new_vaccine):
 
         sql = """
             SELECT
-                vm.vacc_m
+                vm.vacc_m,
+                vm.vacc_m_id
             FROM vacc_m vm
             WHERE NOT vm.vacc_m_delete_ind
         """
         values = []
-        cols = ['Vaccine Name']
+        cols = ['Vaccine Name', 'ID']
 
 
         if searchterm:
@@ -468,12 +492,20 @@ def managedata_vaccinelist(pathname, searchterm, n_clicks, new_vaccine):
                 );
                 """
             values = [f"%{searchterm}%"]
-
-
         df = db.querydatafromdatabase(sql, values, cols)
 
-
-        df = df[['Vaccine Name']]
+        
+        if df.shape:
+            buttons = []
+            for vacc__m_id in df['ID']:
+                buttons += [
+                    html.Div(
+                        dbc.Button('Edit', href=f'/editvaccinename?mode=edit&id={vacc__m_id}', size='sm', color='success'),
+                        style = {'text-align':'center'}
+                    )
+                ]
+            df['Action'] = buttons
+            df = df[['Vaccine Name', 'Action']]
 
 
         table = dbc.Table.from_dataframe(df, striped=True, bordered=True, hover=True, size='sm',
@@ -484,6 +516,9 @@ def managedata_vaccinelist(pathname, searchterm, n_clicks, new_vaccine):
     else:
         raise PreventUpdate
     
+
+
+# DEWORM LIST
 
 @app.callback(
     [
@@ -512,12 +547,13 @@ def managedata_dewormlist(pathname, searchterm, n_clicks, new_deworm):
 
         sql = """
             SELECT
-                dwm.deworm_m
+                dwm.deworm_m,
+                dwm.deworm_m_id
             FROM deworm_m dwm
             WHERE NOT dwm.deworm_m_delete_ind
         """
         values = []
-        cols = ['Deworming Medicine Name']
+        cols = ['Deworming Medicine Name', 'ID']
 
 
         if searchterm:
@@ -526,13 +562,19 @@ def managedata_dewormlist(pathname, searchterm, n_clicks, new_deworm):
                 );
                 """
             values = [f"%{searchterm}%"]
-
-
         df = db.querydatafromdatabase(sql, values, cols)
 
-
-        df = df[['Deworming Medicine Name']]
-
+        if df.shape:
+            buttons = []
+            for deworm_m_id in df['ID']:
+                buttons += [
+                    html.Div(
+                        dbc.Button('Edit', href=f'/editdewormtype?mode=edit&id={deworm_m_id}', size='sm', color='success'),
+                        style = {'text-align':'center'}
+                    )
+                ]
+            df['Action'] = buttons
+            df = df[['Deworming Medicine Name', 'Action']]
 
         table = dbc.Table.from_dataframe(df, striped=True, bordered=True, hover=True, size='sm',
                                          style={'text-align': 'center'})
