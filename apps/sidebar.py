@@ -87,23 +87,23 @@ sidebar = dbc.Nav(
         #         dbc.NavLink("Manage Data", href="/managedata", active="exact", className="active-link", style=subelement_style),
         #     ]
         # ),
-         dbc. Accordion(
-            [
-                dbc.AccordionItem( #indent needs to be fixed or uncomment ln 10889 in bootstrap.css
-                    [
-                        dbc.NavLink("New User", href="/newuser", active="exact", className="active-link", style=subelement_style),
-                        dbc.NavLink("View Users", href="/viewuser", active="exact", className="active-link", style=subelement_style),
-                    ],
-                    title="Users",
-                    id="add-new-link",
-                ),
-            ],
-            className="custom-accordion",
-            start_collapsed=True,
-        ),
+        #  dbc. Accordion(
+        #     [
+        #         dbc.AccordionItem( #indent needs to be fixed or uncomment ln 10889 in bootstrap.css
+        #             [
+        #                 dbc.NavLink("New User", href="/newuser", active="exact", className="active-link", style=subelement_style),
+        #                 dbc.NavLink("View Users", href="/viewuser", active="exact", className="active-link", style=subelement_style),
+        #             ],
+        #             title="Users",
+        #             id="add-new-link",
+        #         ),
+        #     ],
+        #     className="custom-accordion",
+        #     start_collapsed=True,
+        # ),
 
-
-
+        
+        dbc.NavLink("View Users", href="/viewuser", active="exact", className="active-link", style=subelement_style),
         dbc. Accordion(
             [
                 dbc.AccordionItem( #indent needs to be fixed or uncomment ln 10889 in bootstrap.css

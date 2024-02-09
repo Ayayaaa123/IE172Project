@@ -22,15 +22,15 @@ layout = html.Div(
                 ),
                 dbc.CardBody(
                     [
-                        html.Div( #add new user button
-                            [
-                                dbc.Button(
-                                    "Add New User Profile",
-                                    color="secondary",
-                                    href='/newuser'
-                                )
-                            ]
-                        ),
+                        # html.Div( #add new user button
+                        #     [
+                        #         dbc.Button(
+                        #             "Add New User Profile",
+                        #             color="secondary",
+                        #             href='/newuser'
+                        #         )
+                        #     ]
+                        # ),
                         html.Hr(),
                         html.Div( # create section to show list of records
                             [
