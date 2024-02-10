@@ -238,7 +238,7 @@ layout = html.Div(
         dbc.Modal(children = [ # successful saving of client profile
             dbc.ModalHeader(html.H4('Client Profile Recorded Successfully!', style={'text-align': 'center', 'width': '100%'}), close_button = False),
             dbc.ModalFooter([
-                dbc.Button("Close", id = 'editprofile_client_close_successmodal', className = "btn btn-primary ms-auto"),
+                dbc.Button("Close", id = 'editprofile_client_close_successmodal', className = "btn btn-primary ms-auto", href=""),
                 #dbc.Button("Close", href = "/", id = "close_client_successmodal", className = "ms-auto"),
             ]),
         ], centered = True, id = 'editprofile_client_successmodal', backdrop = 'static', is_open = False, keyboard = False),
@@ -321,7 +321,7 @@ layout = html.Div(
         dbc.Modal(children = [ # successful saving of patient profile
             dbc.ModalHeader(html.H4('Patient Profile Recorded Successfully!', style={'text-align': 'center', 'width': '100%'}), close_button = False),
             dbc.ModalFooter([
-                dbc.Button("Close", id = 'editprofile_patient_close_successmodal', className = "btn btn-primary ms-auto"),
+                dbc.Button("Close", id = 'editprofile_patient_close_successmodal', className = "btn btn-primary ms-auto", href=""),
                 #dbc.Button("Close", id = "close_patient_successmodal", className = "ms-auto"),
             ]),
         ], centered = True, id = 'editprofile_patient_successmodal', backdrop = 'static', is_open = False, keyboard = False),
@@ -662,6 +662,7 @@ def clientmodal_initial_values(url_search, click):
             Output('editprofile_clientprofile_alert', 'color'),
             Output('editprofile_clientprofile_alert', 'children'),
             Output('editprofile_clientprofile_alert', 'is_open'),
+            Output('editprofile_client_close_successmodal', 'href')
         ],
         [
             Input('editprofile_client_submit', 'n_clicks'),
@@ -757,7 +758,10 @@ def editprofile_client_save(submitbtn, url_search, fn, ln, mi, sf, cn, email, ho
                     values = [ln, fn, mi, sf, email, cn, house_no, street, brgy, city, region, client_id]
 
                     db.modifydatabase(sql, values)
-                return [alert_color, alert_text, alert_open]
+
+                href = f'/editrecord?mode=edit&id={patient_id}&refresh={time.time()}'
+
+                return [alert_color, alert_text, alert_open, href]
             else:
                 raise PreventUpdate
         else:
@@ -876,6 +880,7 @@ def patientmodal_initial_values(url_search, click):
             Output('editprofile_patientprofile_alert', 'color'),
             Output('editprofile_patientprofile_alert', 'children'),
             Output('editprofile_patientprofile_alert', 'is_open'),
+            Output('editprofile_patient_close_successmodal', 'href')
         ],
         [
             Input('editprofile_patient_submit', 'n_clicks'),
@@ -944,7 +949,9 @@ def editprofile_patient_save(submitbtn, url_search, name, species, breed, color,
 
                     db.modifydatabase(sql, values)
 
-                return [alert_color, alert_text, alert_open]
+                href = f'/editrecord?mode=edit&id={patient_id}&refresh={time.time()}'
+
+                return [alert_color, alert_text, alert_open, href]
             
             else:
                 raise PreventUpdate
