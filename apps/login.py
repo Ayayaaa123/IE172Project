@@ -18,7 +18,7 @@ layout = html.Div(
                 dbc.CardBody(
                     [  
                         html.Hr(),
-                        html.H2('Please Login', style = {'font size': '24px'}),
+                        html.H2('Please Login', style = {'font ze': '24px'}),
                         html.Hr(),
                         dbc.Alert('Username or password is incorrect.', color="danger", id='login_alert',
                                 is_open=False),

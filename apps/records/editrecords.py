@@ -11,7 +11,8 @@ from app import app
 from apps import dbconnect as db
 import datetime
 from dash import ALL, MATCH
-from urllib.parse import urlparse, parse_qs
+from urllib.parse import urlparse, parse_qs, urlencode
+import time
 
 
 layout = html.Div(
@@ -155,6 +156,175 @@ layout = html.Div(
                 )
             ]
         ),
+        dbc.Modal([
+            dbc.ModalHeader(dbc.ModalTitle("Edit Client Profile", style={'text-align': 'center', 'width': '100%'})),
+            dbc.ModalBody([
+                dbc.Alert(id = "editprofile_clientprofile_alert", is_open = False),
+                dbc.InputGroup(
+                    [
+                        dbc.InputGroupText("First Name", style={"width": "17%"}),
+                        dbc.Input(id='editprofile_client_fn', type='text', placeholder="e.g. Juan"),
+                    ],
+                    className="mb-2",
+                ),
+
+                dbc.InputGroup(
+                    [
+                        dbc.InputGroupText("Last Name", style={"width": "17%"}),
+                        dbc.Input(id='editprofile_client_ln', type='text', placeholder="e.g. Dela Cruz"),
+                    ],
+                    className="mb-2",
+                ),
+
+                dbc.InputGroup(
+                    [
+                        dbc.InputGroupText("Middle Initial", style={"width": "17%"}),
+                        dbc.Input(id='editprofile_client_mi', type='text', placeholder="e.g. M."),
+                        dbc.InputGroupText("Suffix", style={"width": "12%"}),
+                        dbc.Input(id='editprofile_client_suffix', type='text', placeholder="e.g. Jr."),
+                    ],
+                    className="mb-4",
+                ),
+
+                dbc.InputGroup(
+                    [
+                        dbc.InputGroupText("Contact No.", style={"width": "17%"}),
+                        dbc.Input(id='editprofile_client_contact_no', type='text', placeholder="e.g. 09123456789"),
+                    ],
+                    className="mb-2",
+                ),
+
+                dbc.InputGroup(
+                    [
+                        dbc.InputGroupText("Email", style={"width": "17%"}),
+                        dbc.Input(id='editprofile_client_email', type='text', placeholder="e.g. Juan.DelaCruz@example.com"),
+                    ],
+                    className="mb-4",
+                ),
+
+                dbc.InputGroup(
+                    [
+                        dbc.InputGroupText("House No.", style={"width": "17%"}),
+                        dbc.Input(id='editprofile_client_house_no', type='text', placeholder="e.g. No. 1A (or any landmark)"),
+                    ],
+                    className="mb-2",
+                ),
+
+                dbc.InputGroup(
+                    [
+                        dbc.InputGroupText("Street", style={"width": "17%"}),
+                        dbc.Input(id='editprofile_client_street', type='text', placeholder="e.g. P. Vargas St."),
+                        dbc.InputGroupText("Barangay", style={"width": "12%"}),
+                        dbc.Input(id='editprofile_client_barangay', type='text', placeholder="e.g. Krus na Ligas"),
+                    ],
+                    className="mb-2",
+                ),
+
+                dbc.InputGroup(
+                    [
+                        dbc.InputGroupText("City", style={"width": "17%"}),
+                        dbc.Input(id='editprofile_client_city', type='text', placeholder="e.g. Pasay City"),
+                        dbc.InputGroupText("Region", style={"width": "12%"}),
+                        dbc.Input(id='editprofile_client_region', type='text', placeholder="e.g. Metro Manila"),
+                    ],
+                    #className="mb-3",
+                ),
+            ]),
+            dbc.ModalFooter([
+                dbc.Button("Submit Client Details", id = "editprofile_client_submit", className = "ms-auto"),
+            ]),
+        ], centered = True, id = "editprofile_client_modal", is_open = False, backdrop = "static", size = 'lg'),
+
+        dbc.Modal(children = [ # successful saving of client profile
+            dbc.ModalHeader(html.H4('Client Profile Recorded Successfully!', style={'text-align': 'center', 'width': '100%'}), close_button = False),
+            dbc.ModalFooter([
+                dbc.Button("Close", id = 'editprofile_client_close_successmodal', className = "btn btn-primary ms-auto"),
+                #dbc.Button("Close", href = "/", id = "close_client_successmodal", className = "ms-auto"),
+            ]),
+        ], centered = True, id = 'editprofile_client_successmodal', backdrop = 'static', is_open = False, keyboard = False),
+
+        # modal for creating patient profile
+        dbc.Modal([
+            dbc.ModalHeader(dbc.ModalTitle("Edit Patient Profile", style={'text-align': 'center', 'width': '100%'})),
+            dbc.ModalBody([
+                dbc.Alert(id = "editprofile_patientprofile_alert", is_open = False),
+                dbc.InputGroup(
+                    [
+                        dbc.InputGroupText("Name", style={"width": "17%"}),
+                        dbc.Input(id='editprofile_patient_m', type='text', placeholder="e.g. Bantay (leave blank if none)"),
+                    ],
+                    className="mb-2",
+                ),
+
+                dbc.InputGroup(
+                    [
+                        dbc.InputGroupText("Species", style={"width": "17%"}),
+                        dbc.Input(id='editprofile_patient_species', type='text', placeholder="e.g. Dog"),
+                    ],
+                    className="mb-2",
+                ),
+
+                dbc.InputGroup(
+                    [
+                        dbc.InputGroupText("Breed", style={"width": "17%"}),
+                        dbc.Input(id='editprofile_patient_breed', type='text', placeholder="e.g. Bulldog"),
+                    ],
+                    className="mb-2",
+                ),
+
+                dbc.InputGroup(
+                    [
+                        dbc.InputGroupText("Color Marks", style={"width": "17%"}),
+                        dbc.Input(id='editprofile_patient_color', type='text', placeholder="e.g. White or With black spots"),
+                    ],
+                    className="mb-2",
+                ),
+
+                dbc.InputGroup(
+                    [
+                        dbc.InputGroupText("Sex", style={"width": "19%"}),                            
+                        dbc.InputGroupText(dcc.Dropdown(
+                            id='editprofile_patient_sex',
+                            options=[
+                                {'label':'Male', 'value':'Male'},
+                                {'label':'Female', 'value':'Female'},
+                            ],
+                            placeholder='Select Sex',
+                            style = {"width": "100%"}
+                            ), style = {"width": "32%"}
+                        ),
+                        dbc.InputGroupText("Birth Date", style={"width": "17%"}),
+                        dbc.InputGroupText(dmc.DatePicker(
+                            id='editprofile_patient_bd',
+                            dropdownType='modal',
+                            inputFormat='MMM DD, YYYY',
+                            placeholder = "Choose Date"
+                            ), style = {"width":"32%"}
+                        ),
+                    ],
+                    className="mb-2",
+                ),
+
+                dbc.InputGroup(
+                    [
+                        dbc.InputGroupText("Idiosyncrasies", style={"width": "17%"}),
+                        dbc.Input(id='editprofile_patient_idiosync', type='text', placeholder="e.g. Likes morning walks"),
+                    ],
+                    #className="mb-3",
+                ),
+            ]),
+            dbc.ModalFooter([
+                dbc.Button("Submit Patient Details", id = "editprofile_patient_submit", className = "ms-auto"),
+            ]),
+        ], centered = True, id = "editprofile_patient_modal", is_open = False, backdrop = "static", size = 'lg'),
+
+        dbc.Modal(children = [ # successful saving of patient profile
+            dbc.ModalHeader(html.H4('Patient Profile Recorded Successfully!', style={'text-align': 'center', 'width': '100%'}), close_button = False),
+            dbc.ModalFooter([
+                dbc.Button("Close", id = 'editprofile_patient_close_successmodal', className = "btn btn-primary ms-auto"),
+                #dbc.Button("Close", id = "close_patient_successmodal", className = "ms-auto"),
+            ]),
+        ], centered = True, id = 'editprofile_patient_successmodal', backdrop = 'static', is_open = False, keyboard = False),
     ]
 )
 
@@ -187,7 +357,7 @@ def initial_values(url_search):
         patient_id = query_patient_id['id'][0]
         sql = """
             SELECT 
-                client_fn || ' ' || COALESCE(client_mi, '') || '. ' || client_ln || ' ' || COALESCE(client_suffix, '') AS client_name,
+                client_fn || ' ' || COALESCE(client_mi, '') || ' ' || client_ln || ' ' || COALESCE(client_suffix, '') AS client_name,
                 client_email, 
                 client_cn, 
                 COALESCE(client_house_no || ' ', '') || client_street || ' ' || client_barangay AS client_address1, 
@@ -367,3 +537,436 @@ def problem_table(url_search):
 
     else:
         raise PreventUpdate
+    
+
+@app.callback( #opens and close form and success modal for creating client profile
+        [
+            Output('editprofile_client_modal', 'is_open'),
+            Output('editprofile_client_successmodal', 'is_open'),
+        ],
+        [
+            Input('editrecords_clientdetails', 'n_clicks'),
+            Input('editprofile_client_submit','n_clicks'),
+            Input('editprofile_client_close_successmodal','n_clicks'),
+        ],
+        [
+            State('editprofile_client_modal', 'is_open'),
+            State('editprofile_client_successmodal', 'is_open'),
+            State('editprofile_client_fn', 'value'),
+            State('editprofile_client_ln', 'value'),
+            State('editprofile_client_contact_no', 'value'),
+            State('editprofile_client_email', 'value'),
+            State('editprofile_client_street', 'value'),
+            State('editprofile_client_barangay', 'value'),
+            State('editprofile_client_city', 'value'),
+            State('editprofile_client_region', 'value'),
+        ]
+)
+def editprofile_client_modal(create, submit, close, form, success, fn, ln, cn, email, street, brgy, city, region):
+    ctx = dash.callback_context
+
+    if ctx.triggered:
+        eventid = ctx.triggered[0]['prop_id'].split('.')[0]
+
+        if eventid == "editrecords_clientdetails" and create:
+            return [not form, success]
+            
+        if eventid == 'editprofile_client_submit' and submit and all([fn, ln, cn, email, street, brgy, city, region]):
+            return [not form, not success]
+            
+        if eventid == 'editprofile_client_close_successmodal' and close:
+            return [form, not success]
+            
+    return [form, success]
+
+
+
+@app.callback( #modal initial values
+    [
+        Output('editprofile_client_fn', 'value'),
+        Output('editprofile_client_ln', 'value'),
+        Output('editprofile_client_mi', 'value'),
+        Output('editprofile_client_suffix', 'value'),
+        Output('editprofile_client_contact_no', 'value'),
+        Output('editprofile_client_email', 'value'),
+        Output('editprofile_client_house_no', 'value'),
+        Output('editprofile_client_street', 'value'),
+        Output('editprofile_client_barangay', 'value'),
+        Output('editprofile_client_city', 'value'),
+        Output('editprofile_client_region', 'value'),
+    ],
+    [
+        Input('url', 'search'),
+        Input('editrecords_clientdetails', 'n_clicks'),
+    ],
+)
+def clientmodal_initial_values(url_search, click):
+    ctx = dash.callback_context
+    parsed = urlparse(url_search)
+    query_patient_id = parse_qs(parsed.query)
+
+    if 'id' in query_patient_id:
+        patient_id = query_patient_id['id'][0]
+
+        if ctx.triggered:
+            eventid = ctx.triggered[0]['prop_id'].split('.')[0]
+            if eventid == 'editrecords_clientdetails' and click:
+                sql = """
+                    SELECT 
+                        client_fn,
+                        client_ln,
+                        client_mi,
+                        client_suffix, 
+                        client_cn, 
+                        client_email,
+                        client_house_no,
+                        client_street,
+                        client_barangay,
+                        client_city,
+                        client_region
+                    FROM 
+                        patient
+                    INNER JOIN client ON patient.client_id = client.client_id
+                    WHERE patient_id = %s
+                """
+                values = [patient_id]
+                col = ['client_fn', 'client_ln', 'client_mi', 'client_suffix', 'client_cn', 'client_email', 'client_house_no', 'client_street', 'client_barangay', 'client_city', 'client_region']
+                    
+                df = db.querydatafromdatabase(sql, values, col)
+                    
+                client_fn = df['client_fn'][0]
+                client_ln = df['client_ln'][0]
+                client_mi = df['client_mi'][0]
+                client_suffix = df['client_suffix'][0]
+                client_cn = df['client_cn'][0]
+                client_email = df['client_email'][0]
+                client_house_no = df['client_house_no'][0]
+                client_street = df['client_street'][0]
+                client_barangay = df['client_barangay'][0]
+                client_city = df['client_city'][0]
+                client_region = df['client_region'][0]
+
+                return [client_fn, client_ln, client_mi, client_suffix, client_cn, client_email, client_house_no, client_street, client_barangay, client_city, client_region]
+            else:
+                raise PreventUpdate
+        else:
+            raise PreventUpdate
+    else:
+        raise PreventUpdate
+    
+
+
+
+@app.callback( # Submit Button for client profile
+        [
+            Output('editprofile_clientprofile_alert', 'color'),
+            Output('editprofile_clientprofile_alert', 'children'),
+            Output('editprofile_clientprofile_alert', 'is_open'),
+            Output('url', 'search')
+        ],
+        [
+            Input('url', 'search'),
+            Input('editprofile_client_submit', 'n_clicks'),
+            Input('editprofile_client_fn', 'value'),
+            Input('editprofile_client_ln', 'value'),
+            Input('editprofile_client_mi', 'value'),
+            Input('editprofile_client_suffix', 'value'),
+            Input('editprofile_client_contact_no', 'value'),
+            Input('editprofile_client_email', 'value'),
+            Input('editprofile_client_house_no', 'value'),
+            Input('editprofile_client_street', 'value'),
+            Input('editprofile_client_barangay', 'value'),
+            Input('editprofile_client_city', 'value'),
+            Input('editprofile_client_region', 'value'),
+        ],
+)
+def editprofile_client_save(url_search, submitbtn, fn, ln, mi, sf, cn, email, house_no, street, brgy, city, region):
+    ctx = dash.callback_context
+    parsed = urlparse(url_search)
+    query_patient_id = parse_qs(parsed.query)
+
+    if 'id' in query_patient_id:
+        patient_id = query_patient_id['id'][0]
+        
+        if ctx.triggered:
+            eventid = ctx.triggered[0]['prop_id'].split('.')[0]
+                
+            alert_open = False
+            alert_color = ''
+            alert_text = ''
+
+            if eventid == 'editprofile_client_submit' and submitbtn:
+
+                if not fn:
+                    alert_open = True
+                    alert_color = 'danger'
+                    alert_text = "Please enter client's first name"
+                elif not ln:
+                    alert_open = True
+                    alert_color = 'danger'
+                    alert_text = "Please enter client's last name"
+                elif not cn:
+                    alert_open = True
+                    alert_color = 'danger'
+                    alert_text = "Please enter client's contact number"
+                elif not email:
+                    alert_open = True
+                    alert_color = 'danger'
+                    alert_text = "Please enter client's email address"
+                elif not street:
+                    alert_open = True
+                    alert_color = 'danger'
+                    alert_text = "Please enter client's street address"
+                elif not brgy:
+                    alert_open = True
+                    alert_color = 'danger'
+                    alert_text = "Please enter client's barangay"
+                elif not city:
+                    alert_open = True
+                    alert_color = 'danger'
+                    alert_text = "Please enter the city of client's address"
+                elif not region:
+                    alert_open = True
+                    alert_color = 'danger'
+                    alert_text = "Please enter the region of client's address"
+                else:
+                    sql = '''
+                        SELECT client.client_id
+                        FROM patient
+                        INNER JOIN client ON patient.client_id = client.client_id
+                        WHERE patient_id = %s
+                    '''
+                    values = [patient_id]
+                    col = ['client_id']
+                    df = db.querydatafromdatabase(sql, values, col)
+                    client_id = int(df['client_id'][0])
+
+
+                    sql = '''
+                        UPDATE client 
+                        SET
+                            client_ln = %s,
+                            client_fn = %s,
+                            client_mi = %s,
+                            client_suffix = %s,
+                            client_email = %s,
+                            client_cn = %s,
+                            client_house_no = %s,
+                            client_street = %s,
+                            client_barangay = %s,
+                            client_city = %s,
+                            client_region = %s
+                        WHERE client_id = %s
+                    '''
+                    values = [ln, fn, mi, sf, email, cn, house_no, street, brgy, city, region, client_id]
+
+                    db.modifydatabase(sql, values)
+                
+                query_patient_id['refresh'] = [str(time.time())]
+                updated_query_string = urlencode(query_patient_id, doseq=True)
+                updated_url_search = parsed._replace(query=updated_query_string).geturl()
+
+                return [alert_color, alert_text, alert_open, updated_url_search]
+            else:
+                raise PreventUpdate
+        else:
+            raise PreventUpdate
+    else:
+        raise PreventUpdate
+    
+
+
+
+@app.callback( #opens and close form and success modal for creating patient profile
+        [
+            Output('editprofile_patient_modal', 'is_open'),
+            Output('editprofile_patient_successmodal', 'is_open'),
+        ],
+        [
+            Input('editrecords_patientdetails', 'n_clicks'),
+            Input('editprofile_patient_submit','n_clicks'),
+            Input('editprofile_patient_close_successmodal','n_clicks'),
+        ],
+        [
+            State('editprofile_patient_modal', 'is_open'),
+            State('editprofile_patient_successmodal', 'is_open'),
+            State('editprofile_patient_species', 'value'),
+            State('editprofile_patient_breed', 'value'),
+            State('editprofile_patient_color', 'value'),
+            State('editprofile_patient_sex', 'value'),
+            State('editprofile_patient_bd', 'value'),
+            State('editprofile_patient_idiosync', 'value'),
+        ]
+)
+def editprofile_patient_modal(create, submit, close, form, success, species, breed, color, sex, bd, idiosync):
+    ctx = dash.callback_context
+
+    if ctx.triggered:
+        eventid = ctx.triggered[0]['prop_id'].split('.')[0]
+
+        if eventid == "editrecords_patientdetails" and create:
+            return [not form, success]
+        
+        if eventid == "editprofile_patient_submit" and submit and all([species, color, breed, sex, bd, idiosync]):
+            return [not form, not success]
+        
+        if eventid == "editprofile_patient_close_successmodal" and close:
+            return [form, not success]
+           
+    return [form, success]
+
+
+
+@app.callback( #modal initial values
+    [
+        Output('editprofile_patient_m', 'value'),
+        Output('editprofile_patient_species', 'value'),
+        Output('editprofile_patient_breed', 'value'),
+        Output('editprofile_patient_color', 'value'),
+        Output('editprofile_patient_sex', 'value'),
+        Output('editprofile_patient_bd', 'value'),
+        Output('editprofile_patient_idiosync', 'value'),
+    ],
+    [
+        Input('url', 'search'),
+        Input('editrecords_patientdetails', 'n_clicks'),
+    ],
+)
+def patientmodal_initial_values(url_search, click):
+    ctx = dash.callback_context
+    parsed = urlparse(url_search)
+    query_patient_id = parse_qs(parsed.query)
+
+    if 'id' in query_patient_id:
+        patient_id = query_patient_id['id'][0]
+
+        if ctx.triggered:
+            eventid = ctx.triggered[0]['prop_id'].split('.')[0]
+            if eventid == 'editrecords_patientdetails' and click:
+                sql = """
+                    SELECT 
+                        patient_m,
+                        patient_species,
+                        patient_breed,
+                        patient_color,
+                        patient_sex,
+                        patient_bd,
+                        patient_idiosync
+                    FROM 
+                        patient
+                    WHERE patient_id = %s
+                """
+                values = [patient_id]
+                col = ['patient_m', 'patient_species', 'patient_breed', 'patient_color', 'patient_sex', 'patient_bd', 'patient_idiosync']
+                    
+                df = db.querydatafromdatabase(sql, values, col)
+                    
+                patient_m = df['patient_m'][0]
+                patient_species = df['patient_species'][0]
+                patient_breed = df['patient_breed'][0]
+                patient_color = df['patient_color'][0]
+                patient_sex = df['patient_sex'][0]
+                patient_bd = df['patient_bd'][0]
+                patient_idiosync = df['patient_idiosync'][0]
+
+                return [patient_m, patient_species, patient_breed, patient_color, patient_sex, patient_bd, patient_idiosync]
+            else:
+                raise PreventUpdate
+        else:
+            raise PreventUpdate
+    else:
+        raise PreventUpdate
+    
+
+
+
+# @app.callback( # Submit Button for patient profile
+#         [
+#             Output('editprofile_patientprofile_alert', 'color'),
+#             Output('editprofile_patientprofile_alert', 'children'),
+#             Output('editprofile_patientprofile_alert', 'is_open'),
+#             Output('url', 'search')
+#         ],
+#         [
+#             Input('url', 'search'),
+#             Input('editprofile_patient_submit', 'n_clicks'),
+#             Input('editprofile_patient_m', 'value'),
+#             Input('editprofile_patient_species', 'value'),
+#             Input('editprofile_patient_breed', 'value'),
+#             Input('editprofile_patient_color', 'value'),
+#             Input('editprofile_patient_sex', 'value'),
+#             Input('editprofile_patient_bd', 'value'),
+#             Input('editprofile_patient_idiosync', 'value'),
+#         ],
+# )
+# def editprofile_patient_save(url_search, submitbtn, name, species, breed, color, sex, bd, idiosync):
+#     ctx = dash.callback_context
+#     parsed = urlparse(url_search)
+#     query_patient_id = parse_qs(parsed.query)
+
+#     if 'id' in query_patient_id:
+#         patient_id = query_patient_id['id'][0]
+        
+#         if ctx.triggered:
+#             eventid = ctx.triggered[0]['prop_id'].split('.')[0]
+                
+#             alert_open = False
+#             alert_color = ''
+#             alert_text = ''
+
+#             if eventid == 'editprofile_patient_submit' and submitbtn:
+
+#                 if not species:
+#                     alert_open = True
+#                     alert_color = 'danger'
+#                     alert_text = 'Please indicate the species of the patient'
+#                 elif not breed:
+#                     alert_open = True
+#                     alert_color = 'danger'
+#                     alert_text = 'Please indicate the breed of the patient'
+#                 elif not color:
+#                     alert_open = True
+#                     alert_color = 'danger'
+#                     alert_text = 'Please describe the color or any color marks on the patient'
+#                 elif not sex:
+#                     alert_open = True
+#                     alert_color = 'danger'
+#                     alert_text = 'Please indicate the sex of the patient'
+#                 elif not bd:
+#                     alert_open = True
+#                     alert_color = 'danger'
+#                     alert_text = 'Please enter the birth date of the patient'
+#                 elif not idiosync:
+#                     alert_open = True
+#                     alert_color = 'danger'
+#                     alert_text = 'Please describe any behavior or characteristic of the patient'
+#                 else:
+#                     sql = '''
+#                         UPDATE patient 
+#                         SET
+#                             patient_m = %s,
+#                             patient_species = %s,
+#                             patient_breed = %s,
+#                             patient_color = %s,
+#                             patient_sex = %s,
+#                             patient_bd = %s,
+#                             patient_idiosync = %s
+#                         WHERE patient_id = %s
+#                     '''
+#                     values = [name, species, breed, color, sex, bd, idiosync, patient_id]
+
+#                     db.modifydatabase(sql, values)
+                
+#                 query_patient_id['refresh'] = [str(time.time())]
+#                 updated_query_string = urlencode(query_patient_id, doseq=True)
+#                 updated_url_search = parsed._replace(query=updated_query_string).geturl()
+
+#                 return [alert_color, alert_text, alert_open, updated_url_search]
+            
+#             else:
+#                 raise PreventUpdate
+#         else:
+#             raise PreventUpdate
+#     else:
+#         raise PreventUpdate
+    

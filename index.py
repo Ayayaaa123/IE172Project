@@ -20,7 +20,7 @@ CONTENT_STYLE = {
 
 app.layout = html.Div(
     [
-        dcc.Location(id="url", refresh=True),
+        dcc.Location(id="url", refresh=False),
         
         # LOGIN DATA
         # 1) logout indicator, storage_type='session' means that data will be retained
@@ -82,7 +82,7 @@ def displaypage(pathname, sessionlogout, userid):
                         returnlayout = login.layout
                         sessionlogout = True
 
-                elif pathname == "/" or pathname == "/home_visit":
+                elif pathname == "/home_visit" or pathname == "/":
                     returnlayout = home_visit.layout
                 elif pathname == "/purpose" or pathname == "/home_visit/purpose":
                     returnlayout = purpose.layout
