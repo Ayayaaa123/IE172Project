@@ -662,11 +662,10 @@ def clientmodal_initial_values(url_search, click):
             Output('editprofile_clientprofile_alert', 'color'),
             Output('editprofile_clientprofile_alert', 'children'),
             Output('editprofile_clientprofile_alert', 'is_open'),
-            Output('url', 'search')
         ],
         [
-            Input('url', 'search'),
             Input('editprofile_client_submit', 'n_clicks'),
+            Input('url', 'search'),
             Input('editprofile_client_fn', 'value'),
             Input('editprofile_client_ln', 'value'),
             Input('editprofile_client_mi', 'value'),
@@ -680,22 +679,19 @@ def clientmodal_initial_values(url_search, click):
             Input('editprofile_client_region', 'value'),
         ],
 )
-def editprofile_client_save(url_search, submitbtn, fn, ln, mi, sf, cn, email, house_no, street, brgy, city, region):
+def editprofile_client_save(submitbtn, url_search, fn, ln, mi, sf, cn, email, house_no, street, brgy, city, region):
     ctx = dash.callback_context
-    parsed = urlparse(url_search)
-    query_patient_id = parse_qs(parsed.query)
-
-    if 'id' in query_patient_id:
-        patient_id = query_patient_id['id'][0]
-        
-        if ctx.triggered:
-            eventid = ctx.triggered[0]['prop_id'].split('.')[0]
+    if ctx.triggered:
+        eventid = ctx.triggered[0]['prop_id'].split('.')[0]
+        if eventid == 'editprofile_client_submit' and submitbtn: 
+            parsed = urlparse(url_search)
+            query_patient_id = parse_qs(parsed.query)
+            if 'id' in query_patient_id:
+                patient_id = query_patient_id['id'][0]
                 
-            alert_open = False
-            alert_color = ''
-            alert_text = ''
-
-            if eventid == 'editprofile_client_submit' and submitbtn:
+                alert_open = False
+                alert_color = ''
+                alert_text = ''
 
                 if not fn:
                     alert_open = True
@@ -761,12 +757,7 @@ def editprofile_client_save(url_search, submitbtn, fn, ln, mi, sf, cn, email, ho
                     values = [ln, fn, mi, sf, email, cn, house_no, street, brgy, city, region, client_id]
 
                     db.modifydatabase(sql, values)
-                
-                query_patient_id['refresh'] = [str(time.time())]
-                updated_query_string = urlencode(query_patient_id, doseq=True)
-                updated_url_search = parsed._replace(query=updated_query_string).geturl()
-
-                return [alert_color, alert_text, alert_open, updated_url_search]
+                return [alert_color, alert_text, alert_open]
             else:
                 raise PreventUpdate
         else:
@@ -880,93 +871,85 @@ def patientmodal_initial_values(url_search, click):
 
 
 
-# @app.callback( # Submit Button for patient profile
-#         [
-#             Output('editprofile_patientprofile_alert', 'color'),
-#             Output('editprofile_patientprofile_alert', 'children'),
-#             Output('editprofile_patientprofile_alert', 'is_open'),
-#             Output('url', 'search')
-#         ],
-#         [
-#             Input('url', 'search'),
-#             Input('editprofile_patient_submit', 'n_clicks'),
-#             Input('editprofile_patient_m', 'value'),
-#             Input('editprofile_patient_species', 'value'),
-#             Input('editprofile_patient_breed', 'value'),
-#             Input('editprofile_patient_color', 'value'),
-#             Input('editprofile_patient_sex', 'value'),
-#             Input('editprofile_patient_bd', 'value'),
-#             Input('editprofile_patient_idiosync', 'value'),
-#         ],
-# )
-# def editprofile_patient_save(url_search, submitbtn, name, species, breed, color, sex, bd, idiosync):
-#     ctx = dash.callback_context
-#     parsed = urlparse(url_search)
-#     query_patient_id = parse_qs(parsed.query)
-
-#     if 'id' in query_patient_id:
-#         patient_id = query_patient_id['id'][0]
+@app.callback( # Submit Button for patient profile
+        [
+            Output('editprofile_patientprofile_alert', 'color'),
+            Output('editprofile_patientprofile_alert', 'children'),
+            Output('editprofile_patientprofile_alert', 'is_open'),
+        ],
+        [
+            Input('editprofile_patient_submit', 'n_clicks'),
+            Input('url', 'search'),
+            Input('editprofile_patient_m', 'value'),
+            Input('editprofile_patient_species', 'value'),
+            Input('editprofile_patient_breed', 'value'),
+            Input('editprofile_patient_color', 'value'),
+            Input('editprofile_patient_sex', 'value'),
+            Input('editprofile_patient_bd', 'value'),
+            Input('editprofile_patient_idiosync', 'value'),
+        ],
+)
+def editprofile_patient_save(submitbtn, url_search, name, species, breed, color, sex, bd, idiosync):
+    ctx = dash.callback_context
+    if ctx.triggered:
+        eventid = ctx.triggered[0]['prop_id'].split('.')[0]
+        if eventid == 'editprofile_patient_submit' and submitbtn: 
+            parsed = urlparse(url_search)
+            query_patient_id = parse_qs(parsed.query)
+            if 'id' in query_patient_id:
+                patient_id = query_patient_id['id'][0]
         
-#         if ctx.triggered:
-#             eventid = ctx.triggered[0]['prop_id'].split('.')[0]
-                
-#             alert_open = False
-#             alert_color = ''
-#             alert_text = ''
+                alert_open = False
+                alert_color = ''
+                alert_text = ''
 
-#             if eventid == 'editprofile_patient_submit' and submitbtn:
+                if not species:
+                    alert_open = True
+                    alert_color = 'danger'
+                    alert_text = 'Please indicate the species of the patient'
+                elif not breed:
+                    alert_open = True
+                    alert_color = 'danger'
+                    alert_text = 'Please indicate the breed of the patient'
+                elif not color:
+                    alert_open = True
+                    alert_color = 'danger'
+                    alert_text = 'Please describe the color or any color marks on the patient'
+                elif not sex:
+                    alert_open = True
+                    alert_color = 'danger'
+                    alert_text = 'Please indicate the sex of the patient'
+                elif not bd:
+                    alert_open = True
+                    alert_color = 'danger'
+                    alert_text = 'Please enter the birth date of the patient'
+                elif not idiosync:
+                    alert_open = True
+                    alert_color = 'danger'
+                    alert_text = 'Please describe any behavior or characteristic of the patient'
+                else:
+                    sql = '''
+                        UPDATE patient 
+                        SET
+                            patient_m = %s,
+                            patient_species = %s,
+                            patient_breed = %s,
+                            patient_color = %s,
+                            patient_sex = %s,
+                            patient_bd = %s,
+                            patient_idiosync = %s
+                        WHERE patient_id = %s
+                    '''
+                    values = [name, species, breed, color, sex, bd, idiosync, patient_id]
 
-#                 if not species:
-#                     alert_open = True
-#                     alert_color = 'danger'
-#                     alert_text = 'Please indicate the species of the patient'
-#                 elif not breed:
-#                     alert_open = True
-#                     alert_color = 'danger'
-#                     alert_text = 'Please indicate the breed of the patient'
-#                 elif not color:
-#                     alert_open = True
-#                     alert_color = 'danger'
-#                     alert_text = 'Please describe the color or any color marks on the patient'
-#                 elif not sex:
-#                     alert_open = True
-#                     alert_color = 'danger'
-#                     alert_text = 'Please indicate the sex of the patient'
-#                 elif not bd:
-#                     alert_open = True
-#                     alert_color = 'danger'
-#                     alert_text = 'Please enter the birth date of the patient'
-#                 elif not idiosync:
-#                     alert_open = True
-#                     alert_color = 'danger'
-#                     alert_text = 'Please describe any behavior or characteristic of the patient'
-#                 else:
-#                     sql = '''
-#                         UPDATE patient 
-#                         SET
-#                             patient_m = %s,
-#                             patient_species = %s,
-#                             patient_breed = %s,
-#                             patient_color = %s,
-#                             patient_sex = %s,
-#                             patient_bd = %s,
-#                             patient_idiosync = %s
-#                         WHERE patient_id = %s
-#                     '''
-#                     values = [name, species, breed, color, sex, bd, idiosync, patient_id]
+                    db.modifydatabase(sql, values)
 
-#                     db.modifydatabase(sql, values)
-                
-#                 query_patient_id['refresh'] = [str(time.time())]
-#                 updated_query_string = urlencode(query_patient_id, doseq=True)
-#                 updated_url_search = parsed._replace(query=updated_query_string).geturl()
-
-#                 return [alert_color, alert_text, alert_open, updated_url_search]
+                return [alert_color, alert_text, alert_open]
             
-#             else:
-#                 raise PreventUpdate
-#         else:
-#             raise PreventUpdate
-#     else:
-#         raise PreventUpdate
+            else:
+                raise PreventUpdate
+        else:
+            raise PreventUpdate
+    else:
+        raise PreventUpdate
     
