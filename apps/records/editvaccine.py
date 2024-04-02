@@ -98,13 +98,15 @@ layout = html.Div(
             dbc.Row([
                 dbc.Col(html.H4("Delete Record?"), width=3),
                 dbc.Col(
-                    dcc.Dropdown(
-                        id="vacc_delete",
-                        searchable=True,
+                    dbc.Checklist(
+                        id='vacc_delete',
                         options=[
-                            {"label": "Yes", "value": True},
-                            {"label": "No", "value": False},
-                        ]
+                            {
+                                'label': "Mark for Deletion",
+                                'value': 1
+                            }
+                        ],
+                        style={'fontWeight': 'bold'},
                     ),
                     width=6,
                 ),
@@ -142,7 +144,6 @@ layout = html.Div(
     Output('vaccine_dateadministered','value'),
     Output('vaccine_expdate','value'),
     Output('vacc_fromvetmed','value'),
-    Output('vacc_delete','value'),
     Output('vaccine_return-link', 'href'),
     Input('url','search'),
 )
@@ -169,7 +170,7 @@ def initial_values(url_search):
         options = [{'label': row['vacc_m'], 'value': row['vacc_id']} for _, row in result.iterrows()]
 
         sql = """
-            SELECT vacc.vacc_m_id, vacc_dose, vacc_date_administered, vacc_exp, vacc_from_vetmed, vacc_delete_ind
+            SELECT vacc.vacc_m_id, vacc_dose, vacc_date_administered, vacc_exp, vacc_from_vetmed
             FROM vacc
             INNER JOIN vacc_m ON vacc.vacc_m_id = vacc_m.vacc_m_id
             INNER JOIN visit ON vacc.visit_id = visit.visit_id
@@ -177,7 +178,7 @@ def initial_values(url_search):
             WHERE vacc_id = %s AND patient.patient_id = %s
         """
         values = [vaccine_id, patient_id]
-        col = ['vacc_m_id', 'vacc_dose', 'vacc_date_administered', 'vacc_exp', 'vacc_from_vetmed', 'vacc_delete_ind']
+        col = ['vacc_m_id', 'vacc_dose', 'vacc_date_administered', 'vacc_exp', 'vacc_from_vetmed']
         df = db.querydatafromdatabase(sql, values, col)
 
         vaccine_name = df['vacc_m_id'][0]
@@ -185,11 +186,10 @@ def initial_values(url_search):
         vaccine_dateadministered = df['vacc_date_administered'][0]
         vaccine_expdate = df['vacc_exp'][0]
         vaccine_fromvetmed = df['vacc_from_vetmed'][0]
-        vaccine_delete = df['vacc_delete_ind'][0]
 
         patient_link = f'/editrecord?mode=edit&id={patient_id}'
 
-        return (options, vaccine_name, vaccine_dose, vaccine_dateadministered, vaccine_expdate, vaccine_fromvetmed, vaccine_delete, patient_link)
+        return (options, vaccine_name, vaccine_dose, vaccine_dateadministered, vaccine_expdate, vaccine_fromvetmed, patient_link)
     else:
         raise PreventUpdate
     
@@ -251,6 +251,7 @@ def save_vacc_record(submitbtn, url_search, vaccine_name, vaccine_dose, vaccine_
                 alert_color = 'danger'
                 alert_text = 'Check your inputs. Please select if vaccine should be deleted'
             else:
+                to_delete = bool(vacc_delete)
                 sql = """
                     UPDATE vacc
                     SET 
@@ -264,7 +265,7 @@ def save_vacc_record(submitbtn, url_search, vaccine_name, vaccine_dose, vaccine_
                     INNER JOIN patient ON visit.patient_id = patient.patient_id
                     WHERE vacc_id = %s AND patient.patient_id = %s
                 """
-                values = [vaccine_name, vaccine_dose, vaccine_dateadministered, vaccine_expdate, vacc_fromvetmed, vacc_delete, vaccine_id, patient_id]
+                values = [vaccine_name, vaccine_dose, vaccine_dateadministered, vaccine_expdate, vacc_fromvetmed, to_delete, vaccine_id, patient_id]
                 db.modifydatabase(sql, values)
 
                 modal_open = True

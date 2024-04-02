@@ -98,13 +98,15 @@ layout = html.Div(
             dbc.Row([
                 dbc.Col(html.H4("Delete Record?"), width=3),
                 dbc.Col(
-                    dcc.Dropdown(
-                        id="deworm_delete",
-                        searchable=True,
+                    dbc.Checklist(
+                        id='deworm_delete',
                         options=[
-                            {"label": "Yes", "value": True},
-                            {"label": "No", "value": False},
-                        ]
+                            {
+                                'label': "Mark for Deletion",
+                                'value': 1
+                            }
+                        ],
+                        style={'fontWeight': 'bold'},
                     ),
                     width=6,
                 ),
@@ -142,7 +144,6 @@ layout = html.Div(
     Output('deworm_dateadministered','value'),
     Output('deworm_expdate','value'),
     Output('deworm_fromvetmed','value'),
-    Output('deworm_delete','value'),
     Output('deworm_return-link', 'href'),
     Input('url','search'),
 )
@@ -169,7 +170,7 @@ def initial_values(url_search):
         options = [{'label': row['deworm_m'], 'value': row['deworm_id']} for _, row in result.iterrows()]
 
         sql = """
-            SELECT deworm.deworm_m_id, deworm_dose, deworm_administered, deworm_exp, deworm_from_vetmed, deworm_delete_ind
+            SELECT deworm.deworm_m_id, deworm_dose, deworm_administered, deworm_exp, deworm_from_vetmed
             FROM deworm
             INNER JOIN deworm_m ON deworm.deworm_m_id = deworm_m.deworm_m_id
             INNER JOIN visit ON deworm.visit_id = visit.visit_id
@@ -177,19 +178,18 @@ def initial_values(url_search):
             WHERE deworm_id = %s AND patient.patient_id = %s
         """
         values = [deworm_id, patient_id]
-        col = ['deworm_m_id', 'deworm_dose', 'deworm_administered', 'deworm_exp', 'deworm_from_vetmed', 'deworm_delete_ind']
+        col = ['deworm_m_id', 'deworm_dose', 'deworm_administered', 'deworm_exp', 'deworm_from_vetmed']
         df = db.querydatafromdatabase(sql, values, col)
 
-        vaccine_name = df['deworm_m_id'][0]
-        vaccine_dose = df['deworm_dose'][0]
-        vaccine_dateadministered = df['deworm_administered'][0]
-        vaccine_expdate = df['deworm_exp'][0]
-        vaccine_fromvetmed = df['deworm_from_vetmed'][0]
-        vaccine_delete = df['deworm_delete_ind'][0]
+        deworm_name = df['deworm_m_id'][0]
+        deworm_dose = df['deworm_dose'][0]
+        deworm_dateadministered = df['deworm_administered'][0]
+        deworm_expdate = df['deworm_exp'][0]
+        deworm_fromvetmed = df['deworm_from_vetmed'][0]
 
         patient_link = f'/editrecord?mode=edit&id={patient_id}'
 
-        return (options, vaccine_name, vaccine_dose, vaccine_dateadministered, vaccine_expdate, vaccine_fromvetmed, vaccine_delete, patient_link)
+        return (options, deworm_name, deworm_dose, deworm_dateadministered, deworm_expdate, deworm_fromvetmed, patient_link)
     else:
         raise PreventUpdate
     
@@ -251,6 +251,7 @@ def save_deworm_record(submitbtn, url_search, deworm_name, deworm_dose, deworm_d
                 alert_color = 'danger'
                 alert_text = 'Check your inputs. Please select if vaccine should be deleted'
             else:
+                to_delete = bool(deworm_delete)
                 sql = """
                     UPDATE deworm
                     SET 
@@ -264,7 +265,7 @@ def save_deworm_record(submitbtn, url_search, deworm_name, deworm_dose, deworm_d
                     INNER JOIN patient ON visit.patient_id = patient.patient_id
                     WHERE deworm_id = %s AND patient.patient_id = %s
                 """
-                values = [deworm_name, deworm_dose, deworm_dateadministered, deworm_expdate, deworm_fromvetmed, deworm_delete, deworm_id, patient_id]
+                values = [deworm_name, deworm_dose, deworm_dateadministered, deworm_expdate, deworm_fromvetmed, to_delete, deworm_id, patient_id]
                 db.modifydatabase(sql, values)
 
                 modal_open = True

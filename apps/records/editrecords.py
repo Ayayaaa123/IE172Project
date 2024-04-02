@@ -156,6 +156,47 @@ layout = html.Div(
                 )
             ]
         ),
+        html.Br(),
+        html.Div(
+            dbc.Row(
+                [
+                    dbc.Label("Delete Record?", width=2),
+                    dbc.Col(
+                        dbc.Checklist(
+                            id='recordprofile_removerecord',
+                            options=[
+                                {
+                                    'label': "Mark for Deletion",
+                                    'value': 1
+                                }
+                            ],
+                            style={'fontWeight': 'bold'},
+                        ),
+                        width=5,
+                    ),
+                ],
+                className="mb-3",
+            ),
+        id='recordrofile_removerecord_div'),
+        html.Br(),
+        dbc.Button(
+            'Save',
+            id='editrecord_savebtn',
+            n_clicks=0,
+            className='custom-submitbutton',
+        ),
+        dbc.Modal(
+            [
+                dbc.ModalHeader(html.H4('Save Success')),
+                dbc.ModalBody('Record has been updated', id='editrecord_feedback_message'),
+                dbc.ModalFooter(
+                    dbc.Button("Okay", href='/viewrecord', id='editrecord_btn_modal')
+                )
+            ],
+            centered=True,
+            id='editrecord_successmodal',
+            backdrop='static'
+        ),
         dbc.Modal([
             dbc.ModalHeader(dbc.ModalTitle("Edit Client Profile", style={'text-align': 'center', 'width': '100%'})),
             dbc.ModalBody([
@@ -421,7 +462,7 @@ def vaccine_table(url_search):
         INNER JOIN visit ON vacc.visit_id = visit.visit_id
         INNER JOIN patient ON visit.patient_id = patient.patient_id
         INNER JOIN vacc_m ON vacc.vacc_m_id = vacc_m.vacc_m_id
-        WHERE patient.patient_id = %s
+        WHERE patient.patient_id = %s AND vacc_delete_ind = false
         """
         values = [patient_id]
         sql += "ORDER BY vacc_date_administered DESC"
@@ -466,7 +507,7 @@ def deworm_table(url_search):
         INNER JOIN visit ON deworm.visit_id = visit.visit_id
         INNER JOIN patient ON visit.patient_id = patient.patient_id
         INNER JOIN deworm_m ON deworm.deworm_m_id = deworm_m.deworm_m_id
-        WHERE patient.patient_id = %s 
+        WHERE patient.patient_id = %s AND deworm_delete_ind = false
         """
         values = [patient_id]
         sql += "ORDER BY deworm_administered DESC"
@@ -512,7 +553,7 @@ def problem_table(url_search):
         INNER JOIN problem_status ON problem.problem_status_id = problem_status.problem_status_id
         INNER JOIN visit ON problem.problem_id = visit.problem_id
         INNER JOIN patient ON visit.patient_id = patient.patient_id
-        WHERE patient.patient_id = %s 
+        WHERE patient.patient_id = %s AND problem_delete_ind = false
         """
         values = [patient_id]
         sql += "ORDER BY problem.problem_id DESC"
@@ -960,3 +1001,57 @@ def editprofile_patient_save(submitbtn, url_search, name, species, breed, color,
     else:
         raise PreventUpdate
     
+
+
+@app.callback( #callback for save button
+    [
+        Output('editrecord_successmodal', 'is_open'),
+        Output('editrecord_feedback_message', 'children'),
+        Output('editrecord_btn_modal', 'href'),
+    ],
+   
+    [
+        Input('editrecord_savebtn', 'n_clicks'),
+        Input('url', 'search'),
+        Input('recordprofile_removerecord', 'value')
+    ],
+)
+def save_record_profile(n_clicks_btn, url_search, removerecord):   
+    ctx = dash.callback_context
+    parsed = urlparse(url_search)
+    query_patient_id = parse_qs(parsed.query)
+
+    if 'id' in query_patient_id:
+        patient_id = query_patient_id['id'][0]
+
+        if ctx.triggered:
+            eventid = ctx.triggered[0]['prop_id'].split('.')[0]
+            if eventid == 'editrecord_savebtn' and n_clicks_btn:
+
+                modal_open = False
+                modal_text = ''
+                modal_href = '#'
+
+                sql = """ 
+                        UPDATE patient
+                        SET
+                            patient_delete_ind = %s
+                        WHERE
+                            patient_id = %s
+                    """
+                to_delete = bool(removerecord) 
+                values= [to_delete, patient_id]
+                
+                db.modifydatabase(sql, values)
+                
+                modal_text = "Changes have been saved successfully."
+                modal_href = '/viewrecord'
+                modal_open = True
+            
+                return [modal_open, modal_text, modal_href]
+            else:
+                raise PreventUpdate
+        else: 
+            raise PreventUpdate
+    else:
+        raise PreventUpdate
