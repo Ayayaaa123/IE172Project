@@ -779,7 +779,7 @@ def editprofile_client_save(submitbtn, url_search, fn, ln, mi, sf, cn, email, ho
                     df = db.querydatafromdatabase(sql, values, col)
                     client_id = int(df['client_id'][0])
 
-
+                    modified_date = datetime.datetime.now().strftime("%Y-%m-%d")
                     sql = '''
                         UPDATE client 
                         SET
@@ -793,10 +793,11 @@ def editprofile_client_save(submitbtn, url_search, fn, ln, mi, sf, cn, email, ho
                             client_street = %s,
                             client_barangay = %s,
                             client_city = %s,
-                            client_region = %s
+                            client_region = %s,
+                            client_modified_date = %s
                         WHERE client_id = %s
                     '''
-                    values = [ln, fn, mi, sf, email, cn, house_no, street, brgy, city, region, client_id]
+                    values = [ln, fn, mi, sf, email, cn, house_no, street, brgy, city, region, modified_date, client_id]
 
                     db.modifydatabase(sql, values)
 
@@ -974,6 +975,7 @@ def editprofile_patient_save(submitbtn, url_search, name, species, breed, color,
                     alert_color = 'danger'
                     alert_text = 'Please describe any behavior or characteristic of the patient'
                 else:
+                    modified_date = datetime.datetime.now().strftime("%Y-%m-%d")
                     sql = '''
                         UPDATE patient 
                         SET
@@ -983,10 +985,11 @@ def editprofile_patient_save(submitbtn, url_search, name, species, breed, color,
                             patient_color = %s,
                             patient_sex = %s,
                             patient_bd = %s,
-                            patient_idiosync = %s
+                            patient_idiosync = %s,
+                            patient_modified_date = %s
                         WHERE patient_id = %s
                     '''
-                    values = [name, species, breed, color, sex, bd, idiosync, patient_id]
+                    values = [name, species, breed, color, sex, bd, idiosync, modified_date, patient_id]
 
                     db.modifydatabase(sql, values)
 
