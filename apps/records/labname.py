@@ -18,6 +18,8 @@ from urllib.parse import urlparse, parse_qs
 layout = html.Div(
     [
         dbc.Alert(id='editlab_alert', is_open=False),
+        dbc.Nav(dbc.NavItem(dbc.NavLink("<  Return", active=True, href="/managedata", id="editclinicians_return-link", style={"font-size": "1.25rem", 'margin-left':0, 'font-weight': 'bold'}))),
+        html.Div(style={'margin-bottom':'1rem'}),
         dbc.Card(
             [
                 dbc.CardHeader(

@@ -1,0 +1,215 @@
+from dash import dcc #interpreter recommended to replace 'import dash_core_components as dcc' with 'from dash import dcc'
+from dash import html #interpreter recommended to replace 'import dash_html_components as html' with 'from dash import html'
+import dash_bootstrap_components as dbc
+from dash import dash_table #interpreter recommended to replace 'import dash_table' with 'from dash import dash_table'
+import dash
+from dash.dependencies import Input, Output, State
+from dash.exceptions import PreventUpdate
+import pandas as pd
+import dash_mantine_components as dmc
+from app import app
+from apps import dbconnect as db
+import datetime
+from dash import ALL, MATCH
+from urllib.parse import urlparse, parse_qs
+
+
+layout = html.Div(
+    [
+        dbc.Alert(id='problemclinicalexam_alert', is_open = False),
+        dbc.Nav(dbc.NavItem(dbc.NavLink("<  Return", active=True, href="", id="problemclinicalexam_return-link", style={"font-size": "1.25rem", 'margin-left':0, 'font-weight': 'bold'}))),
+        html.Div(style={'margin-bottom':'1rem'}),
+        html.H2("Clinical Exam Details"),
+        html.Hr(),
+        dbc.Form([
+            dbc.Row([
+                dbc.Col(html.H4("Clinical Exam Type"), width=3),
+                dbc.Col(
+                    dcc.Dropdown(
+                        id="problemclinicalexam_namelist",
+                        placeholder='Select Clinical Exam Type',
+                        searchable=True,
+                        options=[],
+                    ),
+                    width=6,
+                )
+            ]),
+            html.Div(style={'margin-bottom':'1rem'}),
+            dbc.Row([
+                dbc.Col(html.H4("Clinical Exam Findings"), width=3),
+                dbc.Col(
+                    dcc.Textarea(
+                        id="problemclinicalexam_findings",
+                        placeholder='Enter findings',
+                        style={"height":100, 'width':'100%'},
+                        contentEditable=True
+                    ),
+                    width=6,
+                )
+            ]),
+            html.Div(style={'margin-bottom':'1rem'}),
+            dbc.Row([
+                dbc.Col(html.H4("Delete Record?"), width=3),
+                dbc.Col(
+                    dbc.Checklist(
+                        id='problemclinicalexam_delete',
+                        options=[
+                            {
+                                'label': "Mark for Deletion",
+                                'value': 1
+                            }
+                        ],
+                        style={'fontWeight': 'bold'},
+                    ),
+                    width=6,
+                ),
+            ]),
+        ]),
+        html.Br(),
+        dbc.Button(
+            'Save',
+            id = 'problemclinicalexam_save',
+            n_clicks = 0,
+            className='custom-submitbutton',
+        ),
+        dbc.Modal([
+            dbc.ModalHeader(html.H3('Save Success')),
+            dbc.ModalFooter(
+                dbc.Button(
+                    "Return",
+                    href="",
+                    id="problemclinicalexam_return-button",
+                )
+            )
+        ],
+        centered = True, 
+        id = 'problemclinicalexam_successmodal',
+        backdrop = 'static'
+        )
+    ]
+)
+
+
+
+@app.callback(  #initial values
+    Output('problemclinicalexam_namelist', 'options'),
+    Output('problemclinicalexam_namelist', 'value'),
+    Output('problemclinicalexam_findings', 'value'),
+    Output('problemclinicalexam_return-link', 'href'),
+    Input('url','search'),
+)
+def problemclinicalexam_initial_values(url_search):
+    parsed = urlparse(url_search)
+    query_ids = parse_qs(parsed.query)
+    patient_link= ""
+
+    if 'patient_id' in query_ids and 'problem_id' in query_ids and 'clinical_id' in query_ids:
+        patient_id = query_ids.get('patient_id', [None])[0]
+        problem_id = query_ids.get('problem_id', [None])[0]
+        clinical_id = query_ids.get('clinical_id', [None])[0]
+
+        sql = """
+            SELECT 
+                clinical_exam_type_id,
+                clinical_exam_type_m
+            FROM 
+                clinical_exam_type 
+            WHERE 
+                NOT clinical_exam_type_delete_ind
+        """
+        values = []
+        cols = ['clinical_exam_type_id', 'clinical_exam_type_m']
+        result = db.querydatafromdatabase(sql, values, cols)
+        options = [{'label': row['clinical_exam_type_m'], 'value': row['clinical_exam_type_id']} for _, row in result.iterrows()]
+        
+        sql = """
+            SELECT clinical_exam_type_id, clinical_exam_ab_findings
+            FROM clinical_exam
+            INNER JOIN problem ON clinical_exam.problem_id = problem.problem_id
+            INNER JOIN visit ON problem.problem_id = visit.problem_id
+            INNER JOIN patient ON visit.patient_id = patient.patient_id
+            WHERE clinical_exam_id = %s AND problem.problem_id = %s AND patient.patient_id = %s
+        """
+        values = [clinical_id, problem_id, patient_id]
+        col = ['clinical_exam_type', 'clinical_exam_findings']
+        df = db.querydatafromdatabase(sql, values, col)
+
+        clinical_exam_type = df['clinical_exam_type'][0]
+        clinical_exam_findings = df['clinical_exam_findings'][0]
+
+        patient_link = f'/editproblem?mode=edit&problem_id={problem_id}&patient_id={patient_id}'
+
+        return (options, clinical_exam_type, clinical_exam_findings, patient_link)
+    
+    else:
+        raise PreventUpdate
+    
+
+
+@app.callback( #save changes
+    Output('problemclinicalexam_alert','color'),
+    Output('problemclinicalexam_alert','children'),
+    Output('problemclinicalexam_alert','is_open'),
+    Output('problemclinicalexam_successmodal', 'is_open'),
+    Output('problemclinicalexam_return-button', 'href'),
+    Input('problemclinicalexam_save', 'n_clicks'),
+    Input('url','search'),
+    Input('problemclinicalexam_namelist','value'),
+    Input('problemclinicalexam_findings','value'),
+    Input('problemclinicalexam_delete','value'),
+)
+def save_deworm_record(submitbtn, url_search, clinicalexam_name, clinicalexam_findings, clinicalexam_delete):
+    ctx = dash.callback_context
+    if ctx.triggered:
+        eventid = ctx.triggered[0]['prop_id'].split('.')[0]
+        if eventid == 'problemclinicalexam_save' and submitbtn:
+            parsed = urlparse(url_search)
+            query_ids = parse_qs(parsed.query)  
+
+            alert_open = False
+            modal_open = False
+            alert_color = ''
+            alert_text = ''
+            patient_link = ''
+       
+            patient_id = query_ids.get('patient_id', [None])[0]
+            problem_id = query_ids.get('problem_id', [None])[0]
+            clinical_id = query_ids.get('clinical_id', [None])[0]  
+
+            if not clinicalexam_name:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Check your inputs. Please select clinical exam type'
+            elif not clinicalexam_findings:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Check your inputs. Please enter clinical exam findings'
+            else:
+                to_delete = bool(clinicalexam_delete)
+                modified_date = datetime.datetime.now().strftime("%Y-%m-%d")
+                sql = """
+                    UPDATE clinical_exam
+                    SET 
+                        clinical_exam_type_id = %s,
+                        clinical_exam_ab_findings = %s,
+                        clinical_exam_modified_date = %s,
+                        clinical_exam_delete_ind = %s
+                    FROM problem
+                    INNER JOIN visit ON problem.problem_id = visit.problem_id
+                    INNER JOIN patient ON visit.patient_id = patient.patient_id
+                    WHERE problem.problem_id = %s AND patient.patient_id = %s AND clinical_exam_id = %s
+                """
+                values = [clinicalexam_name, clinicalexam_findings, modified_date, to_delete, problem_id, patient_id, clinical_id]
+                db.modifydatabase(sql, values)
+
+                modal_open = True
+
+                patient_link = f'/editproblem?mode=edit&problem_id={problem_id}&patient_id={patient_id}'
+
+            return [alert_color, alert_text, alert_open, modal_open, patient_link]
+        
+        else:
+            raise PreventUpdate
+        
+    else:
+        raise PreventUpdate

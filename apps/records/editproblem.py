@@ -21,10 +21,11 @@ layout = html.Div(
         dbc.Row([
                 dbc.Col(html.H2("Problem Chief Complaint"), width=3),
                 dbc.Col(
-                    dbc.Textarea(
+                    dcc.Textarea(
                         id="problem_complaint",
                         placeholder="Describe the overall problem",
                         style={"height":50, 'width':'100%'},
+                        contentEditable=True
                     ),
                     width=6,
                 ),
@@ -43,10 +44,11 @@ layout = html.Div(
             dbc.Row([
                 dbc.Col(html.H4("Medical History"), width=3),
                 dbc.Col(
-                    dbc.Textarea(
+                    dcc.Textarea(
                         id="problem_medhistory",
                         placeholder='Enter any relevant medical history',
-                        style={"height":50, 'width':'100%'},
+                        style={"height":75, 'width':'100%'},
+                        contentEditable=True
                     ),
                     width=6,
                 )
@@ -55,10 +57,10 @@ layout = html.Div(
             dbc.Row([
                 dbc.Col(html.H4("Diet"), width=3),
                 dbc.Col(
-                    dbc.Textarea(
+                    dbc.Input(
+                        type='text',
                         id="problem_diet",
                         placeholder="Enter patient's general diet",
-                        style={"height":50, 'width':'100%'},
                     ),
                     width=6,
                 )
@@ -67,10 +69,10 @@ layout = html.Div(
             dbc.Row([
                 dbc.Col(html.H4("Water Source"), width=3),
                 dbc.Col(
-                    dbc.Textarea(
+                    dbc.Input(
+                        type='text',
                         id="problem_watersource",
                         placeholder="Enter patient's general source of hydration",
-                        style={"height":50, 'width':'100%'},
                     ),
                     width=6,
                 )
@@ -175,10 +177,11 @@ layout = html.Div(
             dbc.Row([
                 dbc.Col(html.H4("Diagnosis"), width=3),
                 dbc.Col(
-                    dbc.Textarea(
+                    dcc.Textarea(
                         id="problem_diagnosis",
                         placeholder='Enter Diagnosis',
-                        style={"height":50, 'width':'100%'},
+                        style={"height":75, 'width':'100%'},
+                        contentEditable=True
                     ),
                     width=6,
                 )
@@ -187,10 +190,11 @@ layout = html.Div(
             dbc.Row([
                 dbc.Col(html.H4("Prescription"), width=3),
                 dbc.Col(
-                    dbc.Textarea(
+                    dcc.Textarea(
                         id="problem_prescription",
                         placeholder='Enter Prescription',
-                        style={"height":50, 'width':'100%'},
+                        style={"height":75, 'width':'100%'},
+                        contentEditable=True
                     ),
                     width=6,
                 )
@@ -199,10 +203,11 @@ layout = html.Div(
             dbc.Row([
                 dbc.Col(html.H4("Patient Instructions"), width=3),
                 dbc.Col(
-                    dbc.Textarea(
+                    dcc.Textarea(
                         id="problem_clienteduc",
                         placeholder='Enter Instructions',
-                        style={"height":50, 'width':'100%'},
+                        style={"height":75, 'width':'100%'},
+                        contentEditable=True
                     ),
                     width=6,
                 )
@@ -262,8 +267,8 @@ def clinicalexam_table(url_search):
         patient_id = query_id.get('patient_id', [None])[0]
         problem_id = query_id.get('problem_id', [None])[0]
         sql = """
-        SELECT 
-            clinical_exam_type_m, clinical_exam_ab_findings, clinical_exam.clinical_exam_id, problem.problem_id, patient.patient_id
+        SELECT DISTINCT
+            clinical_exam_type_m, clinical_exam_ab_findings, clinical_exam.clinical_exam_id, problem.problem_id, patient.patient_id, clinical_exam_no
         FROM 
             clinical_exam
         INNER JOIN problem ON clinical_exam.problem_id = problem.problem_id
@@ -274,7 +279,7 @@ def clinicalexam_table(url_search):
         """
         values = [patient_id, problem_id]
         sql += "ORDER BY clinical_exam_no DESC"
-        col = ['Clinical Exam', 'Findings', 'Clinical_ID', 'Problem_ID', 'Patient_ID']
+        col = ['Clinical Exam', 'Findings', 'Clinical_ID', 'Problem_ID', 'Patient_ID', 'clinical_exam_no']
         df = db.querydatafromdatabase(sql, values, col)
 
         if df.shape:
