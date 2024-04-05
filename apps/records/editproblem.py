@@ -268,18 +268,23 @@ def clinicalexam_table(url_search):
         problem_id = query_id.get('problem_id', [None])[0]
         sql = """
         SELECT DISTINCT
-            clinical_exam_type_m, clinical_exam_ab_findings, clinical_exam.clinical_exam_id, problem.problem_id, patient.patient_id, clinical_exam_no
+            STRING_AGG(DISTINCT clinical_exam_type_m, ', ') AS clinical_exam_types, MIN(clinical_exam_ab_findings) AS clinical_exam_ab_findings, 
+            STRING_AGG(DISTINCT COALESCE(clinician_ln, '') || ', ' || COALESCE (clinician_fn, '') || ' ' || COALESCE (clinician_mi, ''), '; ') AS clinician_names, 
+            clinical_exam.clinical_exam_id, problem.problem_id, patient.patient_id, MIN(clinical_exam_no) AS clinical_exam_no
         FROM 
             clinical_exam
         INNER JOIN problem ON clinical_exam.problem_id = problem.problem_id
         INNER JOIN clinical_exam_type ON clinical_exam.clinical_exam_type_id = clinical_exam_type.clinical_exam_type_id
+        INNER JOIN clinician_assignment ON clinical_exam.clinical_exam_id = clinician_assignment.clinical_exam_id
+        INNER JOIN clinician ON clinician_assignment.clinician_id = clinician.clinician_id
         INNER JOIN visit ON problem.problem_id = visit.problem_id
         INNER JOIN patient ON visit.patient_id = patient.patient_id
-        WHERE patient.patient_id = %s AND problem.problem_id = %s AND clinical_exam_delete_ind = false
+        WHERE patient.patient_id = %s AND problem.problem_id = %s AND clinical_exam_delete_ind = false AND clinician_assignment_delete_ind = false
+		GROUP BY clinical_exam.clinical_exam_id, problem.problem_id, patient.patient_id
         """
         values = [patient_id, problem_id]
         sql += "ORDER BY clinical_exam_no DESC"
-        col = ['Clinical Exam', 'Findings', 'Clinical_ID', 'Problem_ID', 'Patient_ID', 'clinical_exam_no']
+        col = ['Clinical Exam', 'Findings', 'Clinician', 'Clinical_ID', 'Problem_ID', 'Patient_ID', 'clinical_exam_no']
         df = db.querydatafromdatabase(sql, values, col)
 
         if df.shape:
@@ -293,7 +298,7 @@ def clinicalexam_table(url_search):
                 ]
 
             df['Action'] = buttons
-            df = df[['Clinical Exam', 'Findings', 'Action']] 
+            df = df[['Clinical Exam', 'Findings', 'Clinician', 'Action']] 
 
             table = dbc.Table.from_dataframe(df, striped=True, bordered=True, hover=True, size='sm', style={'text-align': 'center'})
             return [table]
@@ -306,7 +311,7 @@ def clinicalexam_table(url_search):
     Output('progressnotes-table', 'children'),
     Input('url', 'search'),
 )
-def clinicalexam_table(url_search):
+def progressnotes_table(url_search):
     parsed = urlparse(url_search)
     query_id = parse_qs(parsed.query)
 
@@ -315,7 +320,7 @@ def clinicalexam_table(url_search):
         problem_id = query_id.get('problem_id', [None])[0]
         sql = """
         SELECT 
-            visit_date, note_differential_diagnosis, note_treatment, note_for_testing, note.note_id, problem.problem_id, patient.patient_id
+            visit_date, note_differential_diagnosis, note_treatment, note_bill, note_for_testing, note.note_id, problem.problem_id, patient.patient_id
         FROM 
             note
         INNER JOIN problem ON note.problem_id = problem.problem_id
@@ -325,7 +330,7 @@ def clinicalexam_table(url_search):
         """
         values = [patient_id, problem_id]
         sql += "ORDER BY visit_date DESC"
-        col = ['Visit Date', 'Differential Diagnosis', 'Treatment', 'Tests Needed', 'Note_ID', 'Problem_ID', 'Patient_ID']
+        col = ['Visit Date', 'Differential Diagnosis', 'Treatment', 'Bill', 'Tests Needed', 'Note_ID', 'Problem_ID', 'Patient_ID']
         df = db.querydatafromdatabase(sql, values, col)
 
         if df.shape:
@@ -339,7 +344,7 @@ def clinicalexam_table(url_search):
                 ]
 
             df['Action'] = buttons
-            df = df[['Visit Date', 'Differential Diagnosis', 'Treatment', 'Tests Needed', 'Action']] 
+            df = df[['Visit Date', 'Differential Diagnosis', 'Treatment', 'Bill', 'Tests Needed', 'Action']] 
 
             table = dbc.Table.from_dataframe(df, striped=True, bordered=True, hover=True, size='sm', style={'text-align': 'center'})
             return [table]
