@@ -258,7 +258,7 @@ def problemnote_initial_values(url_search):
     Input('problemnote_bill','value'),
     Input('problemnote_delete','value'),
 )
-def save_deworm_record(submitbtn, url_search, note_tested, note_diagnosis, note_treatment, note_tests, note_bill, note_delete):
+def save_note_record(submitbtn, url_search, note_tested, note_diagnosis, note_treatment, note_tests, note_bill, note_delete):
     ctx = dash.callback_context
     if ctx.triggered:
         eventid = ctx.triggered[0]['prop_id'].split('.')[0]

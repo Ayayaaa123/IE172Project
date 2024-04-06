@@ -147,7 +147,7 @@ def problemclinicalexam_initial_values(url_search):
             WHERE 
                 NOT clinician_delete_ind
         """
-        values = [clinical_id]
+        values = []
         cols = ['clinician_id', 'clinician_name']
         result = db.querydatafromdatabase(sql, values, cols)
         options2 = [{'label': row['clinician_name'], 'value': row['clinician_id']} for _, row in result.iterrows()]
