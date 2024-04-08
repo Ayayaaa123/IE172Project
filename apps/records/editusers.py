@@ -224,9 +224,18 @@ def deactivatesave(password, passwordconf):
    
     # enable button if password exists and passwordconf exists
     #  and password = passwordconf
-    enablebtn = password and passwordconf and password == passwordconf
-
-    return [not enablebtn]
+    enablebtn = False
+    if not password:
+        return [not enablebtn]
+    elif not passwordconf:
+        return [not enablebtn]
+    else:
+        if password == passwordconf:
+            return [enablebtn]
+        else:
+            return [not enablebtn]
+    # enablebtn = password and passwordconf and password == passwordconf
+    # return [not enablebtn]
 
 
 
@@ -324,6 +333,7 @@ def save_user_profile(edituser_savebtn, n_clicks, vet_fn, vet_ln, vet_mi, vet_su
 
 
                 #save to db
+                modified_date = datetime.datetime.now().strftime("%Y-%m-%d")
                 sql_vet = """ UPDATE vet
                     SET
                         vet_ln = %s,
@@ -333,13 +343,14 @@ def save_user_profile(edituser_savebtn, n_clicks, vet_fn, vet_ln, vet_mi, vet_su
                         vet_email = %s,
                         vet_cn= %s,
                         vet_user_pw = %s,
+                        vet_modified_date = %s,
                         vet_delete_ind = %s
                     WHERE
                         vet_id = %s
                     """
                 
                 to_delete = bool(removerecord)   
-                values_vet = [vet_ln, vet_fn, vet_mi, vet_suffix, vet_email, vet_cn, password, to_delete, vet_id]
+                values_vet = [vet_ln, vet_fn, vet_mi, vet_suffix, vet_email, vet_cn, password, modified_date, to_delete, vet_id]
                 print("values_vet:", values_vet)
 
 

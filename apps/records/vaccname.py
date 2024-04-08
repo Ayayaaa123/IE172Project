@@ -190,15 +190,17 @@ def save_vaccname(n_clicks_btn, n_clicks_modal, vacc_m, url_search, removerecord
 
             else: #all inputs are valid
                 #save to db
+                modified_date = datetime.datetime.now().strftime("%Y-%m-%d")
                 sql_vaccname = """ UPDATE vacc_m
                                     SET
                                         vacc_m = %s,
+                                        vacc_m_modified_date = %s,
                                         vacc_m_delete_ind = %s
                                     WHERE
                                         vacc_m_id = %s
                                     """
                 to_delete = bool(removerecord) 
-                values_vaccname = [vacc_m, to_delete, vacc_m_id]
+                values_vaccname = [vacc_m, modified_date, to_delete, vacc_m_id]
         
 
                 db.modifydatabase(sql_vaccname, values_vaccname)

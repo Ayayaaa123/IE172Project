@@ -190,15 +190,17 @@ def save_dewormname(n_clicks_btn, n_clicks_modal, deworm_m, url_search, removere
 
             else: #all inputs are valid
                 #save to db
+                modified_date = datetime.datetime.now().strftime("%Y-%m-%d")
                 sql_dewormname = """ UPDATE deworm_m
                                     SET
                                         deworm_m = %s,
+                                        deworm_m_modified_date = %s,
                                         deworm_m_delete_ind = %s
                                     WHERE
                                         deworm_m_id = %s
                                     """
                 to_delete = bool(removerecord) 
-                values_dewormname = [deworm_m, to_delete, deworm_m_id]
+                values_dewormname = [deworm_m, modified_date, to_delete, deworm_m_id]
         
 
                 db.modifydatabase(sql_dewormname, values_dewormname)

@@ -418,7 +418,7 @@ def managedata_labexamlist(pathname, searchterm, n_clicks, new_labexam):
 
         if searchterm:
             sql += """ AND (
-                lab_exam_type_m LIKE %s
+                lab_exam_type_m ILIKE %s
                 );
                 """
             values = [f"%{searchterm}%"]

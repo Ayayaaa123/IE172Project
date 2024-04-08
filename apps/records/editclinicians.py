@@ -228,6 +228,7 @@ def save_clinician_profile(n_clicks_btn, n_clicks_modal, clinician_fn, clinician
 
             else: #all inputs are valid
                 #save to db
+                modified_date = datetime.datetime.now().strftime("%Y-%m-%d")
                 sql_clinician = """ UPDATE clinician
                                     SET
                                         clinician_ln = %s,
@@ -236,12 +237,13 @@ def save_clinician_profile(n_clicks_btn, n_clicks_modal, clinician_fn, clinician
                                         clinician_suffix = %s,
                                         clinician_email = %s,
                                         clinician_cn= %s,
+                                        clinician_modified_date = %s,
                                         clinician_delete_ind = %s
                                     WHERE
                                         clinician_id = %s
                                     """
                 to_delete = bool(removerecord) 
-                values_clinician = [clinician_ln, clinician_fn, clinician_mi, clinician_suffix, clinician_email, clinician_cn, to_delete, clinician_id]
+                values_clinician = [clinician_ln, clinician_fn, clinician_mi, clinician_suffix, clinician_email, clinician_cn, modified_date, to_delete, clinician_id]
                 # print("values_vet:", values_vet)
 
                 db.modifydatabase(sql_clinician, values_clinician)

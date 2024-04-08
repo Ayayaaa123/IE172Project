@@ -192,15 +192,17 @@ def save_clinical(n_clicks_btn, n_clicks_modal,clinical_exam_type_m, url_search,
 
             else: #all inputs are valid
                 #save to db
+                modified_date = datetime.datetime.now().strftime("%Y-%m-%d")
                 sql_clinician = """ UPDATE clinical_exam_type
                                     SET
                                         clinical_exam_type_m = %s,
+                                        clinical_exam_type_modified_date = %s,
                                         clinical_exam_type_delete_ind = %s
                                     WHERE
                                         clinical_exam_type_id = %s
                                     """
                 to_delete = bool(removerecord) 
-                values_clinical = [clinical_exam_type_m, to_delete, clinical_exam_type_id]
+                values_clinical = [clinical_exam_type_m, modified_date, to_delete, clinical_exam_type_id]
         
 
                 db.modifydatabase(sql_clinician, values_clinical)

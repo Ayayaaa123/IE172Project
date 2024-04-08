@@ -190,15 +190,17 @@ def save_labname(n_clicks_btn, n_clicks_modal, lab_exam_type_m, url_search, remo
 
             else: #all inputs are valid
                 #save to db
+                modified_date = datetime.datetime.now().strftime("%Y-%m-%d")
                 sql_labname = """ UPDATE lab_exam_type
                                     SET
                                         lab_exam_type_m = %s,
+                                        lab_exam_type_modified_date = %s,
                                         lab_exam_type_delete_ind = %s
                                     WHERE
                                         lab_exam_type_id = %s
                                     """
                 to_delete = bool(removerecord) 
-                values_labname = [lab_exam_type_m, to_delete, lab_exam_type_id]
+                values_labname = [lab_exam_type_m, modified_date, to_delete, lab_exam_type_id]
         
 
                 db.modifydatabase(sql_labname, values_labname)
