@@ -191,9 +191,9 @@ def initial_values(url_search):
         if mode == "add":
             patient_link = f'/home_visit/purpose?mode=add&patient_id={patient_id}'
         elif mode == "edit":
-            patient_link = f'/editrecord?mode=edit&patient_id={patient_id}'
+            patient_link = f'/editrecord?mode=edit&id={patient_id}'
         else:
-            patient_link = f'/editrecord?mode=edit&patient_id={patient_id}'
+            patient_link = f'/editrecord?mode=edit&id={patient_id}'
 
         return (options, vaccine_name, vaccine_dose, vaccine_dateadministered, vaccine_expdate, vaccine_fromvetmed, patient_link)
     else:
@@ -230,7 +230,8 @@ def save_vacc_record(submitbtn, url_search, vaccine_name, vaccine_dose, vaccine_
             patient_link = ''
 
             vaccine_id = query_ids.get('vacc_id', [None])[0]
-            patient_id = query_ids.get('patient_id', [None])[0]    
+            patient_id = query_ids.get('patient_id', [None])[0]
+            mode = query_ids.get('mode', [None])[0]    
 
             if not vaccine_name:
                 alert_open = True
@@ -276,7 +277,12 @@ def save_vacc_record(submitbtn, url_search, vaccine_name, vaccine_dose, vaccine_
 
                 modal_open = True
 
-                patient_link = f'/editrecord?mode=edit&id={patient_id}'
+                if mode == "add":
+                    patient_link = f'/home_visit/purpose?mode=add&patient_id={patient_id}'
+                elif mode == "edit":
+                    patient_link = f'/editrecord?mode=edit&id={patient_id}'
+                else:
+                    patient_link = f'/editrecord?mode=edit&id={patient_id}'
 
             return [alert_color, alert_text, alert_open, modal_open, patient_link]
         

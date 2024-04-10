@@ -137,6 +137,7 @@ def problemclinicalexam_initial_values(url_search):
     if 'note_id' in query_ids and 'lab_id' in query_ids:
         note_id = query_ids.get('note_id', [None])[0]
         lab_id = query_ids.get('lab_id', [None])[0]
+        mode = query_ids.get('mode', [None])[0]
 
         sql = """
             SELECT 
@@ -196,7 +197,12 @@ def problemclinicalexam_initial_values(url_search):
         problem_id = df['problem_id'][0]
         patient_id = df['patient_id'][0]
 
-        patient_link = f'/editproblemnote?mode=edit&note_id={note_id}&problem_id={problem_id}&patient_id={patient_id}'
+        if mode == "add":
+            patient_link = f'/editproblemnote?mode=add&note_id={note_id}&problem_id={problem_id}&patient_id={patient_id}'
+        elif mode == "edit":
+            patient_link = f'/editproblemnote?mode=edit&note_id={note_id}&problem_id={problem_id}&patient_id={patient_id}'
+        else:
+            patient_link = f'/editproblemnote?mode=edit&note_id={note_id}&problem_id={problem_id}&patient_id={patient_id}'
 
         return (options, lab_exam_type, lab_exam_results, from_vetmed, options2, lab_exam_examiner, patient_link)
     
@@ -235,6 +241,7 @@ def save_labexam_record(submitbtn, url_search, lab_type, results, fromvetmed, ex
 
             lab_id = query_ids.get('lab_id', [None])[0]
             note_id = query_ids.get('note_id', [None])[0]    
+            mode = query_ids.get('mode', [None])[0]
 
             if not lab_type:
                 alert_open = True
@@ -267,8 +274,13 @@ def save_labexam_record(submitbtn, url_search, lab_type, results, fromvetmed, ex
 
                 problem_id = df['problem_id'][0]
                 patient_id = df['patient_id'][0]
-                
-                patient_link = f'/editproblemnote?mode=edit&note_id={note_id}&problem_id={problem_id}&patient_id={patient_id}'
+
+                if mode == "add":
+                    patient_link = f'/editproblemnote?mode=add&note_id={note_id}&problem_id={problem_id}&patient_id={patient_id}'
+                elif mode == "edit":
+                    patient_link = f'/editproblemnote?mode=edit&note_id={note_id}&problem_id={problem_id}&patient_id={patient_id}'
+                else:
+                    patient_link = f'/editproblemnote?mode=edit&note_id={note_id}&problem_id={problem_id}&patient_id={patient_id}'
 
                 sql = """
                     UPDATE lab_exam

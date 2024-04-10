@@ -156,6 +156,7 @@ def labexam_table(url_search):
         patient_id = query_id.get('patient_id', [None])[0]
         problem_id = query_id.get('problem_id', [None])[0]
         note_id = query_id.get('note_id', [None])[0]
+        mode = query_id.get('mode', [None])[0]
 
         sql = """
         SELECT 
@@ -179,9 +180,15 @@ def labexam_table(url_search):
 
             buttons = []
             for note_id, lab_id, in zip(df['Note_ID'], df['Lab_ID']):
+                if mode == "add":
+                    hreflab = f'/editproblemlabexam?mode=add&note_id={note_id}&lab_id={lab_id}'
+                elif mode == "edit":
+                    hreflab = f'/editproblemlabexam?mode=edit&note_id={note_id}&lab_id={lab_id}'
+                else:
+                    hreflab = f'/editproblemlabexam?mode=edit&note_id={note_id}&lab_id={lab_id}'
                 buttons += [
                     html.Div(
-                        dbc.Button('Edit', href=f'/editproblemlabexam?mode=edit&note_id={note_id}&lab_id={lab_id}', size='sm', color='success'),
+                        dbc.Button('Edit', href=hreflab, size='sm', color='success'),
                         style = {'text-align':'center'}
                     )
                 ]
@@ -215,6 +222,7 @@ def problemnote_initial_values(url_search):
         patient_id = query_ids.get('patient_id', [None])[0]
         problem_id = query_ids.get('problem_id', [None])[0]
         note_id = query_ids.get('note_id', [None])[0]
+        mode = query_ids.get('mode', [None])[0]
         
         sql = """
             SELECT note_have_been_tested, note_differential_diagnosis, note_treatment, note_for_testing, note_bill
@@ -234,7 +242,12 @@ def problemnote_initial_values(url_search):
         testing = df['testing'][0]
         bill = df['bill'][0]
 
-        patient_link = f'/editproblem?mode=edit&problem_id={problem_id}&patient_id={patient_id}'
+        if mode == "add":
+            patient_link = f'/editproblem?mode=add&problem_id={problem_id}&patient_id={patient_id}'
+        elif mode == "edit":
+            patient_link = f'/editproblem?mode=edit&problem_id={problem_id}&patient_id={patient_id}'
+        else:
+            patient_link = f'/editproblem?mode=edit&problem_id={problem_id}&patient_id={patient_id}'
 
         return (tested, diagnosis, treatment, testing, bill, patient_link)
     
@@ -275,6 +288,7 @@ def save_note_record(submitbtn, url_search, note_tested, note_diagnosis, note_tr
             problem_id = query_ids.get('problem_id', [None])[0]
             patient_id = query_ids.get('patient_id', [None])[0]
             note_id = query_ids.get('note_id', [None])[0]    
+            mode = query_ids.get('mode', [None])[0]
 
             if note_tested is None:
                 alert_open = True
@@ -312,7 +326,12 @@ def save_note_record(submitbtn, url_search, note_tested, note_diagnosis, note_tr
 
                 modal_open = True
 
-                patient_link = f'/editproblem?mode=edit&problem_id={problem_id}&patient_id={patient_id}'
+                if mode == "add":
+                    patient_link = f'/editproblem?mode=add&problem_id={problem_id}&patient_id={patient_id}'
+                elif mode == "edit":
+                    patient_link = f'/editproblem?mode=edit&problem_id={problem_id}&patient_id={patient_id}'
+                else:
+                    patient_link = f'/editproblem?mode=edit&problem_id={problem_id}&patient_id={patient_id}'
 
             return [alert_color, alert_text, alert_open, modal_open, patient_link]
         

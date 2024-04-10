@@ -48,161 +48,181 @@ layout = html.Div([
                 ]),
             ]),
         ], id = 'deworm_field', style = {'display': 'none'}),
-
-        html.Div([ #Problem Card
+        html.Div([ # problem card
             html.Br(),
-            dbc.Card([ 
-                dbc.CardHeader(
-                            html.Div([                                
-                                html.H2("Problem Details", className = 'flex-grow-1'),
-
-                                dbc.Col([
-                                    html.Div("Problem Status", className = 'me-2', style = {'white-space': 'nowrap','flex': '0 0 auto'}),
-                                    dcc.Dropdown(
-                                        id = "newproblem_status",
-                                        placeholder = "Select Status",
-                                        searchable = True,
-                                        options = [],
-                                        value = None,
-                                        style = {'flex': '1'},
-                                    ),
-                                ], className = "d-flex align-items-center", width = 3),
-                            ], className = "d-flex align-items-center justify-content-between")
-                        ),
-                dbc.CardBody([
-
-                            dbc.Row( #Problem
-                                [
-                                    dbc.Col(html.H3("Problem"), width=2),
-                                    dbc.Col(dbc.Input(id="newproblem", type='text', placeholder='Enter Problem',), width = 6),
-                                    dbc.Col(html.H6("Problem No:", style={"text-align": "right"}), width = 2),
-                                    dbc.Col(dbc.Input(id='newproblem_no', type='text', placeholder='Problem no'), width = 2),
-                                ], style={"align-items": "center"}, className="mb-4"
-                            ),
-
-                            dbc.Row([ #Health, Intake, and assessment (2 columns)
-                                dbc.Col([ #Health & Nutrients Intake column
-                                    dbc.Row(html.H3("Health & Nutrients Intake")),
-
-                                    dbc.Row(
-                                        [
-                                            dbc.Label("Relevant Medical History"),
-                                            dbc.Textarea(id='newproblem_medhistory', placeholder='Enter Any Relevant Medical History', style={"height":85, 'width': '95%'})
-                                        ], style={"margin-left": "1%"}, className="mb-1"
-                                    ),
-                                    dbc.Row(
-                                        [
-                                            dbc.Col(html.H6("Diet"), width = 3),
-                                            dbc.Col(dbc.Input(id='newproblem_diet', type = 'text', placeholder="Enter Patient's Diet"))
-                                        ], style={"margin-left": "1%", "margin-right": "1%", "align-items": "center"}, className="mb-1"
-                                    ),
-                                    dbc.Row(
-                                        [
-                                            dbc.Col(html.H6("Water Source"), width = 3),
-                                            dbc.Col(dbc.Input(id='newproblem_water', type = 'text', placeholder="Enter Patient's Water Source"))
-                                        ], style={"margin-left": "1%", "margin-right": "1%", "align-items": "center"}, className="mb-1"
-                                    ),
-                                ]),
-
-                                dbc.Col([
-                                    dbc.Row(html.H3("Health Assessment")),
-                                    dbc.Row(
-                                        [
-                                            dbc.Col(html.H6("Temperature"), width = 4),
-                                            dbc.Col(dbc.Input(id='newproblem_temp', type='text', placeholder='Enter Temperature'), width = 7)
-                                        ], style={"margin-left": "1%", "align-items": "center"}, className="mb-1"
-                                    ),
-                                    dbc.Row(
-                                        [
-                                            dbc.Col(html.H6("Pulse Rate"), width = 4),
-                                            dbc.Col(dbc.Input(id='newproblem_pr', type='text', placeholder="Enter Pulse Rate"), width = 7)
-                                        ], style={"margin-left": "1%", "align-items": "center"}, className="mb-1"
-                                    ),
-                                    dbc.Row(
-                                        [
-                                            dbc.Col(html.H6("Weight"), width = 4),
-                                            dbc.Col(dbc.Input(id='newproblem_weight', type='text', placeholder='Enter Weight'), width = 7)
-                                        ], style={"margin-left": "1%", "align-items": "center"}, className="mb-1"
-                                    ),
-                                    dbc.Row(
-                                        [
-                                            dbc.Col(html.H6("Respiration Rate"), width = 4),
-                                            dbc.Col(dbc.Input(id='newproblem_rr', type='text', placeholder="Enter Respiration Rate"), width = 7)
-                                        ], style={"margin-left": "1%", "align-items": "center"}, className="mb-1"
-                                    ),
-                                    dbc.Row(
-                                        [
-                                            dbc.Col(html.H6("Body Condition Score"), width = 4),
-                                            dbc.Col(dbc.Input(id='newproblem_bodyscore', type='text', placeholder="Enter Body Condition Score"), width = 7)
-                                        ], style={"margin-left": "1%", "align-items": "center"}, className="mb-1"
-                                    ),
-                                ]),
-                            ], className="mb-4"),
-
-                            html.Div([ #Clinical Exam List
-                                dbc.Card([
-                                    dbc.CardHeader(
-                                        html.Div([
-                                            html.H2("List of Clinical Exams Done", className = 'flex-grow-1'),
-                                            html.Div(dbc.Button("Add Exam", id = "add_clinical_form_btn"), className = "ml-2 d-flex"),
-                                        ], className = "d-flex align-items-center justify-content-between")
-                                    ),
-                                    dbc.CardBody([
-                                        html.Div(id = "clinical_exam_list")
-                                    ]),
-                                ], className="mb-4"),
-                            ], id = 'clincal_exam_field', style = {'display': 'none'}), 
-
-                            html.Div([ #add clinical and progress button row 
-                                dbc.Row([
-                                    dbc.Col(html.Hr(), className='text-center'),
-                                    dbc.Col(dbc.Button("Add Clinical Exams", id = 'clinical_exam_btn'), width='auto', className='text-center', id = 'show_clinical_exam', style = {'display': 'block'}),
-                                    dbc.Col(dbc.Button("Add Progress Notes", id = 'progress_notes_btn'), width='auto', className='text-center', id = 'show_progress_notes', style = {'display': 'block'}), 
-                                    dbc.Col(html.Hr(), className='text-center'),
-                                ], className="mb-4"),
-                            ], id = 'button_row', style = {'display': 'block'}),
-
-                            html.Div([ #Progress Notes Card
-                                dbc.Card([
-                                    dbc.CardHeader(
-                                        html.Div([
-                                            html.H2("Problem Progress Notes", className = 'flex-grow-1'),
-                                            html.Div(dbc.Button("Add Note", id = "add_clinical_form_btn"), className = "ml-2 d-flex"),
-                                        ], className = "d-flex align-items-center justify-content-between")
-                                    ),
-                                    dbc.CardBody([
-                                        html.Div(id = "progress_notes_list")
-                                    ]),
-                                ], className="mb-4"),
-                            ], id = 'progress_notes_field', style = {'display': 'none'}), 
-
-                            dbc.Row(dbc.Col(html.H3("Diagnosis and Treatment"))),
-                            dbc.Row([ # Under Diagnosis
-                                dbc.Col(
-                                    [
-                                        dbc.Label("Diagnosis"),
-                                        dbc.Textarea(id='newproblem_reCreP_diagnosis', placeholder='Enter Diagnosis', style={"height":50})
-                                    ],
-                                    width=4
-                                ),
-                                dbc.Col(
-                                    [
-                                        dbc.Label("Prescription"),
-                                        dbc.Textarea(id='newproblem_reCreP_prescription', placeholder="Enter Prescription", style={"height":50})
-                                    ],
-                                    width=4
-                                ),
-                                dbc.Col(
-                                    [
-                                        dbc.Label("Patient instructions"),
-                                        dbc.Textarea(id='newproblem_reCreP_clienteduc', placeholder="Enter instructions", style={"height":50})
-                                    ],
-                                    width=4
-                                ),
-                            ]),
-                        ]),
-            ])
+            dbc.Card(
+                [
+                    dbc.CardHeader(
+                    html.Div([
+                        html.H2("Problem", className = 'flex-grow-1'),
+                        html.Div(dbc.Button("Add New Problem", id = "add_problem_form_btn"), className = "ml-2 d-flex"),
+                    ], className = "d-flex align-items-center justify-content-between")
+                    ),
+                    dbc.CardBody(
+                        [
+                            html.Div([
+                                html.Div(id='homevisit_problem-table'),
+                            ])
+                        ]
+                    )
+                ]
+            ),
         ], id = 'new_problem_card', style = {'display': 'none'}),
+        
+        # html.Div([ #Problem Card
+        #     html.Br(),
+            # dbc.Card([ 
+            #     dbc.CardHeader(
+            #                 html.Div([                                
+            #                     html.H2("Problem Details", id='homevisit_problemtable', className = 'flex-grow-1'),
+
+            #                     dbc.Col([
+            #                         html.Div("Problem Status", className = 'me-2', style = {'white-space': 'nowrap','flex': '0 0 auto'}),
+            #                         dcc.Dropdown(
+            #                             id = "newproblem_status",
+            #                             placeholder = "Select Status",
+            #                             searchable = True,
+            #                             options = [],
+            #                             value = None,
+            #                             style = {'flex': '1'},
+            #                         ),
+            #                     ], className = "d-flex align-items-center", width = 3),
+            #                 ], className = "d-flex align-items-center justify-content-between")
+            #             ),
+            #     dbc.CardBody([
+
+            #                 dbc.Row( #Problem
+            #                     [
+            #                         dbc.Col(html.H3("Problem"), width=2),
+            #                         dbc.Col(dbc.Input(id="newproblem", type='text', placeholder='Enter Problem',), width = 6),
+            #                         dbc.Col(html.H6("Problem No:", style={"text-align": "right"}), width = 2),
+            #                         dbc.Col(dbc.Input(id='newproblem_no', type='text', placeholder='Problem no'), width = 2),
+            #                     ], style={"align-items": "center"}, className="mb-4"
+            #                 ),
+
+            #                 dbc.Row([ #Health, Intake, and assessment (2 columns)
+            #                     dbc.Col([ #Health & Nutrients Intake column
+            #                         dbc.Row(html.H3("Health & Nutrients Intake")),
+
+            #                         dbc.Row(
+            #                             [
+            #                                 dbc.Label("Relevant Medical History"),
+            #                                 dbc.Textarea(id='newproblem_medhistory', placeholder='Enter Any Relevant Medical History', style={"height":85, 'width': '95%'})
+            #                             ], style={"margin-left": "1%"}, className="mb-1"
+            #                         ),
+            #                         dbc.Row(
+            #                             [
+            #                                 dbc.Col(html.H6("Diet"), width = 3),
+            #                                 dbc.Col(dbc.Input(id='newproblem_diet', type = 'text', placeholder="Enter Patient's Diet"))
+            #                             ], style={"margin-left": "1%", "margin-right": "1%", "align-items": "center"}, className="mb-1"
+            #                         ),
+            #                         dbc.Row(
+            #                             [
+            #                                 dbc.Col(html.H6("Water Source"), width = 3),
+            #                                 dbc.Col(dbc.Input(id='newproblem_water', type = 'text', placeholder="Enter Patient's Water Source"))
+            #                             ], style={"margin-left": "1%", "margin-right": "1%", "align-items": "center"}, className="mb-1"
+            #                         ),
+            #                     ]),
+
+            #                     dbc.Col([
+            #                         dbc.Row(html.H3("Health Assessment")),
+            #                         dbc.Row(
+            #                             [
+            #                                 dbc.Col(html.H6("Temperature"), width = 4),
+            #                                 dbc.Col(dbc.Input(id='newproblem_temp', type='text', placeholder='Enter Temperature'), width = 7)
+            #                             ], style={"margin-left": "1%", "align-items": "center"}, className="mb-1"
+            #                         ),
+            #                         dbc.Row(
+            #                             [
+            #                                 dbc.Col(html.H6("Pulse Rate"), width = 4),
+            #                                 dbc.Col(dbc.Input(id='newproblem_pr', type='text', placeholder="Enter Pulse Rate"), width = 7)
+            #                             ], style={"margin-left": "1%", "align-items": "center"}, className="mb-1"
+            #                         ),
+            #                         dbc.Row(
+            #                             [
+            #                                 dbc.Col(html.H6("Weight"), width = 4),
+            #                                 dbc.Col(dbc.Input(id='newproblem_weight', type='text', placeholder='Enter Weight'), width = 7)
+            #                             ], style={"margin-left": "1%", "align-items": "center"}, className="mb-1"
+            #                         ),
+            #                         dbc.Row(
+            #                             [
+            #                                 dbc.Col(html.H6("Respiration Rate"), width = 4),
+            #                                 dbc.Col(dbc.Input(id='newproblem_rr', type='text', placeholder="Enter Respiration Rate"), width = 7)
+            #                             ], style={"margin-left": "1%", "align-items": "center"}, className="mb-1"
+            #                         ),
+            #                         dbc.Row(
+            #                             [
+            #                                 dbc.Col(html.H6("Body Condition Score"), width = 4),
+            #                                 dbc.Col(dbc.Input(id='newproblem_bodyscore', type='text', placeholder="Enter Body Condition Score"), width = 7)
+            #                             ], style={"margin-left": "1%", "align-items": "center"}, className="mb-1"
+            #                         ),
+            #                     ]),
+            #                 ], className="mb-4"),
+
+            #                 html.Div([ #Clinical Exam List
+            #                     dbc.Card([
+            #                         dbc.CardHeader(
+            #                             html.Div([
+            #                                 html.H2("List of Clinical Exams Done", className = 'flex-grow-1'),
+            #                                 html.Div(dbc.Button("Add Exam", id = "add_clinical_form_btn"), className = "ml-2 d-flex"),
+            #                             ], className = "d-flex align-items-center justify-content-between")
+            #                         ),
+            #                         dbc.CardBody([
+            #                             html.Div(id = "clinical_exam_list")
+            #                         ]),
+            #                     ], className="mb-4"),
+            #                 ], id = 'clincal_exam_field', style = {'display': 'none'}), 
+
+            #                 html.Div([ #add clinical and progress button row 
+            #                     dbc.Row([
+            #                         dbc.Col(html.Hr(), className='text-center'),
+            #                         dbc.Col(dbc.Button("Add Clinical Exams", id = 'clinical_exam_btn'), width='auto', className='text-center', id = 'show_clinical_exam', style = {'display': 'block'}),
+            #                         dbc.Col(dbc.Button("Add Progress Notes", id = 'progress_notes_btn'), width='auto', className='text-center', id = 'show_progress_notes', style = {'display': 'block'}), 
+            #                         dbc.Col(html.Hr(), className='text-center'),
+            #                     ], className="mb-4"),
+            #                 ], id = 'button_row', style = {'display': 'block'}),
+
+            #                 html.Div([ #Progress Notes Card
+            #                     dbc.Card([
+            #                         dbc.CardHeader(
+            #                             html.Div([
+            #                                 html.H2("Problem Progress Notes", className = 'flex-grow-1'),
+            #                                 html.Div(dbc.Button("Add Note", id = "add_clinical_form_btn"), className = "ml-2 d-flex"),
+            #                             ], className = "d-flex align-items-center justify-content-between")
+            #                         ),
+            #                         dbc.CardBody([
+            #                             html.Div(id = "progress_notes_list")
+            #                         ]),
+            #                     ], className="mb-4"),
+            #                 ], id = 'progress_notes_field', style = {'display': 'none'}), 
+
+            #                 dbc.Row(dbc.Col(html.H3("Diagnosis and Treatment"))),
+            #                 dbc.Row([ # Under Diagnosis
+            #                     dbc.Col(
+            #                         [
+            #                             dbc.Label("Diagnosis"),
+            #                             dbc.Textarea(id='newproblem_reCreP_diagnosis', placeholder='Enter Diagnosis', style={"height":50})
+            #                         ],
+            #                         width=4
+            #                     ),
+            #                     dbc.Col(
+            #                         [
+            #                             dbc.Label("Prescription"),
+            #                             dbc.Textarea(id='newproblem_reCreP_prescription', placeholder="Enter Prescription", style={"height":50})
+            #                         ],
+            #                         width=4
+            #                     ),
+            #                     dbc.Col(
+            #                         [
+            #                             dbc.Label("Patient instructions"),
+            #                             dbc.Textarea(id='newproblem_reCreP_clienteduc', placeholder="Enter instructions", style={"height":50})
+            #                         ],
+            #                         width=4
+            #                     ),
+            #                 ]),
+            #             ]),
+            # ])
+        # ], id = 'new_problem_card', style = {'display': 'none'}),
 
         dbc.Modal([ #For adding vaccination
             dbc.ModalHeader(html.H4("Administered Vaccine Details", style={'text-align': 'center', 'width': '100%'}), close_button = True),
@@ -365,7 +385,7 @@ layout = html.Div([
                 dbc.Button("Submit Details", id="deworm_submit_btn", className="ms-auto", n_clicks=0),
             ]),
         ], centered = True, id="deworm_modal", is_open=False, backdrop = "static"), #size = "lg"),
-
+        
         # modal for editing client profile
         dbc.Modal([
             dbc.ModalHeader(dbc.ModalTitle("Edit Client Profile", style={'text-align': 'center', 'width': '100%'})),
@@ -967,207 +987,207 @@ def visit_deworm_list(pathname):
         print(f"An error occurred: {e}")
         return [html.Div()]
 
-@app.callback( #Add the client table in the layout
-    Output("clinical_exam_list", "children"),
-    Input("url", "pathname")        
-)
-def clinical_exam_list(pathname):
+# @app.callback( #Add the client table in the layout
+#     Output("clinical_exam_list", "children"),
+#     Input("url", "pathname")        
+# )
+# def clinical_exam_list(pathname):
 
-    sql = """
-        SELECT MAX(visit_id)
-        FROM visit
-        """
-    values = []
-    df = db.querydatafromdatabase(sql,values)
-    visit_id = int(df.loc[0,0])
+#     sql = """
+#         SELECT MAX(visit_id)
+#         FROM visit
+#         """
+#     values = []
+#     df = db.querydatafromdatabase(sql,values)
+#     visit_id = int(df.loc[0,0])
 
-    sql = """
-        select problem_id
-        from visit
-        where visit_id = %s
-        """
-    values = [visit_id]
-    df = db.querydatafromdatabase(sql, values)
-    problem_id = df.loc[0][0]
-    if problem_id == None:
-        problem_id = 0
-    else:
-        problem_id = int(problem_id)
-    problem_id = 6
+#     sql = """
+#         select problem_id
+#         from visit
+#         where visit_id = %s
+#         """
+#     values = [visit_id]
+#     df = db.querydatafromdatabase(sql, values)
+#     problem_id = df.loc[0][0]
+#     if problem_id == None:
+#         problem_id = 0
+#     else:
+#         problem_id = int(problem_id)
+#     problem_id = 6
 
-    try:  
-        if pathname == "/home_visit/purpose":
+#     try:  
+#         if pathname == "/home_visit/purpose":
 
-            sql = """
-                select
-                    clinical_exam_no,
-                    clinical_exam_type_m,
-                    clinical_exam_ab_findings,
-                    STRING_AGG((COALESCE(clinician_fn, '') || ' ' || COALESCE(clinician_mi, '') || ' ' || COALESCE(clinician_ln, '') || ' ' || COALESCE(clinician_suffix, '')),'; ') AS clinician_assigned,
-                    clinical_exam_modified_date,
-                    clinical_exam_no
-                from clinical_exam e
-                join clinical_exam_type m on e.clinical_exam_type_id = m.clinical_exam_type_id
-                join clinician_assignment a on e.clinical_exam_id = a.clinical_exam_id
-                join clinician c on a.clinician_id = c.clinician_id
-                where problem_id = %s
-                group by clinical_exam_no, clinical_exam_type_m, clinical_exam_ab_findings, clinical_exam_modified_date
-                order by clinical_exam_modified_date
-            """
-            values = [problem_id]
-            cols = ["No.", "Exam", "Clinical Findings", "Clinicians Assigned", "Date", "ID"]
+#             sql = """
+#                 select
+#                     clinical_exam_no,
+#                     clinical_exam_type_m,
+#                     clinical_exam_ab_findings,
+#                     STRING_AGG((COALESCE(clinician_fn, '') || ' ' || COALESCE(clinician_mi, '') || ' ' || COALESCE(clinician_ln, '') || ' ' || COALESCE(clinician_suffix, '')),'; ') AS clinician_assigned,
+#                     clinical_exam_modified_date,
+#                     clinical_exam_no
+#                 from clinical_exam e
+#                 join clinical_exam_type m on e.clinical_exam_type_id = m.clinical_exam_type_id
+#                 join clinician_assignment a on e.clinical_exam_id = a.clinical_exam_id
+#                 join clinician c on a.clinician_id = c.clinician_id
+#                 where problem_id = %s
+#                 group by clinical_exam_no, clinical_exam_type_m, clinical_exam_ab_findings, clinical_exam_modified_date
+#                 order by clinical_exam_modified_date
+#             """
+#             values = [problem_id]
+#             cols = ["No.", "Exam", "Clinical Findings", "Clinicians Assigned", "Date", "ID"]
 
-            df = db.querydatafromdatabase(sql, values, cols)
+#             df = db.querydatafromdatabase(sql, values, cols)
 
-            if not df.empty:
+#             if not df.empty:
 
-                buttons = []
-                for clinical_exam_no in df["ID"]:
-                    buttons += [
-                        html.Div(
-                            dbc.Button("Edit", size = 'sm', color = 'success'),
-                            style = {'text-align': 'center'}
-                        )
-                    ]
-                df['Action'] = buttons
-                df = df[["No.", "Exam", "Clinical Findings", "Clinicians Assigned", "Date", "Action"]]
-
-
-                table = dbc.Table.from_dataframe(df, striped = True, bordered = True, hover = True, size = 'sm', style = {'text-align': 'center'})
-                return [table]
-            else:
-                empty_df = pd.DataFrame(columns=["No.", "Exam", "Clinical Findings", "Clinicians Assigned", "Date", "Action"])
-                table = dbc.Table.from_dataframe(empty_df, striped=True, bordered=True, hover=True, size='sm', style={'text-align': 'center'}, header=True, index=False)
-                return [table]
-        else:
-            return [html.Div()]
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        return [html.Div()]    
-
-@app.callback( #Add the progress notes table in the layout
-    Output("progress_notes_list", "children"),
-    Input("url", "pathname")        
-)
-def progress_notes_list(pathname):
-
-    sql = """
-        SELECT MAX(visit_id)
-        FROM visit
-        """
-    values = []
-    df = db.querydatafromdatabase(sql,values)
-    visit_id = int(df.loc[0,0])
-
-    sql = """
-        select problem_id
-        from visit
-        where visit_id = %s
-        """
-    values = [visit_id]
-    df = db.querydatafromdatabase(sql, values)
-    problem_id = df.loc[0][0]
-    if problem_id == None:
-        problem_id = 0
-    else:
-        problem_id = int(problem_id)
-    problem_id = 2
-
-    try:  
-        if pathname == "/home_visit/purpose":
-
-            sql = """
-                select
-                    note_no,
-                    note_have_been_tested,
-                    note_differential_diagnosis,
-                    note_treatment,
-                    note_for_testing,
-                    note_or_no,
-                    note_bill,
-                    note_no
-                from note
-                where problem_id = %s
-            """
-            values = [problem_id]
-            cols = ["No.", "result_id",  "Differential Diagnosis", "Treatment", "Follow-up test", "OR No.", "Bill", "ID"]
-
-            df = db.querydatafromdatabase(sql, values, cols)
-
-            if not df.empty:
-
-                action_buttons = []
-                for action in df["ID"]:
-                    action_buttons += [
-                        html.Div(
-                            dbc.Button("Edit", size = 'sm', color = 'success'),
-                            style = {'text-align': 'center'}
-                        )
-                    ]
-                df['Action'] = action_buttons
-
-                test_buttons = []
-                for action in df["result_id"]:
-                    if action:
-                        test_buttons += [
-                            html.Div(
-                                dbc.Button("See Results", size = 'sm', color = 'success'),
-                                style = {'text-align': 'center'}
-                            )
-                        ]
-                    else:
-                        test_buttons += ['None']
-                df['Previous Lab Exam'] = test_buttons
-
-                df = df[["No.", "Previous Lab Exam", "Differential Diagnosis", "Treatment", "Follow-up test", "OR No.", "Bill", "Action"]]
+#                 buttons = []
+#                 for clinical_exam_no in df["ID"]:
+#                     buttons += [
+#                         html.Div(
+#                             dbc.Button("Edit", size = 'sm', color = 'success'),
+#                             style = {'text-align': 'center'}
+#                         )
+#                     ]
+#                 df['Action'] = buttons
+#                 df = df[["No.", "Exam", "Clinical Findings", "Clinicians Assigned", "Date", "Action"]]
 
 
-                table = dbc.Table.from_dataframe(df, striped = True, bordered = True, hover = True, size = 'sm', style = {'text-align': 'center'})
-                return [table]
-            else:
-                empty_df = pd.DataFrame(columns=["No.", "Previous Lab Exam", "Differential Diagnosis", "Treatment", "Follow-up test", "OR No.", "Bill", "Action"])
-                table = dbc.Table.from_dataframe(empty_df, striped=True, bordered=True, hover=True, size='sm', style={'text-align': 'center'}, header=True, index=False)
-                return [table]
-        else:
-            return [html.Div()]
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        return [html.Div()]    
+#                 table = dbc.Table.from_dataframe(df, striped = True, bordered = True, hover = True, size = 'sm', style = {'text-align': 'center'})
+#                 return [table]
+#             else:
+#                 empty_df = pd.DataFrame(columns=["No.", "Exam", "Clinical Findings", "Clinicians Assigned", "Date", "Action"])
+#                 table = dbc.Table.from_dataframe(empty_df, striped=True, bordered=True, hover=True, size='sm', style={'text-align': 'center'}, header=True, index=False)
+#                 return [table]
+#         else:
+#             return [html.Div()]
+#     except Exception as e:
+#         print(f"An error occurred: {e}")
+#         return [html.Div()]    
 
-@app.callback( # button row
-    [
-        Output('show_clinical_exam', 'style'),
-        Output('show_progress_notes', 'style'),
-        Output('button_row', 'style'),
-        Output('clincal_exam_field', 'style'),
-        Output('progress_notes_field', 'style'),
-    ],
-    [
-        Input('clinical_exam_btn', 'n_clicks'),
-        Input('progress_notes_btn', 'n_clicks'),
-    ],
-    [
-        State('show_clinical_exam', 'style'),
-        State('show_progress_notes', 'style'),
-    ]
-)
-def toggle_clinical_btn(clinical_btn, progress_btn, clinical_show, progress_show):
-    ctx = dash.callback_context
+# @app.callback( #Add the progress notes table in the layout
+#     Output("progress_notes_list", "children"),
+#     Input("url", "pathname")        
+# )
+# def progress_notes_list(pathname):
+
+#     sql = """
+#         SELECT MAX(visit_id)
+#         FROM visit
+#         """
+#     values = []
+#     df = db.querydatafromdatabase(sql,values)
+#     visit_id = int(df.loc[0,0])
+
+#     sql = """
+#         select problem_id
+#         from visit
+#         where visit_id = %s
+#         """
+#     values = [visit_id]
+#     df = db.querydatafromdatabase(sql, values)
+#     problem_id = df.loc[0][0]
+#     if problem_id == None:
+#         problem_id = 0
+#     else:
+#         problem_id = int(problem_id)
+#     problem_id = 2
+
+#     try:  
+#         if pathname == "/home_visit/purpose":
+
+#             sql = """
+#                 select
+#                     note_no,
+#                     note_have_been_tested,
+#                     note_differential_diagnosis,
+#                     note_treatment,
+#                     note_for_testing,
+#                     note_or_no,
+#                     note_bill,
+#                     note_no
+#                 from note
+#                 where problem_id = %s
+#             """
+#             values = [problem_id]
+#             cols = ["No.", "result_id",  "Differential Diagnosis", "Treatment", "Follow-up test", "OR No.", "Bill", "ID"]
+
+#             df = db.querydatafromdatabase(sql, values, cols)
+
+#             if not df.empty:
+
+#                 action_buttons = []
+#                 for action in df["ID"]:
+#                     action_buttons += [
+#                         html.Div(
+#                             dbc.Button("Edit", size = 'sm', color = 'success'),
+#                             style = {'text-align': 'center'}
+#                         )
+#                     ]
+#                 df['Action'] = action_buttons
+
+#                 test_buttons = []
+#                 for action in df["result_id"]:
+#                     if action:
+#                         test_buttons += [
+#                             html.Div(
+#                                 dbc.Button("See Results", size = 'sm', color = 'success'),
+#                                 style = {'text-align': 'center'}
+#                             )
+#                         ]
+#                     else:
+#                         test_buttons += ['None']
+#                 df['Previous Lab Exam'] = test_buttons
+
+#                 df = df[["No.", "Previous Lab Exam", "Differential Diagnosis", "Treatment", "Follow-up test", "OR No.", "Bill", "Action"]]
+
+
+#                 table = dbc.Table.from_dataframe(df, striped = True, bordered = True, hover = True, size = 'sm', style = {'text-align': 'center'})
+#                 return [table]
+#             else:
+#                 empty_df = pd.DataFrame(columns=["No.", "Previous Lab Exam", "Differential Diagnosis", "Treatment", "Follow-up test", "OR No.", "Bill", "Action"])
+#                 table = dbc.Table.from_dataframe(empty_df, striped=True, bordered=True, hover=True, size='sm', style={'text-align': 'center'}, header=True, index=False)
+#                 return [table]
+#         else:
+#             return [html.Div()]
+#     except Exception as e:
+#         print(f"An error occurred: {e}")
+#         return [html.Div()]    
+
+# @app.callback( # button row
+#     [
+#         Output('show_clinical_exam', 'style'),
+#         Output('show_progress_notes', 'style'),
+#         Output('button_row', 'style'),
+#         Output('clincal_exam_field', 'style'),
+#         Output('progress_notes_field', 'style'),
+#     ],
+#     [
+#         Input('clinical_exam_btn', 'n_clicks'),
+#         Input('progress_notes_btn', 'n_clicks'),
+#     ],
+#     [
+#         State('show_clinical_exam', 'style'),
+#         State('show_progress_notes', 'style'),
+#     ]
+# )
+# def toggle_clinical_btn(clinical_btn, progress_btn, clinical_show, progress_show):
+#     ctx = dash.callback_context
     
-    if ctx.triggered:
-        eventid = ctx.triggered[0]['prop_id'].split('.')[0]
+#     if ctx.triggered:
+#         eventid = ctx.triggered[0]['prop_id'].split('.')[0]
 
-        if eventid == 'clinical_exam_btn' and clinical_btn and progress_show == {'display': 'block'}:
-            return [{'display': 'none'},{'display': 'block'},{'display': 'block'},{'display': 'block'},{'display': 'none'}]
-        if eventid == 'clinical_exam_btn' and clinical_btn and progress_show == {'display': 'none'}:
-            return [{'display': 'none'},{'display': 'none'},{'display': 'none'},{'display': 'block'},{'display': 'block'}]
+#         if eventid == 'clinical_exam_btn' and clinical_btn and progress_show == {'display': 'block'}:
+#             return [{'display': 'none'},{'display': 'block'},{'display': 'block'},{'display': 'block'},{'display': 'none'}]
+#         if eventid == 'clinical_exam_btn' and clinical_btn and progress_show == {'display': 'none'}:
+#             return [{'display': 'none'},{'display': 'none'},{'display': 'none'},{'display': 'block'},{'display': 'block'}]
         
-        if eventid == 'progress_notes_btn' and progress_btn and clinical_show == {'display': 'block'}:
-            return [{'display': 'block'},{'display': 'none'},{'display': 'block'},{'display': 'none'},{'display': 'block'}]
-        if eventid == 'progress_notes_btn' and progress_btn and clinical_show == {'display': 'none'}:
-            return [{'display': 'none'},{'display': 'none'},{'display': 'none'},{'display': 'block'},{'display': 'block'}]
+#         if eventid == 'progress_notes_btn' and progress_btn and clinical_show == {'display': 'block'}:
+#             return [{'display': 'block'},{'display': 'none'},{'display': 'block'},{'display': 'none'},{'display': 'block'}]
+#         if eventid == 'progress_notes_btn' and progress_btn and clinical_show == {'display': 'none'}:
+#             return [{'display': 'none'},{'display': 'none'},{'display': 'none'},{'display': 'block'},{'display': 'block'}]
     
-    return [{'display': 'block'}, {'display': 'block'}, {'display': 'block'},{'display': 'none'},{'display': 'none'}]
+#     return [{'display': 'block'}, {'display': 'block'}, {'display': 'block'},{'display': 'none'},{'display': 'none'}]
 
 
 
@@ -1217,30 +1237,29 @@ def toggle_deworm_modal(deworm_add_btn, deworm_modal):
         
     return [deworm_modal]
 
-@app.callback( # opens vaccine medication modal
-    [
-        Output('temp', 'children'),
-    ],
-    [
-        #Input('vacc_edit_btn', 'n_clicks'),
-        Input({"type": "vacc_edit_btn", "index": ALL}, 'n_clicks'),
-    ],
-)
-def toggle_vaccine_modal(edit_btn):
-    ctx = dash.callback_context
+# @app.callback( # opens vaccine medication modal
+#     [
+#         Output('temp', 'children'),
+#     ],
+#     [
+#         #Input('vacc_edit_btn', 'n_clicks'),
+#         Input({"type": "vacc_edit_btn", "index": ALL}, 'n_clicks'),
+#     ],
+# )
+# def toggle_vaccine_modal(edit_btn):
+#     ctx = dash.callback_context
 
-    if ctx.triggered:
-        eventid = ctx.triggered[0]['prop_id'].split('.')[0]
-        vacc_id = ctx.triggered[0]['prop_id'].split('.')[1]
+#     if ctx.triggered:
+#         eventid = ctx.triggered[0]['prop_id'].split('.')[0]
+#         vacc_id = ctx.triggered[0]['prop_id'].split('.')[1]
 
-        if eventid == 'vacc_edit_btn' and edit_btn:
-            print(vacc_id)
+#         if eventid == 'vacc_edit_btn' and edit_btn:
+#             print(vacc_id)
         
-        return [html.Div()]
-    else:
-        return [html.Div()]
+#         return [html.Div()]
+#     else:
+#         return [html.Div()]
     
-
 
 @app.callback( #opens and close form and success modal for editing client profile
         [
@@ -1663,5 +1682,51 @@ def editprofile_patient_save(submitbtn, url_search, name, species, breed, color,
                 raise PreventUpdate
         else:
             raise PreventUpdate
+    else:
+        raise PreventUpdate
+    
+
+@app.callback(
+    Output('homevisit_problem-table', 'children'),
+    Input('url', 'search'),
+)
+
+def homevisit_problem_table(url_search):
+    parsed = urlparse(url_search)
+    query_patient_id = parse_qs(parsed.query)
+
+    if 'patient_id' in query_patient_id:
+        patient_id = query_patient_id['patient_id'][0]
+        sql = """
+        SELECT DISTINCT
+            problem_chief_complaint, problem_diagnosis, problem_prescription, problem_client_educ, problem_status_m, problem_date_created, problem_date_resolved, problem.problem_id, patient.patient_id
+        FROM 
+            problem
+        INNER JOIN problem_status ON problem.problem_status_id = problem_status.problem_status_id
+        INNER JOIN visit ON problem.problem_id = visit.problem_id
+        INNER JOIN patient ON visit.patient_id = patient.patient_id
+        WHERE patient.patient_id = %s AND problem_delete_ind = false
+        """
+        values = [patient_id]
+        sql += "ORDER BY problem.problem_id DESC"
+        col = ['Chief Complaint', 'Diagnosis', 'Prescription', 'Patient Instructions', 'Problem Status', 'Start Date', 'Resolved Date', 'Problem_ID', 'Patient_ID']
+        df = db.querydatafromdatabase(sql, values, col)
+
+        if df.shape:
+            buttons = []
+            for problem_id, patient_id_query in zip(df['Problem_ID'], df['Patient_ID']):
+                buttons += [
+                    html.Div(
+                        dbc.Button('Edit', href=f'/editproblem?mode=add&problem_id={problem_id}&patient_id={patient_id_query}', size='sm', color='success'),
+                        style = {'text-align':'center'}
+                    )
+                ]
+
+            df['Action'] = buttons
+            df = df[['Chief Complaint', 'Diagnosis', 'Prescription', 'Patient Instructions', 'Problem Status', 'Start Date', 'Resolved Date', 'Action']] 
+
+            table = dbc.Table.from_dataframe(df, striped=True, bordered=True, hover=True, size='sm', style={'text-align': 'center'})
+            return [table]
+
     else:
         raise PreventUpdate

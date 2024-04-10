@@ -123,6 +123,7 @@ def problemclinicalexam_initial_values(url_search):
         patient_id = query_ids.get('patient_id', [None])[0]
         problem_id = query_ids.get('problem_id', [None])[0]
         clinical_id = query_ids.get('clinical_id', [None])[0]
+        mode = query_ids.get('mode', [None])[0]
 
         sql = """
             SELECT 
@@ -170,7 +171,12 @@ def problemclinicalexam_initial_values(url_search):
         clinician_ids = df['clinician'].tolist()
         clinical_exam_findings = df['clinical_exam_findings'][0]
 
-        patient_link = f'/editproblem?mode=edit&problem_id={problem_id}&patient_id={patient_id}'
+        if mode == "add":
+            patient_link = f'/editproblem?mode=add&problem_id={problem_id}&patient_id={patient_id}'
+        elif mode == "edit":
+            patient_link = f'/editproblem?mode=edit&problem_id={problem_id}&patient_id={patient_id}'
+        else:
+            patient_link = f'/editproblem?mode=edit&problem_id={problem_id}&patient_id={patient_id}'
 
         return (options, clinical_exam_type, options2, clinician_ids, clinical_exam_findings, patient_link)
     
@@ -209,6 +215,7 @@ def save_clinicalexam_record(submitbtn, url_search, clinicalexam_name, clinicale
             patient_id = query_ids.get('patient_id', [None])[0]
             problem_id = query_ids.get('problem_id', [None])[0]
             clinical_id = query_ids.get('clinical_id', [None])[0]  
+            mode = query_ids.get('mode', [None])[0]
 
             if not clinicalexam_name:
                 alert_open = True
@@ -278,7 +285,12 @@ def save_clinicalexam_record(submitbtn, url_search, clinicalexam_name, clinicale
                 
                 modal_open = True
 
-                patient_link = f'/editproblem?mode=edit&problem_id={problem_id}&patient_id={patient_id}'
+                if mode == "add":
+                    patient_link = f'/editproblem?mode=add&problem_id={problem_id}&patient_id={patient_id}'
+                elif mode == "edit":
+                    patient_link = f'/editproblem?mode=edit&problem_id={problem_id}&patient_id={patient_id}'
+                else:
+                    patient_link = f'/editproblem?mode=edit&problem_id={problem_id}&patient_id={patient_id}'
 
             return [alert_color, alert_text, alert_open, modal_open, patient_link]
         

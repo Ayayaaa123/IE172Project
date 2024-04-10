@@ -266,6 +266,7 @@ def clinicalexam_table(url_search):
     if 'patient_id' in query_id and 'problem_id' in query_id:
         patient_id = query_id.get('patient_id', [None])[0]
         problem_id = query_id.get('problem_id', [None])[0]
+        mode = query_id.get('mode', [None])[0]
         sql = """
         SELECT DISTINCT
             STRING_AGG(DISTINCT clinical_exam_type_m, ', ') AS clinical_exam_types, MIN(clinical_exam_ab_findings) AS clinical_exam_ab_findings, 
@@ -286,13 +287,19 @@ def clinicalexam_table(url_search):
         sql += "ORDER BY clinical_exam_no DESC"
         col = ['Clinical Exam', 'Findings', 'Clinician', 'Clinical_ID', 'Problem_ID', 'Patient_ID', 'clinical_exam_no']
         df = db.querydatafromdatabase(sql, values, col)
-
+        
         if df.shape:
             buttons = []
             for clinical_id, problem_id, patient_id in zip(df['Clinical_ID'], df['Problem_ID'], df['Patient_ID']):
+                if mode == "add":
+                    hrefclinical = f'/editproblemclinicalexam?mode=add&clinical_id={clinical_id}&problem_id={problem_id}&patient_id={patient_id}'
+                elif mode == "edit":
+                    hrefclinical = f'/editproblemclinicalexam?mode=edit&clinical_id={clinical_id}&problem_id={problem_id}&patient_id={patient_id}'
+                else:
+                    hrefclinical = f'/editproblemclinicalexam?mode=edit&clinical_id={clinical_id}&problem_id={problem_id}&patient_id={patient_id}'
                 buttons += [
                     html.Div(
-                        dbc.Button('Edit', href=f'/editproblemclinicalexam?mode=edit&clinical_id={clinical_id}&problem_id={problem_id}&patient_id={patient_id}', size='sm', color='success'),
+                        dbc.Button('Edit', href=hrefclinical, size='sm', color='success'),
                         style = {'text-align':'center'}
                     )
                 ]
@@ -318,6 +325,7 @@ def progressnotes_table(url_search):
     if 'patient_id' in query_id and 'problem_id' in query_id:
         patient_id = query_id.get('patient_id', [None])[0]
         problem_id = query_id.get('problem_id', [None])[0]
+        mode = query_id.get('mode', [None])[0]
         sql = """
         SELECT 
             visit_date, note_differential_diagnosis, note_treatment, note_bill, note_for_testing, note.note_id, problem.problem_id, patient.patient_id
@@ -332,13 +340,19 @@ def progressnotes_table(url_search):
         sql += "ORDER BY visit_date DESC"
         col = ['Visit Date', 'Differential Diagnosis', 'Treatment', 'Bill', 'Tests Needed', 'Note_ID', 'Problem_ID', 'Patient_ID']
         df = db.querydatafromdatabase(sql, values, col)
-
+        
         if df.shape:
             buttons = []
             for note_id, problem_id, patient_id in zip(df['Note_ID'], df['Problem_ID'], df['Patient_ID']):
+                if mode == "add":
+                    hrefnote = f'/editproblemnote?mode=add&note_id={note_id}&problem_id={problem_id}&patient_id={patient_id}'
+                elif mode == "edit":
+                    hrefnote = f'/editproblemnote?mode=edit&note_id={note_id}&problem_id={problem_id}&patient_id={patient_id}'
+                else:
+                    hrefnote = f'/editproblemnote?mode=edit&note_id={note_id}&problem_id={problem_id}&patient_id={patient_id}'
                 buttons += [
                     html.Div(
-                        dbc.Button('Edit', href=f'/editproblemnote?mode=edit&note_id={note_id}&problem_id={problem_id}&patient_id={patient_id}', size='sm', color='success'),
+                        dbc.Button('Edit', href=hrefnote, size='sm', color='success'),
                         style = {'text-align':'center'}
                     )
                 ]
@@ -380,6 +394,7 @@ def problem_initial_values(url_search):
     if 'patient_id' in query_ids and 'problem_id' in query_ids:
         patient_id = query_ids.get('patient_id', [None])[0]
         problem_id = query_ids.get('problem_id', [None])[0]
+        mode = query_ids.get('mode', [None])[0]
 
         sql = """
             SELECT 
@@ -423,8 +438,12 @@ def problem_initial_values(url_search):
         problem_prescription = df['problem_prescription'][0]
         problem_clienteduc = df['problem_clienteduc'][0]
 
-
-        patient_link = f'/editrecord?mode=edit&id={patient_id}'
+        if mode == "add":
+            patient_link = f'/home_visit/purpose?mode=add&patient_id={patient_id}'
+        elif mode == "edit":
+            patient_link = f'/editrecord?mode=edit&id={patient_id}'
+        else:
+            patient_link = f'/editrecord?mode=edit&id={patient_id}'
 
         return (options, problem_status, problem_complaint, problem_medhistory, problem_diet, problem_watersource, problem_age, problem_temperature, problem_weight, problem_pulserate, 
                 problem_respirationrate, problem_bodyconditionscore, problem_diagnosis, problem_prescription, problem_clienteduc, patient_link)
@@ -472,7 +491,8 @@ def save_deworm_record(submitbtn, url_search, problem_status, problem_complaint,
             patient_link = ''
 
             problem_id = query_ids.get('problem_id', [None])[0]
-            patient_id = query_ids.get('patient_id', [None])[0]    
+            patient_id = query_ids.get('patient_id', [None])[0]
+            mode = query_ids.get('mode', [None])[0]    
 
             if not problem_status:
                 alert_open = True
@@ -610,7 +630,12 @@ def save_deworm_record(submitbtn, url_search, problem_status, problem_complaint,
 
                 modal_open = True
 
-                patient_link = f'/editrecord?mode=edit&id={patient_id}'
+                if mode == "add":
+                    patient_link = f'/home_visit/purpose?mode=add&patient_id={patient_id}'
+                elif mode == "edit":
+                    patient_link = f'/editrecord?mode=edit&id={patient_id}'
+                else:
+                    patient_link = f'/editrecord?mode=edit&id={patient_id}'
 
             return [alert_color, alert_text, alert_open, modal_open, patient_link]
         
