@@ -100,9 +100,11 @@ def viewrecord_vetlist(pathname, searchterm):
             sql += """ AND (
                 vet_ln ILIKE %s
                 OR vet_fn ILIKE %s
-                );
+                )
             """
-            values = [f"%{searchterm}%", f"%{searchterm}%"]
+            values.extend([f"%{searchterm}%", f"%{searchterm}%"])
+
+        sql += " ORDER BY vet_id;"
        
         df = db.querydatafromdatabase(sql, values, cols)
        

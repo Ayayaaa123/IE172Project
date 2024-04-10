@@ -108,9 +108,11 @@ def viewrecord_loadpatientlist(pathname, searchterm):
                 patient_m ILIKE %s 
                 OR client_ln ILIKE %s 
                 OR client_fn ILIKE %s
-                );
+                )
             """
-            values = [f"%{searchterm}%", f"%{searchterm}%", f"%{searchterm}%"]
+            values.extend([f"%{searchterm}%", f"%{searchterm}%", f"%{searchterm}%"])
+        
+        sql += " ORDER BY patient_id;"
 
         df = db.querydatafromdatabase(sql, values, cols)
         

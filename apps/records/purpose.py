@@ -13,6 +13,7 @@ from apps import dbconnect as db
 from datetime import datetime
 from dash import ALL, MATCH
 from urllib.parse import urlparse, parse_qs
+import time
 
 
 layout = html.Div([
@@ -283,7 +284,7 @@ layout = html.Div([
                 dbc.Button("Submit Details", id="vaccine_submit_btn", className="ms-auto", n_clicks=0),
             ]),
         ], centered = True, id="vaccine_modal", is_open=False, backdrop = "static"), #size = "lg"),
-
+        
         dbc.Modal([ #For adding deworming
             dbc.ModalHeader(html.H4("Administered Deworm Details", style={'text-align': 'center', 'width': '100%'}), close_button = True),
             dbc.ModalBody([
@@ -364,6 +365,177 @@ layout = html.Div([
                 dbc.Button("Submit Details", id="deworm_submit_btn", className="ms-auto", n_clicks=0),
             ]),
         ], centered = True, id="deworm_modal", is_open=False, backdrop = "static"), #size = "lg"),
+
+        # modal for editing client profile
+        dbc.Modal([
+            dbc.ModalHeader(dbc.ModalTitle("Edit Client Profile", style={'text-align': 'center', 'width': '100%'})),
+            dbc.ModalBody([
+                dbc.Alert(id = "homevisit_clientprofile_alert", is_open = False),
+                dbc.InputGroup(
+                    [
+                        dbc.InputGroupText("First Name", style={"width": "17%"}),
+                        dbc.Input(id='homevisit_client_fn', type='text', placeholder="e.g. Juan"),
+                    ],
+                    className="mb-2",
+                ),
+
+                dbc.InputGroup(
+                    [
+                        dbc.InputGroupText("Last Name", style={"width": "17%"}),
+                        dbc.Input(id='homevisit_client_ln', type='text', placeholder="e.g. Dela Cruz"),
+                    ],
+                    className="mb-2",
+                ),
+
+                dbc.InputGroup(
+                    [
+                        dbc.InputGroupText("Middle Initial", style={"width": "17%"}),
+                        dbc.Input(id='homevisit_client_mi', type='text', placeholder="e.g. M."),
+                        dbc.InputGroupText("Suffix", style={"width": "12%"}),
+                        dbc.Input(id='homevisit_client_suffix', type='text', placeholder="e.g. Jr."),
+                    ],
+                    className="mb-4",
+                ),
+
+                dbc.InputGroup(
+                    [
+                        dbc.InputGroupText("Contact No.", style={"width": "17%"}),
+                        dbc.Input(id='homevisit_client_contact_no', type='text', placeholder="e.g. 09123456789"),
+                    ],
+                    className="mb-2",
+                ),
+
+                dbc.InputGroup(
+                    [
+                        dbc.InputGroupText("Email", style={"width": "17%"}),
+                        dbc.Input(id='homevisit_client_email', type='text', placeholder="e.g. Juan.DelaCruz@example.com"),
+                    ],
+                    className="mb-4",
+                ),
+
+                dbc.InputGroup(
+                    [
+                        dbc.InputGroupText("House No.", style={"width": "17%"}),
+                        dbc.Input(id='homevisit_client_house_no', type='text', placeholder="e.g. No. 1A (or any landmark)"),
+                    ],
+                    className="mb-2",
+                ),
+
+                dbc.InputGroup(
+                    [
+                        dbc.InputGroupText("Street", style={"width": "17%"}),
+                        dbc.Input(id='homevisit_client_street', type='text', placeholder="e.g. P. Vargas St."),
+                        dbc.InputGroupText("Barangay", style={"width": "12%"}),
+                        dbc.Input(id='homevisit_client_barangay', type='text', placeholder="e.g. Krus na Ligas"),
+                    ],
+                    className="mb-2",
+                ),
+
+                dbc.InputGroup(
+                    [
+                        dbc.InputGroupText("City", style={"width": "17%"}),
+                        dbc.Input(id='homevisit_client_city', type='text', placeholder="e.g. Pasay City"),
+                        dbc.InputGroupText("Region", style={"width": "12%"}),
+                        dbc.Input(id='homevisit_client_region', type='text', placeholder="e.g. Metro Manila"),
+                    ],
+                    #className="mb-3",
+                ),
+            ]),
+            dbc.ModalFooter([
+                dbc.Button("Submit Client Details", id = "homevisit_client_submit", className = "ms-auto"),
+            ]),
+        ], centered = True, id = "homevisit_client_modal", is_open = False, backdrop = "static", size = 'lg'),
+
+        dbc.Modal(children = [ # successful saving of client profile
+            dbc.ModalHeader(html.H4('Client Profile Recorded Successfully!', style={'text-align': 'center', 'width': '100%'}), close_button = False),
+            dbc.ModalFooter([
+                dbc.Button("Close", id = 'homevisit_client_close_successmodal', className = "btn btn-primary ms-auto", href=""),
+                #dbc.Button("Close", href = "/", id = "close_client_successmodal", className = "ms-auto"),
+            ]),
+        ], centered = True, id = 'homevisit_client_successmodal', backdrop = 'static', is_open = False, keyboard = False),
+
+        # modal for editing patient profile
+        dbc.Modal([
+            dbc.ModalHeader(dbc.ModalTitle("Edit Patient Profile", style={'text-align': 'center', 'width': '100%'})),
+            dbc.ModalBody([
+                dbc.Alert(id = "homevisit_patientprofile_alert", is_open = False),
+                dbc.InputGroup(
+                    [
+                        dbc.InputGroupText("Name", style={"width": "17%"}),
+                        dbc.Input(id='homevisit_patient_m', type='text', placeholder="e.g. Bantay (leave blank if none)"),
+                    ],
+                    className="mb-2",
+                ),
+
+                dbc.InputGroup(
+                    [
+                        dbc.InputGroupText("Species", style={"width": "17%"}),
+                        dbc.Input(id='homevisit_patient_species', type='text', placeholder="e.g. Dog"),
+                    ],
+                    className="mb-2",
+                ),
+
+                dbc.InputGroup(
+                    [
+                        dbc.InputGroupText("Breed", style={"width": "17%"}),
+                        dbc.Input(id='homevisit_patient_breed', type='text', placeholder="e.g. Bulldog"),
+                    ],
+                    className="mb-2",
+                ),
+
+                dbc.InputGroup(
+                    [
+                        dbc.InputGroupText("Color Marks", style={"width": "17%"}),
+                        dbc.Input(id='homevisit_patient_color', type='text', placeholder="e.g. White or With black spots"),
+                    ],
+                    className="mb-2",
+                ),
+
+                dbc.InputGroup(
+                    [
+                        dbc.InputGroupText("Sex", style={"width": "19%"}),                            
+                        dbc.InputGroupText(dcc.Dropdown(
+                            id='homevisit_patient_sex',
+                            options=[
+                                {'label':'Male', 'value':'Male'},
+                                {'label':'Female', 'value':'Female'},
+                            ],
+                            placeholder='Select Sex',
+                            style = {"width": "100%"}
+                            ), style = {"width": "32%"}
+                        ),
+                        dbc.InputGroupText("Birth Date", style={"width": "17%"}),
+                        dbc.InputGroupText(dmc.DatePicker(
+                            id='homevisit_patient_bd',
+                            dropdownType='modal',
+                            inputFormat='MMM DD, YYYY',
+                            placeholder = "Choose Date"
+                            ), style = {"width":"32%"}
+                        ),
+                    ],
+                    className="mb-2",
+                ),
+
+                dbc.InputGroup(
+                    [
+                        dbc.InputGroupText("Idiosyncrasies", style={"width": "17%"}),
+                        dbc.Input(id='homevisit_patient_idiosync', type='text', placeholder="e.g. Likes morning walks"),
+                    ],
+                    #className="mb-3",
+                ),
+            ]),
+            dbc.ModalFooter([
+                dbc.Button("Submit Patient Details", id = "homevisit_patient_submit", className = "ms-auto"),
+            ]),
+        ], centered = True, id = "homevisit_patient_modal", is_open = False, backdrop = "static", size = 'lg'),
+
+        dbc.Modal(children = [ # successful saving of patient profile
+            dbc.ModalHeader(html.H4('Patient Profile Recorded Successfully!', style={'text-align': 'center', 'width': '100%'}), close_button = False),
+            dbc.ModalFooter([
+                dbc.Button("Close", id = 'homevisit_patient_close_successmodal', className = "btn btn-primary ms-auto", href=""),
+                #dbc.Button("Close", id = "close_patient_successmodal", className = "ms-auto"),
+            ]),
+        ], centered = True, id = 'homevisit_patient_successmodal', backdrop = 'static', is_open = False, keyboard = False),
 
         html.Div(id = 'temp'),
 
@@ -497,7 +669,7 @@ def client_patient(pathname):
                         dbc.CardHeader(
                             html.Div([
                                     html.H3("Patient Information", className = "flex-grow-1"),
-                                    dbc.Button("Edit Info", id = 'edit_patient_detail_btn', n_clicks = 0),
+                                    dbc.Button("Edit Info", id = 'homevisit_patientdetails', n_clicks = 0),
                                 ], className = "d-flex align-items-center justify-content-between"),
                         ),
                         dbc.CardBody([
@@ -507,7 +679,7 @@ def client_patient(pathname):
                             ], style={"align-items": "center", "border-bottom": "1px solid #ccc"}, className="mb-2"),
                             dbc.Row([
                                 dbc.Col(html.H6('Species:'), width = 3),
-                                dbc.Col(html.H6(f'{patient_species}'), style={"border-bottom": "1px solid #ccc"}, width = 4),
+                                dbc.Col(html.H6(f'{patient_species}'), width = 4),
                                 dbc.Col(html.H6('Breed:'), width = 2),
                                 dbc.Col(html.H6(f'{patient_breed}'), width = 3),
                             ], style={"align-items": "center"}, className="mb-2"),
@@ -535,7 +707,7 @@ def client_patient(pathname):
                         dbc.CardHeader(
                             html.Div([
                                     html.H3("Client Information", className = "flex-grow-1"),
-                                    dbc.Button("Edit Info", id = 'edit_client_detail_btn', n_clicks = 0),
+                                    dbc.Button("Edit Info", id = 'homevisit_clientdetails', n_clicks = 0),
                                 ], className = "d-flex align-items-center justify-content-between"),
                         ),
                         dbc.CardBody([
@@ -657,10 +829,20 @@ def visit_vaccine_list(pathname):
     values = []
     df = db.querydatafromdatabase(sql,values)
     visit_id = int(df.loc[0,0])
-    visit_id = 18
 
     try:  
         if pathname == "/home_visit/purpose":
+            sql = """
+                    SELECT patient.patient_id
+                    FROM visit
+                    INNER JOIN patient ON visit.patient_id = patient.patient_id
+                    WHERE
+                        visit_id = %s
+                """
+            values = [visit_id]
+            df = db.querydatafromdatabase(sql, values)
+            patient_id = int(df.loc[0,0])
+
 
             sql = """
                 SELECT
@@ -673,10 +855,12 @@ def visit_vaccine_list(pathname):
                     v.vacc_id
                 FROM vacc v 
                     INNER JOIN vacc_m m on v.vacc_m_id = m.vacc_m_id
+                    INNER JOIN visit ON v.visit_id = visit.visit_id
+                    INNER JOIN patient ON visit.patient_id = patient.patient_id
                 WHERE NOT vacc_delete_ind
-                    AND visit_id = %s
+                    AND patient.patient_id = %s
             """
-            values = [visit_id]
+            values = [patient_id]
             cols = ["No.", "Vaccine Name", "Vaccine Dose", "Date Administered", "Expiration Date", "Vaccine from VetMed?", "ID"]
 
             df = db.querydatafromdatabase(sql, values, cols)
@@ -687,7 +871,7 @@ def visit_vaccine_list(pathname):
                 for vacc_id in df["ID"]:
                     buttons += [
                         html.Div(
-                            dbc.Button("Edit", id="vacc_edit_btn", size = 'sm', color = 'success'),
+                            dbc.Button("Edit", href=f'/editvaccine?mode=add&vacc_id={vacc_id}&patient_id={patient_id}', id="vacc_edit_btn", size = 'sm', color = 'success'),
                             style = {'text-align': 'center'}
                         )
                     ]
@@ -721,11 +905,20 @@ def visit_deworm_list(pathname):
     values = []
     df = db.querydatafromdatabase(sql,values)
     visit_id = int(df.loc[0,0])
-    visit_id = 28
 
     try:  
         if pathname == "/home_visit/purpose":
-
+            sql = """
+                    SELECT patient.patient_id
+                    FROM visit
+                    INNER JOIN patient ON visit.patient_id = patient.patient_id
+                    WHERE
+                        visit_id = %s
+                """
+            values = [visit_id]
+            df = db.querydatafromdatabase(sql, values)
+            patient_id = int(df.loc[0,0])
+            
             sql = """
                 SELECT
                     deworm_no,
@@ -737,10 +930,12 @@ def visit_deworm_list(pathname):
                     d.deworm_id
                 FROM deworm d
                     INNER JOIN deworm_m m on d.deworm_m_id = m.deworm_m_id
+                    INNER JOIN visit ON d.visit_id = visit.visit_id
+                    INNER JOIN patient ON visit.patient_id = patient.patient_id
                 WHERE NOT deworm_delete_ind
-                    AND visit_id = %s
+                    AND patient.patient_id = %s
             """
-            values = [visit_id]
+            values = [patient_id]
             cols = ["No.", "Deworm Name", "Deworm Dose", "Date Administered", "Expiration Date", "Deworm from VetMed?", "ID"]
 
             df = db.querydatafromdatabase(sql, values, cols)
@@ -751,7 +946,7 @@ def visit_deworm_list(pathname):
                 for deworm_id in df["ID"]:
                     buttons += [
                         html.Div(
-                            dbc.Button("Edit", size = 'sm', color = 'success'),
+                            dbc.Button("Edit", href=f'/editdeworm?mode=add&deworm_id={deworm_id}&patient_id={patient_id}', size = 'sm', color = 'success'),
                             style = {'text-align': 'center'}
                         )
                     ]
@@ -1044,6 +1239,429 @@ def toggle_vaccine_modal(edit_btn):
         return [html.Div()]
     else:
         return [html.Div()]
+    
+
+
+@app.callback( #opens and close form and success modal for editing client profile
+        [
+            Output('homevisit_client_modal', 'is_open'),
+            Output('homevisit_client_successmodal', 'is_open'),
+        ],
+        [
+            Input('homevisit_clientdetails', 'n_clicks'),
+            Input('homevisit_client_submit','n_clicks'),
+            Input('homevisit_client_close_successmodal','n_clicks'),
+        ],
+        [
+            State('homevisit_client_modal', 'is_open'),
+            State('homevisit_client_successmodal', 'is_open'),
+            State('homevisit_client_fn', 'value'),
+            State('homevisit_client_ln', 'value'),
+            State('homevisit_client_contact_no', 'value'),
+            State('homevisit_client_email', 'value'),
+            State('homevisit_client_street', 'value'),
+            State('homevisit_client_barangay', 'value'),
+            State('homevisit_client_city', 'value'),
+            State('homevisit_client_region', 'value'),
+        ]
+)
+def homevisit_client_modal(create, submit, close, form, success, fn, ln, cn, email, street, brgy, city, region):
+    ctx = dash.callback_context
+
+    if ctx.triggered:
+        eventid = ctx.triggered[0]['prop_id'].split('.')[0]
+
+        if eventid == "homevisit_clientdetails" and create:
+            return [not form, success]
+            
+        if eventid == 'homevisit_client_submit' and submit and all([fn, ln, cn, email, street, brgy, city, region]):
+            return [not form, not success]
+            
+        if eventid == 'homevisit_client_close_successmodal' and close:
+            return [form, not success]
+            
+    return [form, success]
 
 
 
+@app.callback( #modal initial values
+    [
+        Output('homevisit_client_fn', 'value'),
+        Output('homevisit_client_ln', 'value'),
+        Output('homevisit_client_mi', 'value'),
+        Output('homevisit_client_suffix', 'value'),
+        Output('homevisit_client_contact_no', 'value'),
+        Output('homevisit_client_email', 'value'),
+        Output('homevisit_client_house_no', 'value'),
+        Output('homevisit_client_street', 'value'),
+        Output('homevisit_client_barangay', 'value'),
+        Output('homevisit_client_city', 'value'),
+        Output('homevisit_client_region', 'value'),
+    ],
+    [
+        Input('homevisit_clientdetails', 'n_clicks'),
+        Input('url', 'search'),
+    ],
+)
+def homevisit_clientmodal_initial_values(click, url_search):
+    ctx = dash.callback_context
+    parsed = urlparse(url_search)
+    query_patient_id = parse_qs(parsed.query)
+    if 'patient_id' in query_patient_id:
+        patient_id = query_patient_id['patient_id'][0]
+
+        if ctx.triggered:
+            eventid = ctx.triggered[0]['prop_id'].split('.')[0]
+
+            if eventid == 'homevisit_clientdetails' and click:
+                sql = """
+                    SELECT 
+                        client_fn,
+                        client_ln,
+                        client_mi,
+                        client_suffix, 
+                        client_cn, 
+                        client_email,
+                        client_house_no,
+                        client_street,
+                        client_barangay,
+                        client_city,
+                        client_region
+                    FROM 
+                        patient
+                    INNER JOIN client ON patient.client_id = client.client_id
+                    WHERE patient_id = %s
+                """
+                values = [patient_id]
+                col = ['client_fn', 'client_ln', 'client_mi', 'client_suffix', 'client_cn', 'client_email', 'client_house_no', 'client_street', 'client_barangay', 'client_city', 'client_region']
+                        
+                df = db.querydatafromdatabase(sql, values, col)
+                        
+                client_fn = df['client_fn'][0]
+                client_ln = df['client_ln'][0]
+                client_mi = df['client_mi'][0]
+                client_suffix = df['client_suffix'][0]
+                client_cn = df['client_cn'][0]
+                client_email = df['client_email'][0]
+                client_house_no = df['client_house_no'][0]
+                client_street = df['client_street'][0]
+                client_barangay = df['client_barangay'][0]
+                client_city = df['client_city'][0]
+                client_region = df['client_region'][0]
+
+                return [client_fn, client_ln, client_mi, client_suffix, client_cn, client_email, client_house_no, client_street, client_barangay, client_city, client_region]
+            else:
+                raise PreventUpdate
+        else:
+            raise PreventUpdate
+    else:
+        raise PreventUpdate
+
+
+
+@app.callback( # Submit Button for client profile
+        [
+            Output('homevisit_clientprofile_alert', 'color'),
+            Output('homevisit_clientprofile_alert', 'children'),
+            Output('homevisit_clientprofile_alert', 'is_open'),
+            Output('homevisit_client_close_successmodal', 'href')
+        ],
+        [
+            Input('homevisit_client_submit', 'n_clicks'),
+            Input('url', 'search'),
+            Input('homevisit_client_fn', 'value'),
+            Input('homevisit_client_ln', 'value'),
+            Input('homevisit_client_mi', 'value'),
+            Input('homevisit_client_suffix', 'value'),
+            Input('homevisit_client_contact_no', 'value'),
+            Input('homevisit_client_email', 'value'),
+            Input('homevisit_client_house_no', 'value'),
+            Input('homevisit_client_street', 'value'),
+            Input('homevisit_client_barangay', 'value'),
+            Input('homevisit_client_city', 'value'),
+            Input('homevisit_client_region', 'value'),
+        ],
+)
+def homevisit_client_save(submitbtn, url_search, fn, ln, mi, sf, cn, email, house_no, street, brgy, city, region):
+    ctx = dash.callback_context
+    parsed = urlparse(url_search)
+    query_patient_id = parse_qs(parsed.query)
+    if 'patient_id' in query_patient_id:
+        patient_id = query_patient_id['patient_id'][0]
+
+        if ctx.triggered:
+            eventid = ctx.triggered[0]['prop_id'].split('.')[0]
+
+            if eventid == 'homevisit_client_submit' and submitbtn: 
+                alert_open = False
+                alert_color = ''
+                alert_text = ''
+
+                if not fn:
+                    alert_open = True
+                    alert_color = 'danger'
+                    alert_text = "Please enter client's first name"
+                elif not ln:
+                    alert_open = True
+                    alert_color = 'danger'
+                    alert_text = "Please enter client's last name"
+                elif not cn:
+                    alert_open = True
+                    alert_color = 'danger'
+                    alert_text = "Please enter client's contact number"
+                elif not email:
+                    alert_open = True
+                    alert_color = 'danger'
+                    alert_text = "Please enter client's email address"
+                elif not street:
+                    alert_open = True
+                    alert_color = 'danger'
+                    alert_text = "Please enter client's street address"
+                elif not brgy:
+                    alert_open = True
+                    alert_color = 'danger'
+                    alert_text = "Please enter client's barangay"
+                elif not city:
+                    alert_open = True
+                    alert_color = 'danger'
+                    alert_text = "Please enter the city of client's address"
+                elif not region:
+                    alert_open = True
+                    alert_color = 'danger'
+                    alert_text = "Please enter the region of client's address"
+                else:
+                    sql = '''
+                        SELECT client.client_id
+                        FROM patient
+                        INNER JOIN client ON patient.client_id = client.client_id
+                        WHERE patient_id = %s
+                    '''
+                    values = [patient_id]
+                    col = ['client_id']
+                    df = db.querydatafromdatabase(sql, values, col)
+                    client_id = int(df['client_id'][0])
+
+                    modified_date = datetime.now().strftime("%Y-%m-%d")
+                    sql = '''
+                        UPDATE client 
+                        SET
+                            client_ln = %s,
+                            client_fn = %s,
+                            client_mi = %s,
+                            client_suffix = %s,
+                            client_email = %s,
+                            client_cn = %s,
+                            client_house_no = %s,
+                            client_street = %s,
+                            client_barangay = %s,
+                            client_city = %s,
+                            client_region = %s,
+                            client_modified_date = %s
+                        WHERE client_id = %s
+                    '''
+                    values = [ln, fn, mi, sf, email, cn, house_no, street, brgy, city, region, modified_date, client_id]
+
+                    db.modifydatabase(sql, values)
+
+                href = f'/home_visit/purpose?mode=add&patient_id={patient_id}&refresh={time.time()}'
+                return [alert_color, alert_text, alert_open, href]
+            
+            else:
+                raise PreventUpdate
+        else:
+            raise PreventUpdate
+    else:
+        raise PreventUpdate
+    
+
+
+
+@app.callback( #opens and close form and success modal for creating patient profile
+        [
+            Output('homevisit_patient_modal', 'is_open'),
+            Output('homevisit_patient_successmodal', 'is_open'),
+        ],
+        [
+            Input('homevisit_patientdetails', 'n_clicks'),
+            Input('homevisit_patient_submit','n_clicks'),
+            Input('homevisit_patient_close_successmodal','n_clicks'),
+        ],
+        [
+            State('homevisit_patient_modal', 'is_open'),
+            State('homevisit_patient_successmodal', 'is_open'),
+            State('homevisit_patient_species', 'value'),
+            State('homevisit_patient_breed', 'value'),
+            State('homevisit_patient_color', 'value'),
+            State('homevisit_patient_sex', 'value'),
+            State('homevisit_patient_bd', 'value'),
+            State('homevisit_patient_idiosync', 'value'),
+        ]
+)
+def homevisit_patient_modal(create, submit, close, form, success, species, breed, color, sex, bd, idiosync):
+    ctx = dash.callback_context
+
+    if ctx.triggered:
+        eventid = ctx.triggered[0]['prop_id'].split('.')[0]
+
+        if eventid == "homevisit_patientdetails" and create:
+            return [not form, success]
+        
+        if eventid == "homevisit_patient_submit" and submit and all([species, color, breed, sex, bd, idiosync]):
+            return [not form, not success]
+        
+        if eventid == "homevisit_patient_close_successmodal" and close:
+            return [form, not success]
+           
+    return [form, success]
+
+
+
+@app.callback( #modal initial values
+    [
+        Output('homevisit_patient_m', 'value'),
+        Output('homevisit_patient_species', 'value'),
+        Output('homevisit_patient_breed', 'value'),
+        Output('homevisit_patient_color', 'value'),
+        Output('homevisit_patient_sex', 'value'),
+        Output('homevisit_patient_bd', 'value'),
+        Output('homevisit_patient_idiosync', 'value'),
+    ],
+    [
+        Input('url', 'search'),
+        Input('homevisit_patientdetails', 'n_clicks'),
+    ],
+)
+def homevisit_patientmodal_initial_values(url_search, click):
+    ctx = dash.callback_context
+    parsed = urlparse(url_search)
+    query_patient_id = parse_qs(parsed.query)
+
+    if 'patient_id' in query_patient_id:
+        patient_id = query_patient_id['patient_id'][0]
+
+        if ctx.triggered:
+            eventid = ctx.triggered[0]['prop_id'].split('.')[0]
+            if eventid == 'homevisit_patientdetails' and click:
+                sql = """
+                    SELECT 
+                        patient_m,
+                        patient_species,
+                        patient_breed,
+                        patient_color,
+                        patient_sex,
+                        patient_bd,
+                        patient_idiosync
+                    FROM 
+                        patient
+                    WHERE patient_id = %s
+                """
+                values = [patient_id]
+                col = ['patient_m', 'patient_species', 'patient_breed', 'patient_color', 'patient_sex', 'patient_bd', 'patient_idiosync']
+                    
+                df = db.querydatafromdatabase(sql, values, col)
+                    
+                patient_m = df['patient_m'][0]
+                patient_species = df['patient_species'][0]
+                patient_breed = df['patient_breed'][0]
+                patient_color = df['patient_color'][0]
+                patient_sex = df['patient_sex'][0]
+                patient_bd = df['patient_bd'][0]
+                patient_idiosync = df['patient_idiosync'][0]
+
+                return [patient_m, patient_species, patient_breed, patient_color, patient_sex, patient_bd, patient_idiosync]
+            else:
+                raise PreventUpdate
+        else:
+            raise PreventUpdate
+    else:
+        raise PreventUpdate
+    
+
+
+
+@app.callback( # Submit Button for patient profile
+        [
+            Output('homevisit_patientprofile_alert', 'color'),
+            Output('homevisit_patientprofile_alert', 'children'),
+            Output('homevisit_patientprofile_alert', 'is_open'),
+            Output('homevisit_patient_close_successmodal', 'href')
+        ],
+        [
+            Input('homevisit_patient_submit', 'n_clicks'),
+            Input('url', 'search'),
+            Input('homevisit_patient_m', 'value'),
+            Input('homevisit_patient_species', 'value'),
+            Input('homevisit_patient_breed', 'value'),
+            Input('homevisit_patient_color', 'value'),
+            Input('homevisit_patient_sex', 'value'),
+            Input('homevisit_patient_bd', 'value'),
+            Input('homevisit_patient_idiosync', 'value'),
+        ],
+)
+def editprofile_patient_save(submitbtn, url_search, name, species, breed, color, sex, bd, idiosync):
+    ctx = dash.callback_context
+    if ctx.triggered:
+        eventid = ctx.triggered[0]['prop_id'].split('.')[0]
+        if eventid == 'homevisit_patient_submit' and submitbtn: 
+            parsed = urlparse(url_search)
+            query_patient_id = parse_qs(parsed.query)
+            if 'patient_id' in query_patient_id:
+                patient_id = query_patient_id['patient_id'][0]
+        
+                alert_open = False
+                alert_color = ''
+                alert_text = ''
+
+                if not species:
+                    alert_open = True
+                    alert_color = 'danger'
+                    alert_text = 'Please indicate the species of the patient'
+                elif not breed:
+                    alert_open = True
+                    alert_color = 'danger'
+                    alert_text = 'Please indicate the breed of the patient'
+                elif not color:
+                    alert_open = True
+                    alert_color = 'danger'
+                    alert_text = 'Please describe the color or any color marks on the patient'
+                elif not sex:
+                    alert_open = True
+                    alert_color = 'danger'
+                    alert_text = 'Please indicate the sex of the patient'
+                elif not bd:
+                    alert_open = True
+                    alert_color = 'danger'
+                    alert_text = 'Please enter the birth date of the patient'
+                elif not idiosync:
+                    alert_open = True
+                    alert_color = 'danger'
+                    alert_text = 'Please describe any behavior or characteristic of the patient'
+                else:
+                    modified_date = datetime.now().strftime("%Y-%m-%d")
+                    sql = '''
+                        UPDATE patient 
+                        SET
+                            patient_m = %s,
+                            patient_species = %s,
+                            patient_breed = %s,
+                            patient_color = %s,
+                            patient_sex = %s,
+                            patient_bd = %s,
+                            patient_idiosync = %s,
+                            patient_modified_date = %s
+                        WHERE patient_id = %s
+                    '''
+                    values = [name, species, breed, color, sex, bd, idiosync, modified_date, patient_id]
+
+                    db.modifydatabase(sql, values)
+
+                href = f'/home_visit/purpose?mode=add&patient_id={patient_id}&refresh={time.time()}'
+
+                return [alert_color, alert_text, alert_open, href]
+            
+            else:
+                raise PreventUpdate
+        else:
+            raise PreventUpdate
+    else:
+        raise PreventUpdate

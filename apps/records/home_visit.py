@@ -41,7 +41,6 @@ layout = html.Div([
                                 placeholder = "Search Client",
                                 searchable = True,
                                 options = [],
-                                value = None,
                             ), width = 4),
                         
                         dbc.Col(html.H6("Client not listed?", style={"text-align": "right"}), width = 2),
@@ -67,7 +66,6 @@ layout = html.Div([
                                 placeholder="Search Patient",
                                 searchable=True,
                                 options=[],
-                                value=None,
                             ), width = 4),
                         
                         dbc.Col(html.H6("Patient not listed?", style={"text-align": "right"}), width = 2),
@@ -191,7 +189,7 @@ layout = html.Div([
         dbc.Modal(children = [ 
             dbc.ModalHeader(html.H4('Visit Recorded Successfully!', style={'text-align': 'center', 'width': '100%'}), close_button = False),
             dbc.ModalFooter([
-                dbc.Button("Proceed to Visit Details", href = "/home_visit/purpose", className = "ms-auto"),
+                dbc.Button("Proceed to Visit Details", href = "", id='home_visit_returnlink', className = "ms-auto"),
             ]),
         ],centered = True, id = 'visitrecord_successmodal', backdrop = 'static', is_open = False, keyboard = False),
         
@@ -1543,3 +1541,19 @@ def resetvisitfield(submitbtn, selected_option, prob, vacc_deworm, client, patie
 
 
 
+@app.callback(  
+    Output('home_visit_returnlink', 'href'),
+    Input('visitrecord_submit', 'n_clicks'),
+    State('patientlist','value'),
+)
+def returnlink(clicks, patient_id):
+    ctx = dash.callback_context
+    if ctx.triggered:
+        eventid = ctx.triggered[0]['prop_id'].split('.')[0]
+        if eventid == 'visitrecord_submit' and clicks:
+            link = f'/home_visit/purpose?mode=add&patient_id={patient_id}'
+            return link
+        else:
+            raise PreventUpdate
+    else:
+        raise PreventUpdate

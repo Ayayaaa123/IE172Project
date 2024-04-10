@@ -155,6 +155,7 @@ def initial_values(url_search):
     if 'deworm_id' in query_ids and 'patient_id' in query_ids:
         deworm_id = query_ids.get('deworm_id', [None])[0]
         patient_id = query_ids.get('patient_id', [None])[0]
+        mode = query_ids.get('mode', [None])[0]
         sql = """
             SELECT 
                 deworm_m_id,
@@ -187,7 +188,12 @@ def initial_values(url_search):
         deworm_expdate = df['deworm_exp'][0]
         deworm_fromvetmed = df['deworm_from_vetmed'][0]
 
-        patient_link = f'/editrecord?mode=edit&id={patient_id}'
+        if mode == "add":
+            patient_link = f'/home_visit/purpose?mode=add&patient_id={patient_id}'
+        elif mode == "edit":
+            patient_link = f'/editrecord?mode=edit&patient_id={patient_id}'
+        else:
+            patient_link = f'/editrecord?mode=edit&patient_id={patient_id}'
 
         return (options, deworm_name, deworm_dose, deworm_dateadministered, deworm_expdate, deworm_fromvetmed, patient_link)
     else:
