@@ -726,109 +726,6 @@ def toggle_new_problem_modal(visit_btn, problem_btn, visit_success, problem_moda
 
 #SAVE AND SUBMIT CALLBACKS
 
-@app.callback( # Submit Button for visit
-    [
-        Output('visitrecord_alert','color'),
-        Output('visitrecord_alert','children'),
-        Output('visitrecord_alert','is_open'),
-        Output('re_clientlist', 'value'),
-        Output('patientlist','value'),
-        Output('vetlist','value'),
-        Output('visitdate', 'value'),
-        Output('problem_list', 'value'),
-    ],
-    [
-        Input('visitrecord_submit','n_clicks'),
-        Input('re_clientlist', 'value'),
-        Input('patientlist','value'),
-        Input('vetlist','value'),
-        Input('visitdate', 'value'),
-    ],
-    [
-        State('problem_list', 'value'),
-        State('visitpurpose', 'value'),
-        State('visitpurpose_problem', 'value')
-    ]
-)
-def visitrecord_save(submitbtn, client, patient, vet, date, prev_prob, vacc_deworm, prob):
-    ctx = dash.callback_context
-    
-    if ctx.triggered:
-        eventid = ctx.triggered[0]['prop_id'].split('.')[0]
-    
-        alert_open = False
-        alert_color = ''
-        alert_text = ''
-
-        if vacc_deworm is None:
-            vacc_deworm_purpose = []
-        else:
-            vacc_deworm_purpose = vacc_deworm
-
-        if prob is None:
-            prob_purpose = []
-        else:
-            prob_purpose = prob
-        
-        if eventid == 'visitrecord_submit' and submitbtn:
-
-            visit_for_vacc = 'vaccination' in vacc_deworm_purpose
-            visit_for_deworm = 'deworming' in vacc_deworm_purpose
-            follow_up = 'follow_up' in prob_purpose
-            follow_and_problem = follow_up == any([prev_prob])
-            visit_for_problem = len(prob_purpose) == 1
-   
-            if not client:
-                alert_open = True
-                alert_color = 'danger'
-                alert_text = 'Please choose a client'
-            elif not patient:
-                alert_open = True
-                alert_color = 'danger'
-                alert_text = 'Please choose a patient'
-            elif not vet:
-                alert_open = True
-                alert_color = 'danger'
-                alert_text = 'Please choose the Veterinarian assigned'
-            elif not any([visit_for_problem, visit_for_deworm, visit_for_vacc]):
-                alert_open = True
-                alert_color = 'danger'
-                alert_text = 'Please choose the purpose of visit (can be more than one)'
-            elif not date:
-                alert_open = True
-                alert_color = 'danger'
-                alert_text = 'Please select the date of visit'
-            elif not follow_and_problem:
-                alert_open = True
-                alert_color = 'danger'
-                alert_text = 'Please select the previous problem for this follow-up visit'
-            else:
-                sql = '''
-                INSERT INTO visit(
-                                patient_id,
-                                vet_id,
-                                visit_for_vacc,
-                                visit_for_deworm,
-                                visit_for_problem,
-                                problem_id,
-                                visit_delete_ind
-                            )
-                            VALUES(%s, %s, %s, %s, %s, %s, %s)
-                    '''
-                values = [patient, vet, visit_for_vacc, visit_for_deworm, visit_for_problem, prev_prob, False]
-
-                db.modifydatabase(sql, values)
-            
-            if not all([client, patient, vet, date, follow_and_problem, any([visit_for_problem, visit_for_deworm, visit_for_vacc])]):
-                return [alert_color, alert_text, alert_open, client, patient, vet, date, prev_prob]
-
-            return [alert_color, alert_text, alert_open, None, None, None, datetime.now().date(), None]
-
-        else:
-            raise PreventUpdate
-    else:
-        raise PreventUpdate
-
 @app.callback( # Submit Button for client profile
         [
             Output('client_profile_alert', 'color'),
@@ -1261,6 +1158,30 @@ def new_problem_save(submitbtn, problem, hist, diet, water, temp, pr, weight, rr
 
                 db.modifydatabase(sql, values)
 
+                sql_identify = """
+                    SELECT MAX(problem_id)
+                    FROM problem
+                """
+                values_identify = []
+                df = db.querydatafromdatabase(sql_identify, values_identify)
+                problem_id = int(df.loc[0,0])
+                
+                sql_identify = """
+                    SELECT MAX(visit_id)
+                    FROM visit
+                """
+                values_identify = []
+                df = db.querydatafromdatabase(sql_identify, values_identify)
+                visit_id = int(df.loc[0,0])
+
+                sql_modify = """
+                    UPDATE visit
+                    SET problem_id = %s
+                    WHERE visit_id = %s
+                """
+                values_modify = [problem_id, visit_id]
+                df = db.modifydatabase(sql_modify, values_modify)
+
             if not all([problem, hist, diet, water, temp, pr, rr, weight, bodyscore]):
                 return [alert_color, alert_text, alert_open, problem, hist, diet, water, temp, pr, weight, rr, bodyscore]
             
@@ -1270,6 +1191,111 @@ def new_problem_save(submitbtn, problem, hist, diet, water, temp, pr, weight, rr
             raise PreventUpdate
     else:
         raise PreventUpdate
+    
+
+@app.callback( # Submit Button for visit
+    [
+        Output('visitrecord_alert','color'),
+        Output('visitrecord_alert','children'),
+        Output('visitrecord_alert','is_open'),
+        Output('re_clientlist', 'value'),
+        Output('patientlist','value'),
+        Output('vetlist','value'),
+        Output('visitdate', 'value'),
+        Output('problem_list', 'value'),
+    ],
+    [
+        Input('visitrecord_submit','n_clicks'),
+        Input('re_clientlist', 'value'),
+        Input('patientlist','value'),
+        Input('vetlist','value'),
+        Input('visitdate', 'value'),
+    ],
+    [
+        State('problem_list', 'value'),
+        State('visitpurpose', 'value'),
+        State('visitpurpose_problem', 'value')
+    ]
+)
+def visitrecord_save(submitbtn, client, patient, vet, date, prev_prob, vacc_deworm, prob):
+    ctx = dash.callback_context
+    
+    if ctx.triggered:
+        eventid = ctx.triggered[0]['prop_id'].split('.')[0]
+    
+        alert_open = False
+        alert_color = ''
+        alert_text = ''
+
+        if vacc_deworm is None:
+            vacc_deworm_purpose = []
+        else:
+            vacc_deworm_purpose = vacc_deworm
+
+        if prob is None:
+            prob_purpose = []
+        else:
+            prob_purpose = prob
+        
+        if eventid == 'visitrecord_submit' and submitbtn:
+
+            visit_for_vacc = 'vaccination' in vacc_deworm_purpose
+            visit_for_deworm = 'deworming' in vacc_deworm_purpose
+            follow_up = 'follow_up' in prob_purpose
+            follow_and_problem = follow_up == any([prev_prob])
+            visit_for_problem = len(prob_purpose) == 1
+   
+            if not client:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Please choose a client'
+            elif not patient:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Please choose a patient'
+            elif not vet:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Please choose the Veterinarian assigned'
+            elif not any([visit_for_problem, visit_for_deworm, visit_for_vacc]):
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Please choose the purpose of visit (can be more than one)'
+            elif not date:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Please select the date of visit'
+            elif not follow_and_problem:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Please select the previous problem for this follow-up visit'
+            else:
+                sql = '''
+                INSERT INTO visit(
+                                patient_id,
+                                vet_id,
+                                visit_for_vacc,
+                                visit_for_deworm,
+                                visit_for_problem,
+                                problem_id,
+                                visit_delete_ind
+                            )
+                            VALUES(%s, %s, %s, %s, %s, %s, %s)
+                    '''
+                values = [patient, vet, visit_for_vacc, visit_for_deworm, visit_for_problem, prev_prob, False]
+
+                db.modifydatabase(sql, values)
+            
+            if not all([client, patient, vet, date, follow_and_problem, any([visit_for_problem, visit_for_deworm, visit_for_vacc])]):
+                return [alert_color, alert_text, alert_open, client, patient, vet, date, prev_prob]
+
+            return [alert_color, alert_text, alert_open, None, None, None, datetime.now().date(), None]
+
+        else:
+            raise PreventUpdate
+    else:
+        raise PreventUpdate
+
 
 
 
