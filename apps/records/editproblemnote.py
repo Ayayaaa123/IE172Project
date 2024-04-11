@@ -40,7 +40,10 @@ layout = html.Div(
             html.Br(),
             dbc.Card([
                 dbc.CardHeader([
-                    html.H2('Laboratory Exams')
+                    html.Div([
+                        html.H2("Laboratory Exams", className = 'flex-grow-1'),
+                        html.Div(dbc.Button("Add Laboratory Exam", id = "problem_labexam_btn"), className = "ml-2 d-flex"),
+                    ], className = "d-flex align-items-center justify-content-between")
                 ]),
                 dbc.CardBody([
                     html.Div([
@@ -340,3 +343,22 @@ def save_note_record(submitbtn, url_search, note_tested, note_diagnosis, note_tr
         
     else:
         raise PreventUpdate
+    
+
+@app.callback( #disable add button if mode=edit
+    Output('problem_labexam_btn', 'disabled'),
+    Input('url', 'search')
+)
+def disablebuttons(url_search):
+    parsed = urlparse(url_search)
+    query_ids = parse_qs(parsed.query)
+    disabled = False
+    if 'mode' in query_ids:
+        mode = query_ids.get('mode', [None])[0]
+        if mode == "add":
+            return [disabled]
+        elif mode == "edit":
+            disabled = True
+            return [disabled]
+        else:
+            return [disabled]

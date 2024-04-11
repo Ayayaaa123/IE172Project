@@ -153,7 +153,10 @@ layout = html.Div(
             html.Br(),
             dbc.Card([
                 dbc.CardHeader([
-                    html.H2('Clinical Exams')
+                    html.Div([
+                        html.H2("Clinical Exams", className = 'flex-grow-1'),
+                        html.Div(dbc.Button("Add Clinical Exam", id = "problem_clinicalexam_btn"), className = "ml-2 d-flex"),
+                    ], className = "d-flex align-items-center justify-content-between")
                 ]),
                 dbc.CardBody([
                     html.Div([
@@ -164,7 +167,10 @@ layout = html.Div(
             html.Br(),
             dbc.Card([
                 dbc.CardHeader([
-                    html.H2('Progress Notes')
+                    html.Div([
+                        html.H2("Progress Notes", className = 'flex-grow-1'),
+                        html.Div(dbc.Button("Add Progress Note", id = "problem_progressnote_btn"), className = "ml-2 d-flex"),
+                    ], className = "d-flex align-items-center justify-content-between")
                 ]),
                 dbc.CardBody([
                     html.Div([
@@ -644,3 +650,23 @@ def save_deworm_record(submitbtn, url_search, problem_status, problem_complaint,
         
     else:
         raise PreventUpdate
+    
+
+@app.callback( #disable add button if mode=edit
+    Output('problem_clinicalexam_btn', 'disabled'),
+    Output('problem_progressnote_btn', 'disabled'),
+    Input('url', 'search')
+)
+def disablebuttons(url_search):
+    parsed = urlparse(url_search)
+    query_ids = parse_qs(parsed.query)
+    disabled = False
+    if 'mode' in query_ids:
+        mode = query_ids.get('mode', [None])[0]
+        if mode == "add":
+            return [disabled, disabled]
+        elif mode == "edit":
+            disabled = True
+            return [disabled, disabled]
+        else:
+            return [disabled, disabled]
