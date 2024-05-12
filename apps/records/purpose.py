@@ -556,6 +556,97 @@ layout = html.Div([
                 #dbc.Button("Close", id = "close_patient_successmodal", className = "ms-auto"),
             ]),
         ], centered = True, id = 'homevisit_patient_successmodal', backdrop = 'static', is_open = False, keyboard = False),
+        
+        
+        #modal for editing visit details
+        dbc.Modal([
+            dbc.ModalHeader(dbc.ModalTitle("Edit Visit Details", style={'text-align': 'center', 'width': '100%'})),
+            dbc.ModalBody([
+                dbc.Alert(id = "homevisit_visitdetails_alert", is_open = False),
+                dbc.Row([
+                    dbc.Col(html.H4("Visit Date"), width=6),
+                    dbc.Col(
+                        dmc.DatePicker(
+                            id='homevisit_visitdetails_date',
+                            dropdownType='modal',
+                            inputFormat='MMM DD, YYYY',
+                            placeholder = "Choose Date"
+                        ),
+                        width=6,
+                    )
+                ]),
+                html.Div(style={'margin-bottom':'1rem'}),
+                html.H3("Visit Purpose"),
+                html.Hr(),
+                dbc.Row([
+                    dbc.Col(html.H4("For Vaccine?"), width=6),
+                    dbc.Col(
+                        dcc.Dropdown(
+                            id='homevisit_visitdetails_forvaccine',
+                            options=[
+                                {"label": "Yes", "value": True},
+                                {"label": "No", "value": False},
+                            ],
+                            placeholder='Visit Purpose: Vaccine?',
+                        ), 
+                        width=6,
+                    )
+                ]),
+                html.Div(style={'margin-bottom':'1rem'}),
+                dbc.Row([
+                    dbc.Col(html.H4("For Deworm?"), width=6),
+                    dbc.Col(
+                        dcc.Dropdown(
+                            id='homevisit_visitdetails_fordeworm',
+                            options=[
+                                {"label": "Yes", "value": True},
+                                {"label": "No", "value": False},
+                            ],
+                            placeholder='Visit Purpose: Deworming?',
+                        ), 
+                        width=6,
+                    )
+                ]),
+                html.Div(style={'margin-bottom':'1rem'}),
+                dbc.Row([
+                    dbc.Col(html.H4("For Problem?"), width=6),
+                    dbc.Col(
+                        dcc.Dropdown(
+                            id='homevisit_visitdetails_forproblem',
+                            options=[
+                                {"label": "Yes", "value": True},
+                                {"label": "No", "value": False},
+                            ],
+                            placeholder='Visit Purpose: Problem?',
+                        ), 
+                        width=6,
+                    )
+                ]),
+                html.Div(style={'margin-bottom':'1rem'}),
+                dbc.Row([
+                    dbc.Col(html.H4("Problem Chief Complaint"), width=6),
+                    dbc.Col(
+                        dcc.Dropdown(
+                            id='homevisit_visitdetails_problemname',
+                            options=[],
+                            placeholder='Select Problem',
+                        ), 
+                        width=6,
+                    )
+                ]),
+            ]),
+            dbc.ModalFooter([
+                dbc.Button("Submit Visit Details", id = "homevisit_visitdetails_submit", className = "ms-auto"),
+            ]),
+        ], centered = True, id = "homevisit_visitdetails_modal", is_open = False, backdrop = "static", size = 'lg'),
+
+        dbc.Modal(children = [ # successful saving of visit details
+            dbc.ModalHeader(html.H4('Visit Details Recorded Successfully!', style={'text-align': 'center', 'width': '100%'}), close_button = False),
+            dbc.ModalFooter([
+                dbc.Button("Close", id = 'homevisit_visitdetails_close_successmodal', className = "btn btn-primary ms-auto", href=""),
+                #dbc.Button("Close", id = "close_patient_successmodal", className = "ms-auto"),
+            ]),
+        ], centered = True, id = 'homevisit_visitdetails_successmodal', backdrop = 'static', is_open = False, keyboard = False),
 
         html.Div(id = 'temp'),
 
@@ -570,9 +661,12 @@ layout = html.Div([
     ],
     [
         Input('url', 'pathname'),
+        Input('url', 'search'),
     ],
 )
-def client_patient(pathname):
+def client_patient(pathname, url_search):
+    parsed = urlparse(url_search)
+    query_id = parse_qs(parsed.query)
 
     sql = """
         SELECT MAX(visit_id)
@@ -612,21 +706,20 @@ def client_patient(pathname):
     if for_deworm:
         purpose.append('Deworming')
     visit_purpose = '; '.join(purpose)
+    
+    patient_id = query_id.get('patient_id', [None])[0]
 
     sql = """
         select
-            v.patient_id,
-            p.client_id
-        from visit v
-        join patient p on v.patient_id = p.patient_id
-        join client c on p.client_id = c.client_id
-        where visit_id = %s
+            client.client_id
+        from patient
+        inner join client on patient.client_id = client.client_id
+        where patient_id = %s
         """
-    values = [visit_id]
-    cols = ['patient_id', 'client_id']
+    values = [patient_id]
+    cols = ['client_id']
     df = db.querydatafromdatabase(sql,values, cols)
 
-    patient_id = int(df['patient_id'][0])
     client_id = int(df['client_id'][0])
 
     sql = """
@@ -760,7 +853,7 @@ def client_patient(pathname):
                     dbc.CardHeader(
                 html.Div([
                         html.H3("Visit Details", className = "flex-grow-1"),
-                        dbc.Button("Edit Details", id = 'edit_visit_detail_btn', n_clicks = 0),
+                        dbc.Button("Edit Details", id = 'homevisit_visitdetails', n_clicks = 0),
                     ], className = "d-flex align-items-center justify-content-between"),
             ),
                     dbc.CardBody([
@@ -1686,6 +1779,218 @@ def editprofile_patient_save(submitbtn, url_search, name, species, breed, color,
         raise PreventUpdate
     
 
+
+@app.callback( #opens and close form and success modal for editing visit details
+        [
+            Output('homevisit_visitdetails_modal', 'is_open'),
+            Output('homevisit_visitdetails_successmodal', 'is_open'),
+        ],
+        [
+            Input('homevisit_visitdetails', 'n_clicks'),
+            Input('homevisit_visitdetails_submit','n_clicks'),
+            Input('homevisit_visitdetails_close_successmodal','n_clicks'),
+        ],
+        [
+            State('homevisit_visitdetails_modal', 'is_open'),
+            State('homevisit_visitdetails_successmodal', 'is_open'),
+            State('homevisit_visitdetails_date', 'value'),
+            State('homevisit_visitdetails_forvaccine', 'value'),
+            State('homevisit_visitdetails_fordeworm', 'value'),
+            State('homevisit_visitdetails_forproblem', 'value'),
+        ]
+)
+def homevisit_visitdetails_modal(create, submit, close, form, success, date, forvaccine, fordeworm, forproblem):
+    ctx = dash.callback_context
+
+    if ctx.triggered:
+        eventid = ctx.triggered[0]['prop_id'].split('.')[0]
+
+        if eventid == "homevisit_visitdetails" and create:
+            return [not form, success]
+        
+        if eventid == "homevisit_visitdetails_submit" and submit and all([date, forvaccine, fordeworm, forproblem]):
+            return [not form, not success]
+        
+        if eventid == "homevisit_visitdetails_close_successmodal" and close:
+            return [form, not success]
+           
+    return [form, success]
+
+
+
+@app.callback( #modal initial values
+    [
+        Output('homevisit_visitdetails_date', 'value'),
+        Output('homevisit_visitdetails_forvaccine', 'value'),
+        Output('homevisit_visitdetails_fordeworm', 'value'),
+        Output('homevisit_visitdetails_forproblem', 'value'),
+        Output('homevisit_visitdetails_problemname', 'options'),
+        Output('homevisit_visitdetails_problemname', 'value'),
+    ],
+    [
+        Input('url', 'search'),
+        Input('homevisit_visitdetails', 'n_clicks'),
+    ],
+)
+def homevisit_visitdetailsmodal_initial_values(url_search, click):
+    ctx = dash.callback_context
+    parsed = urlparse(url_search)
+    query_patient_id = parse_qs(parsed.query)
+
+    if 'patient_id' in query_patient_id:
+        patient_id = query_patient_id['patient_id'][0]
+
+        if ctx.triggered:
+            eventid = ctx.triggered[0]['prop_id'].split('.')[0]
+            if eventid == 'homevisit_visitdetails' and click:
+                sql = """
+                    SELECT DISTINCT
+                        problem.problem_id,
+                        problem_chief_complaint
+                    FROM 
+                        problem
+                    INNER JOIN visit ON problem.problem_id = visit.problem_id
+                    INNER JOIN patient ON visit.patient_id = patient.patient_id
+                    WHERE 
+                        NOT problem_delete_ind AND patient.patient_id = %s
+                """
+                values = [patient_id]
+                cols = ['problem_id', 'problem_complaint']
+                result = db.querydatafromdatabase(sql, values, cols)
+                options = [{'label': row['problem_complaint'], 'value': row['problem_id']} for _, row in result.iterrows()]
+                
+                sql = """
+                    SELECT MAX(visit_id)
+                    FROM visit
+                    """
+                values = []
+                df = db.querydatafromdatabase(sql,values)
+                visit_id = int(df.loc[0,0])
+
+                sql = """
+                    SELECT 
+                        visit_date,
+                        visit_for_vacc,
+                        visit_for_deworm,
+                        visit_for_problem,
+                        problem_id
+                    FROM 
+                        visit
+                    WHERE
+                        visit_id = %s
+                """
+                values = [visit_id]
+                col = ['visit_date', 'visit_for_vacc', 'visit_for_deworm', 'visit_for_problem', 'problem_id']
+                    
+                df = db.querydatafromdatabase(sql, values, col)
+                    
+                visit_date = df['visit_date'][0]
+                visit_for_vacc = df['visit_for_vacc'][0]
+                visit_for_deworm = df['visit_for_deworm'][0]
+                visit_for_problem = df['visit_for_problem'][0]
+                problem_id = df['problem_id'][0]
+
+                return [visit_date, visit_for_vacc, visit_for_deworm, visit_for_problem, options, problem_id]
+            else:
+                raise PreventUpdate
+        else:
+            raise PreventUpdate
+    else:
+        raise PreventUpdate
+    
+
+
+
+@app.callback( # Submit Button for patient profile
+        [
+            Output('homevisit_visitdetails_alert', 'color'),
+            Output('homevisit_visitdetails_alert', 'children'),
+            Output('homevisit_visitdetails_alert', 'is_open'),
+            Output('homevisit_visitdetails_close_successmodal', 'href')
+        ],
+        [
+            Input('homevisit_visitdetails_submit', 'n_clicks'),
+            Input('url', 'search'),
+            Input('homevisit_visitdetails_date', 'value'),
+            Input('homevisit_visitdetails_forvaccine', 'value'),
+            Input('homevisit_visitdetails_fordeworm', 'value'),
+            Input('homevisit_visitdetails_forproblem', 'value'),
+            Input('homevisit_visitdetails_problemname', 'value'),
+        ],
+)
+def editprofile_visitdetails_save(submitbtn, url_search, date, forvaccine, fordeworm, forproblem, problemname):
+    ctx = dash.callback_context
+    if ctx.triggered:
+        eventid = ctx.triggered[0]['prop_id'].split('.')[0]
+
+        if eventid == 'homevisit_visitdetails_submit' and submitbtn: 
+            parsed = urlparse(url_search)
+            query_patient_id = parse_qs(parsed.query)
+            
+            if 'patient_id' in query_patient_id:
+                patient_id = query_patient_id['patient_id'][0]
+
+                sql = """
+                    SELECT MAX(visit_id)
+                    FROM visit
+                    """
+                values = []
+                df = db.querydatafromdatabase(sql,values)
+                visit_id = int(df.loc[0,0])
+        
+                alert_open = False
+                alert_color = ''
+                alert_text = ''
+
+                if not date:
+                    alert_open = True
+                    alert_color = 'danger'
+                    alert_text = 'Please indicate the species of the patient'
+                elif not forvaccine:
+                    alert_open = True
+                    alert_color = 'danger'
+                    alert_text = 'Please indicate the breed of the patient'
+                elif not fordeworm:
+                    alert_open = True
+                    alert_color = 'danger'
+                    alert_text = 'Please describe the color or any color marks on the patient'
+                elif not forproblem:
+                    alert_open = True
+                    alert_color = 'danger'
+                    alert_text = 'Please indicate the sex of the patient'
+                else:
+                    sql = '''
+                        UPDATE visit
+                        SET
+                            visit_date = %s,
+                            visit_for_vacc = %s,
+                            visit_for_deworm = %s,
+                            visit_for_problem = %s,
+                            problem_id = %s
+                        WHERE visit_id = %s
+                    '''
+                    values = [date, forvaccine, fordeworm, forproblem, problemname, visit_id]
+
+                    db.modifydatabase(sql, values)
+
+                href = f'/home_visit/purpose?mode=add&patient_id={patient_id}&refresh={time.time()}'
+
+                return [alert_color, alert_text, alert_open, href]
+            
+            else:
+                raise PreventUpdate
+        else:
+            raise PreventUpdate
+    else:
+        raise PreventUpdate
+
+
+
+
+
+
+
+
 @app.callback(
     Output('homevisit_problem-table', 'children'),
     Input('url', 'search'),
@@ -1730,3 +2035,5 @@ def homevisit_problem_table(url_search):
 
     else:
         raise PreventUpdate
+
+
