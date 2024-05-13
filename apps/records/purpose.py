@@ -25,7 +25,7 @@ layout = html.Div([
                 dbc.CardHeader(
                     html.Div([
                         html.H2("Vaccination", className = 'flex-grow-1'),
-                        html.Div(dbc.Button("Add Administered Vaccine Medication", id = "add_vaccine_form_btn"), className = "ml-2 d-flex"),
+                        html.Div(dbc.Button("Add Administered Vaccine Medication", id = "add_vaccine_form_btn", href=""), className = "ml-2 d-flex"),
                     ], className = "d-flex align-items-center justify-content-between")
                 ),
                 dbc.CardBody([
@@ -40,7 +40,7 @@ layout = html.Div([
                 dbc.CardHeader(
                     html.Div([
                         html.H2("Deworming", className = 'flex-grow-1'),
-                        html.Div(dbc.Button("Add Administered Deworm Medication", id = "add_deworm_form_btn"), className = "ml-2 d-flex"),
+                        html.Div(dbc.Button("Add Administered Deworm Medication", id = "add_deworm_form_btn", href=""), className = "ml-2 d-flex"),
                     ], className = "d-flex align-items-center justify-content-between")
                 ),
                 dbc.CardBody([
@@ -55,7 +55,6 @@ layout = html.Div([
                     dbc.CardHeader(
                     html.Div([
                         html.H2("Problem", className = 'flex-grow-1'),
-                        html.Div(dbc.Button("Add New Problem", id = "add_problem_form_btn"), className = "ml-2 d-flex"),
                     ], className = "d-flex align-items-center justify-content-between")
                     ),
                     dbc.CardBody(
@@ -1286,49 +1285,49 @@ def visit_deworm_list(pathname):
 
 # MODAL CALLBACKS
     
-@app.callback( # opens vaccine medication modal
-    [
-        Output('vaccine_modal', 'is_open'),
-    ],
-    [
-        Input('add_vaccine_form_btn', 'n_clicks'),
-    ],
-    [
-        State('vaccine_modal', 'is_open'),
-    ]
-)
-def toggle_vaccine_modal(vacc_add_btn, vacc_modal):
-    ctx = dash.callback_context
+# @app.callback( # opens vaccine medication modal
+#     [
+#         Output('vaccine_modal', 'is_open'),
+#     ],
+#     [
+#         Input('add_vaccine_form_btn', 'n_clicks'),
+#     ],
+#     [
+#         State('vaccine_modal', 'is_open'),
+#     ]
+# )
+# def toggle_vaccine_modal(vacc_add_btn, vacc_modal):
+#     ctx = dash.callback_context
 
-    if ctx.triggered:
-        eventid = ctx.triggered[0]['prop_id'].split('.')[0]
+#     if ctx.triggered:
+#         eventid = ctx.triggered[0]['prop_id'].split('.')[0]
 
-        if eventid == 'add_vaccine_form_btn' and vacc_add_btn:
-            return [not vacc_modal]
+#         if eventid == 'add_vaccine_form_btn' and vacc_add_btn:
+#             return [not vacc_modal]
         
-    return [vacc_modal]
+#     return [vacc_modal]
     
-@app.callback( # opens deworm medication modal
-    [
-        Output('deworm_modal', 'is_open'),
-    ],
-    [
-        Input('add_deworm_form_btn', 'n_clicks'),
-    ],
-    [
-        State('deworm_modal', 'is_open'),
-    ]
-)
-def toggle_deworm_modal(deworm_add_btn, deworm_modal):
-    ctx = dash.callback_context
+# @app.callback( # opens deworm medication modal
+#     [
+#         Output('deworm_modal', 'is_open'),
+#     ],
+#     [
+#         Input('add_deworm_form_btn', 'n_clicks'),
+#     ],
+#     [
+#         State('deworm_modal', 'is_open'),
+#     ]
+# )
+# def toggle_deworm_modal(deworm_add_btn, deworm_modal):
+#     ctx = dash.callback_context
 
-    if ctx.triggered:
-        eventid = ctx.triggered[0]['prop_id'].split('.')[0]
+#     if ctx.triggered:
+#         eventid = ctx.triggered[0]['prop_id'].split('.')[0]
         
-        if eventid == 'add_deworm_form_btn' and deworm_add_btn:
-            return [ not deworm_modal]
+#         if eventid == 'add_deworm_form_btn' and deworm_add_btn:
+#             return [ not deworm_modal]
         
-    return [deworm_modal]
+#     return [deworm_modal]
 
 # @app.callback( # opens vaccine medication modal
 #     [
@@ -2037,3 +2036,21 @@ def homevisit_problem_table(url_search):
         raise PreventUpdate
 
 
+@app.callback(  
+    Output('add_vaccine_form_btn', 'href'),
+    Output('add_deworm_form_btn', 'href'),
+    Input('url', 'search'),
+)
+def vaccinedewormbuttonlink(url_search):
+    parsed = urlparse(url_search)
+    query_patient_id = parse_qs(parsed.query)
+    
+    if 'patient_id' in query_patient_id:
+        patient_id = query_patient_id['patient_id'][0]
+
+        vaccinelink = f'/addvaccine?mode=add&patient_id={patient_id}'
+        dewormlink = f'/adddeworm?mode=add&patient_id={patient_id}'
+        return vaccinelink, dewormlink
+
+    else:
+        raise PreventUpdate
