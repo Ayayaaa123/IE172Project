@@ -147,7 +147,7 @@ def adddeworm_initial_values(url_search):
         result = db.querydatafromdatabase(sql, values, cols)
         options = [{'label': row['deworm_m'], 'value': row['deworm_id']} for _, row in result.iterrows()]
 
-        return_link_link = f'/home_visit/purpose?mode=add&patient_id={patient_id}'
+        return_link = f'/home_visit/purpose?mode=add&patient_id={patient_id}'
 
         return (options, return_link)
     else:
