@@ -251,7 +251,7 @@ def save_labexam_record(submitbtn, url_search, lab_type, results, fromvetmed, ex
                 alert_open = True
                 alert_color = 'danger'
                 alert_text = 'Check your inputs. Please enter results'
-            elif not fromvetmed:
+            elif fromvetmed is None:
                 alert_open = True
                 alert_color = 'danger'
                 alert_text = 'Check your inputs. Please select if lab exam is done on vetmed or not'

@@ -884,6 +884,8 @@ def client_patient(pathname, url_search):
                 ]),
             ])
         ])
+    else:
+        input = [None]
     return input
 
 

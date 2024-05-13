@@ -356,9 +356,27 @@ def disablebuttons(url_search):
     if 'mode' in query_ids:
         mode = query_ids.get('mode', [None])[0]
         if mode == "add":
-            return [disabled]
+            return disabled
         elif mode == "edit":
             disabled = True
-            return [disabled]
+            return disabled
         else:
-            return [disabled]
+            return disabled
+        
+@app.callback(  
+    Output('problem_labexam_btn', 'href'),
+    Input('url', 'search'),
+)
+def labexambuttonlink(url_search):
+    parsed = urlparse(url_search)
+    query_patient_id = parse_qs(parsed.query)
+    
+    if 'patient_id' in query_patient_id and 'problem_id' in query_patient_id and 'note_id' in query_patient_id:
+        patient_id = query_patient_id['patient_id'][0]
+        problem_id = query_patient_id['problem_id'][0]
+        note_id = query_patient_id['note_id'][0]
+
+        labexamlink = f'/addproblemlabexam?mode=add&patient_id={patient_id}&problem_id={problem_id}&note_id={note_id}'
+        return labexamlink
+    else:
+        raise PreventUpdate
