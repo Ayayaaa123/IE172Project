@@ -42,7 +42,7 @@ layout = html.Div(
                 dbc.CardHeader([
                     html.Div([
                         html.H2("Laboratory Exams", className = 'flex-grow-1'),
-                        html.Div(dbc.Button("Add Laboratory Exam", id = "problem_labexam_btn"), className = "ml-2 d-flex"),
+                        html.Div(dbc.Button("Add Laboratory Exam", id = "problem_labexam_btn", href=""), className = "ml-2 d-flex"),
                     ], className = "d-flex align-items-center justify-content-between")
                 ]),
                 dbc.CardBody([

@@ -121,157 +121,134 @@ layout = html.Div(
 )
 
 
-# @app.callback(  
-#     Output("deworm_namelist", "options"),
-#     Output('deworm_namelist','value'),
-#     Output('deworm_dose','value'),
-#     Output('deworm_dateadministered','value'),
-#     Output('deworm_expdate','value'),
-#     Output('deworm_fromvetmed','value'),
-#     Output('deworm_return-link', 'href'),
-#     Input('url','search'),
-# )
-# def initial_values(url_search):
-#     parsed = urlparse(url_search)
-#     query_ids = parse_qs(parsed.query)
-#     patient_link= ""
+@app.callback(  
+    Output("adddeworm_namelist", "options"),
+    Output('adddeworm_return-link', 'href'),
+    Input('url','search'),
+)
+def adddeworm_initial_values(url_search):
+    parsed = urlparse(url_search)
+    query_ids = parse_qs(parsed.query)
+    return_link= ""
 
-#     if 'deworm_id' in query_ids and 'patient_id' in query_ids:
-#         deworm_id = query_ids.get('deworm_id', [None])[0]
-#         patient_id = query_ids.get('patient_id', [None])[0]
-#         mode = query_ids.get('mode', [None])[0]
-#         sql = """
-#             SELECT 
-#                 deworm_m_id,
-#                 deworm_m
-#             FROM 
-#                 deworm_m 
-#             WHERE 
-#                 NOT deworm_m_delete_ind
-#         """
-#         values = []
-#         cols = ['deworm_id', 'deworm_m']
-#         result = db.querydatafromdatabase(sql, values, cols)
-#         options = [{'label': row['deworm_m'], 'value': row['deworm_id']} for _, row in result.iterrows()]
+    if 'patient_id' in query_ids:
+        patient_id = query_ids.get('patient_id', [None])[0]
+        sql = """
+            SELECT 
+                deworm_m_id,
+                deworm_m
+            FROM 
+                deworm_m 
+            WHERE 
+                NOT deworm_m_delete_ind
+        """
+        values = []
+        cols = ['deworm_id', 'deworm_m']
+        result = db.querydatafromdatabase(sql, values, cols)
+        options = [{'label': row['deworm_m'], 'value': row['deworm_id']} for _, row in result.iterrows()]
 
-#         sql = """
-#             SELECT deworm.deworm_m_id, deworm_dose, deworm_administered, deworm_exp, deworm_from_vetmed
-#             FROM deworm
-#             INNER JOIN deworm_m ON deworm.deworm_m_id = deworm_m.deworm_m_id
-#             INNER JOIN visit ON deworm.visit_id = visit.visit_id
-#             INNER JOIN patient ON visit.patient_id = patient.patient_id
-#             WHERE deworm_id = %s AND patient.patient_id = %s
-#         """
-#         values = [deworm_id, patient_id]
-#         col = ['deworm_m_id', 'deworm_dose', 'deworm_administered', 'deworm_exp', 'deworm_from_vetmed']
-#         df = db.querydatafromdatabase(sql, values, col)
+        return_link_link = f'/home_visit/purpose?mode=add&patient_id={patient_id}'
 
-#         deworm_name = df['deworm_m_id'][0]
-#         deworm_dose = df['deworm_dose'][0]
-#         deworm_dateadministered = df['deworm_administered'][0]
-#         deworm_expdate = df['deworm_exp'][0]
-#         deworm_fromvetmed = df['deworm_from_vetmed'][0]
-
-#         if mode == "add":
-#             patient_link = f'/home_visit/purpose?mode=add&patient_id={patient_id}'
-#         elif mode == "edit":
-#             patient_link = f'/editrecord?mode=edit&id={patient_id}'
-#         else:
-#             patient_link = f'/editrecord?mode=edit&id={patient_id}'
-
-#         return (options, deworm_name, deworm_dose, deworm_dateadministered, deworm_expdate, deworm_fromvetmed, patient_link)
-#     else:
-#         raise PreventUpdate
+        return (options, return_link)
+    else:
+        raise PreventUpdate
     
 
-# @app.callback(
-#     Output('deworm_alert','color'),
-#     Output('deworm_alert','children'),
-#     Output('deworm_alert','is_open'),
-#     Output('deworm_successmodal', 'is_open'),
-#     Output('deworm_return-button', 'href'),
-#     Input('deworm_save', 'n_clicks'),
-#     Input('url','search'),
-#     Input('deworm_namelist','value'),
-#     Input('deworm_dose','value'),
-#     Input('deworm_dateadministered','value'),
-#     Input('deworm_expdate','value'),
-#     Input('deworm_fromvetmed','value'),
-#     Input('deworm_delete','value'),
-# )
-# def save_deworm_record(submitbtn, url_search, deworm_name, deworm_dose, deworm_dateadministered, deworm_expdate, deworm_fromvetmed, deworm_delete):
-#     ctx = dash.callback_context
-#     if ctx.triggered:
-#         eventid = ctx.triggered[0]['prop_id'].split('.')[0]
-#         if eventid == 'deworm_save' and submitbtn:
-#             parsed = urlparse(url_search)
-#             query_ids = parse_qs(parsed.query)  
+@app.callback(
+    Output('adddeworm_alert','color'),
+    Output('adddeworm_alert','children'),
+    Output('adddeworm_alert','is_open'),
+    Output('adddeworm_successmodal', 'is_open'),
+    Output('adddeworm_return-button', 'href'),
+    Input('adddeworm_save', 'n_clicks'),
+    Input('url','search'),
+    Input('adddeworm_namelist','value'),
+    Input('adddeworm_dose','value'),
+    Input('adddeworm_dateadministered','value'),
+    Input('adddeworm_expdate','value'),
+    Input('adddeworm_fromvetmed','value'),
+)
+def save_adddeworm_record(submitbtn, url_search, deworm_name, deworm_dose, deworm_dateadministered, deworm_expdate, deworm_fromvetmed):
+    ctx = dash.callback_context
+    if ctx.triggered:
+        eventid = ctx.triggered[0]['prop_id'].split('.')[0]
+        if eventid == 'adddeworm_save' and submitbtn:
+            parsed = urlparse(url_search)
+            query_ids = parse_qs(parsed.query)  
 
-#             alert_open = False
-#             modal_open = False
-#             alert_color = ''
-#             alert_text = ''
-#             patient_link = ''
+            alert_open = False
+            modal_open = False
+            alert_color = ''
+            alert_text = ''
+            return_link = ''
 
-#             deworm_id = query_ids.get('deworm_id', [None])[0]
-#             patient_id = query_ids.get('patient_id', [None])[0]
-#             mode = query_ids.get('mode', [None])[0]    
+            patient_id = query_ids.get('patient_id', [None])[0]  
 
-#             if not deworm_name:
-#                 alert_open = True
-#                 alert_color = 'danger'
-#                 alert_text = 'Check your inputs. Please select deworming medicine name'
-#             elif not deworm_dose:
-#                 alert_open = True
-#                 alert_color = 'danger'
-#                 alert_text = 'Check your inputs. Please select deworming dosage'
-#             elif not deworm_dateadministered:
-#                 alert_open = True
-#                 alert_color = 'danger'
-#                 alert_text = 'Check your inputs. Please select date administered'
-#             elif not deworm_expdate:
-#                 alert_open = True
-#                 alert_color = 'danger'
-#                 alert_text = 'Check your inputs. Please select expiration date'
-#             elif deworm_fromvetmed is None:
-#                 alert_open = True
-#                 alert_color = 'danger'
-#                 alert_text = 'Check your inputs. Please select if vaccine is from vetmed'
-#             elif deworm_delete is None:
-#                 alert_open = True
-#                 alert_color = 'danger'
-#                 alert_text = 'Check your inputs. Please select if vaccine should be deleted'
-#             else:
-#                 to_delete = bool(deworm_delete)
-#                 sql = """
-#                     UPDATE deworm
-#                     SET 
-#                         deworm_m_id = %s,
-#                         deworm_dose = %s,
-#                         deworm_administered = %s,
-#                         deworm_exp = %s,
-#                         deworm_from_vetmed = %s,
-#                         deworm_delete_ind = %s
-#                     FROM visit
-#                     INNER JOIN patient ON visit.patient_id = patient.patient_id
-#                     WHERE deworm_id = %s AND patient.patient_id = %s
-#                 """
-#                 values = [deworm_name, deworm_dose, deworm_dateadministered, deworm_expdate, deworm_fromvetmed, to_delete, deworm_id, patient_id]
-#                 db.modifydatabase(sql, values)
+            if not deworm_name:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Check your inputs. Please select deworming medicine name'
+            elif not deworm_dose:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Check your inputs. Please select deworming dosage'
+            elif not deworm_dateadministered:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Check your inputs. Please select date administered'
+            elif not deworm_expdate:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Check your inputs. Please select expiration date'
+            elif deworm_fromvetmed is None:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Check your inputs. Please select if vaccine is from vetmed'
+            else:
+                sql = """
+                    SELECT MAX(visit_id)
+                    FROM visit
+                    """
+                values = []
+                df = db.querydatafromdatabase(sql,values)
+                visit_id = int(df.loc[0,0])
 
-#                 modal_open = True
+                sql = """
+                    SELECT MAX(deworm_no)
+                    FROM deworm
+                    INNER JOIN visit ON deworm.visit_id = visit.visit_id
+                    INNER JOIN patient ON visit.patient_id = patient.patient_id
+                    WHERE patient.patient_id = %s
+                    """
+                values = [patient_id]
+                df = db.querydatafromdatabase(sql,values)
+                deworm_no_before = int(df.loc[0,0]) if not pd.isna(df.loc[0,0]) else 0
+                deworm_no_new = deworm_no_before + 1
+                
+                sql = """
+                    INSERT INTO deworm(
+                        deworm_no,
+                        deworm_m_id,
+                        deworm_dose,
+                        deworm_administered,
+                        deworm_exp,
+                        deworm_from_vetmed,
+                        deworm_delete_ind,
+                        visit_id
+                    )
+                    VALUES(%s, %s, %s, %s, %s, %s, %s, %s)
+                """
+                values = [deworm_no_new, deworm_name, deworm_dose, deworm_dateadministered, deworm_expdate, deworm_fromvetmed, False, visit_id]
+                db.modifydatabase(sql, values)
 
-#                 if mode == "add":
-#                     patient_link = f'/home_visit/purpose?mode=add&patient_id={patient_id}'
-#                 elif mode == "edit":
-#                     patient_link = f'/editrecord?mode=edit&id={patient_id}'
-#                 else:
-#                     patient_link = f'/editrecord?mode=edit&id={patient_id}'
+                modal_open = True
 
-#             return [alert_color, alert_text, alert_open, modal_open, patient_link]
+                return_link = f'/home_visit/purpose?mode=add&patient_id={patient_id}'
+                
+            return [alert_color, alert_text, alert_open, modal_open, return_link]
         
-#         else:
-#             raise PreventUpdate
+        else:
+            raise PreventUpdate
         
-#     else:
-#         raise PreventUpdate
+    else:
+        raise PreventUpdate

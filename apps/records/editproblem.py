@@ -155,7 +155,7 @@ layout = html.Div(
                 dbc.CardHeader([
                     html.Div([
                         html.H2("Clinical Exams", className = 'flex-grow-1'),
-                        html.Div(dbc.Button("Add Clinical Exam", id = "problem_clinicalexam_btn"), className = "ml-2 d-flex"),
+                        html.Div(dbc.Button("Add Clinical Exam", id = "problem_clinicalexam_btn", href=""), className = "ml-2 d-flex"),
                     ], className = "d-flex align-items-center justify-content-between")
                 ]),
                 dbc.CardBody([
@@ -169,7 +169,7 @@ layout = html.Div(
                 dbc.CardHeader([
                     html.Div([
                         html.H2("Progress Notes", className = 'flex-grow-1'),
-                        html.Div(dbc.Button("Add Progress Note", id = "problem_progressnote_btn"), className = "ml-2 d-flex"),
+                        html.Div(dbc.Button("Add Progress Note", id = "problem_progressnote_btn", href=""), className = "ml-2 d-flex"),
                     ], className = "d-flex align-items-center justify-content-between")
                 ]),
                 dbc.CardBody([
@@ -670,3 +670,24 @@ def disablebuttons(url_search):
             return [disabled, disabled]
         else:
             return [disabled, disabled]
+        
+
+@app.callback(  
+    Output('problem_clinicalexam_btn', 'href'),
+    Output('problem_progressnote_btn', 'href'),
+    Input('url', 'search'),
+)
+def clinicalexamnotebuttonlink(url_search):
+    parsed = urlparse(url_search)
+    query_patient_id = parse_qs(parsed.query)
+    
+    if 'patient_id' in query_patient_id and 'problem_id' in query_patient_id:
+        patient_id = query_patient_id['patient_id'][0]
+        problem_id = query_patient_id['problem_id'][0]
+
+        clinicalexamlink = f'/addproblemclinicalexam?mode=add&patient_id={patient_id}&problem_id={problem_id}'
+        notelink = f'/addproblemnote?mode=add&patient_id={patient_id}&problem_id={problem_id}'
+        return clinicalexamlink, notelink
+
+    else:
+        raise PreventUpdate

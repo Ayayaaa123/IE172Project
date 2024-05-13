@@ -563,6 +563,18 @@ layout = html.Div([
             dbc.ModalBody([
                 dbc.Alert(id = "homevisit_visitdetails_alert", is_open = False),
                 dbc.Row([
+                    dbc.Col(html.H4("Veterinarian Assigned"), width=6),
+                    dbc.Col(
+                        dcc.Dropdown(
+                            id='homevisit_visitdetails_vetassigned',
+                            options=[],
+                            placeholder = "Select Veterinarian"
+                        ),
+                        width=6,
+                    )
+                ]),
+                html.Div(style={'margin-bottom':'1rem'}),
+                dbc.Row([
                     dbc.Col(html.H4("Visit Date"), width=6),
                     dbc.Col(
                         dmc.DatePicker(
@@ -1819,6 +1831,8 @@ def homevisit_visitdetails_modal(create, submit, close, form, success, date, for
 
 @app.callback( #modal initial values
     [
+        Output('homevisit_visitdetails_vetassigned', 'options'),
+        Output('homevisit_visitdetails_vetassigned', 'value'),
         Output('homevisit_visitdetails_date', 'value'),
         Output('homevisit_visitdetails_forvaccine', 'value'),
         Output('homevisit_visitdetails_fordeworm', 'value'),
@@ -1843,6 +1857,20 @@ def homevisit_visitdetailsmodal_initial_values(url_search, click):
             eventid = ctx.triggered[0]['prop_id'].split('.')[0]
             if eventid == 'homevisit_visitdetails' and click:
                 sql = """
+                    SELECT 
+                        vet_id,
+                        COALESCE(vet_ln, '') || ', ' || COALESCE (vet_fn, '') || ' ' || COALESCE (vet_mi, '') AS vet_name
+                    FROM 
+                        vet
+                    WHERE 
+                        NOT vet_delete_ind
+                """
+                values = []
+                cols = ['vet_id', 'vet_name']
+                result = db.querydatafromdatabase(sql, values, cols)
+                options1 = [{'label': row['vet_name'], 'value': row['vet_id']} for _, row in result.iterrows()]
+                
+                sql = """
                     SELECT DISTINCT
                         problem.problem_id,
                         problem_chief_complaint
@@ -1856,7 +1884,7 @@ def homevisit_visitdetailsmodal_initial_values(url_search, click):
                 values = [patient_id]
                 cols = ['problem_id', 'problem_complaint']
                 result = db.querydatafromdatabase(sql, values, cols)
-                options = [{'label': row['problem_complaint'], 'value': row['problem_id']} for _, row in result.iterrows()]
+                options2 = [{'label': row['problem_complaint'], 'value': row['problem_id']} for _, row in result.iterrows()]
                 
                 sql = """
                     SELECT MAX(visit_id)
@@ -1868,6 +1896,7 @@ def homevisit_visitdetailsmodal_initial_values(url_search, click):
 
                 sql = """
                     SELECT 
+                        vet_id,
                         visit_date,
                         visit_for_vacc,
                         visit_for_deworm,
@@ -1879,17 +1908,18 @@ def homevisit_visitdetailsmodal_initial_values(url_search, click):
                         visit_id = %s
                 """
                 values = [visit_id]
-                col = ['visit_date', 'visit_for_vacc', 'visit_for_deworm', 'visit_for_problem', 'problem_id']
+                col = ['vet_id', 'visit_date', 'visit_for_vacc', 'visit_for_deworm', 'visit_for_problem', 'problem_id']
                     
                 df = db.querydatafromdatabase(sql, values, col)
                     
+                vet_id = df['vet_id'][0]
                 visit_date = df['visit_date'][0]
                 visit_for_vacc = df['visit_for_vacc'][0]
                 visit_for_deworm = df['visit_for_deworm'][0]
                 visit_for_problem = df['visit_for_problem'][0]
                 problem_id = df['problem_id'][0]
 
-                return [visit_date, visit_for_vacc, visit_for_deworm, visit_for_problem, options, problem_id]
+                return [options1, vet_id, visit_date, visit_for_vacc, visit_for_deworm, visit_for_problem, options2, problem_id]
             else:
                 raise PreventUpdate
         else:
@@ -1910,6 +1940,7 @@ def homevisit_visitdetailsmodal_initial_values(url_search, click):
         [
             Input('homevisit_visitdetails_submit', 'n_clicks'),
             Input('url', 'search'),
+            Input('homevisit_visitdetails_vetassigned', 'value'),
             Input('homevisit_visitdetails_date', 'value'),
             Input('homevisit_visitdetails_forvaccine', 'value'),
             Input('homevisit_visitdetails_fordeworm', 'value'),
@@ -1917,7 +1948,7 @@ def homevisit_visitdetailsmodal_initial_values(url_search, click):
             Input('homevisit_visitdetails_problemname', 'value'),
         ],
 )
-def editprofile_visitdetails_save(submitbtn, url_search, date, forvaccine, fordeworm, forproblem, problemname):
+def editprofile_visitdetails_save(submitbtn, url_search, vet, date, forvaccine, fordeworm, forproblem, problemname):
     ctx = dash.callback_context
     if ctx.triggered:
         eventid = ctx.triggered[0]['prop_id'].split('.')[0]
@@ -1941,26 +1972,31 @@ def editprofile_visitdetails_save(submitbtn, url_search, date, forvaccine, forde
                 alert_color = ''
                 alert_text = ''
 
-                if not date:
+                if not vet:
                     alert_open = True
                     alert_color = 'danger'
-                    alert_text = 'Please indicate the species of the patient'
+                    alert_text = 'Please indicate the veterinarian assigned'
+                elif not date:
+                    alert_open = True
+                    alert_color = 'danger'
+                    alert_text = 'Please indicate the visit date'
                 elif not forvaccine:
                     alert_open = True
                     alert_color = 'danger'
-                    alert_text = 'Please indicate the breed of the patient'
+                    alert_text = 'Please indicate the purpose of visit'
                 elif not fordeworm:
                     alert_open = True
                     alert_color = 'danger'
-                    alert_text = 'Please describe the color or any color marks on the patient'
+                    alert_text = 'Please indicate the purpose of visit'
                 elif not forproblem:
                     alert_open = True
                     alert_color = 'danger'
-                    alert_text = 'Please indicate the sex of the patient'
+                    alert_text = 'Please indicate the purpose of visit'
                 else:
                     sql = '''
                         UPDATE visit
                         SET
+                            vet_id = %s,
                             visit_date = %s,
                             visit_for_vacc = %s,
                             visit_for_deworm = %s,
@@ -1968,7 +2004,7 @@ def editprofile_visitdetails_save(submitbtn, url_search, date, forvaccine, forde
                             problem_id = %s
                         WHERE visit_id = %s
                     '''
-                    values = [date, forvaccine, fordeworm, forproblem, problemname, visit_id]
+                    values = [vet, date, forvaccine, fordeworm, forproblem, problemname, visit_id]
 
                     db.modifydatabase(sql, values)
 
