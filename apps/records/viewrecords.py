@@ -21,16 +21,6 @@ layout = html.Div(
                 ),
                 dbc.CardBody(
                     [
-                        html.Div( #add new patient button
-                            [
-                                dbc.Button(
-                                    "Add New Patient",
-                                    color="secondary",
-                                    href='/newrecord/newpatient'
-                                )
-                            ]
-                        ),
-                        html.Hr(),
                         html.Div( # create section to show list of records
                             [
                                 html.Div(
