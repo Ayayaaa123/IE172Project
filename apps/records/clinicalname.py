@@ -80,7 +80,7 @@ layout = html.Div(
                 dbc.ModalHeader(html.H4('Changes have been saved')),
                 # dbc.ModalBody('Clinician profile has been updated', id='editclinicianrprofile_feedback_message'),
                 dbc.ModalFooter(
-                    dbc.Button("Okay", href='/managedata', id='editclinical_btn_modal')
+                    dbc.Button("Okay", href='/managedata', style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white"}, id='editclinical_btn_modal')
                 )
             ],
             centered=True,

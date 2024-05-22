@@ -305,8 +305,8 @@ def clinicalexam_table(url_search):
                     hrefclinical = f'/editproblemclinicalexam?mode=edit&clinical_id={clinical_id}&problem_id={problem_id}&patient_id={patient_id}'
                 buttons += [
                     html.Div(
-                        dbc.Button('Edit', href=hrefclinical, size='sm', color='success'),
-                        style = {'text-align':'center'}
+                        dbc.Button('Edit', href=hrefclinical, style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white", 'text-align':'center'}, size='sm'), #color='success'),
+                        #style = {'text-align':'center'}
                     )
                 ]
 
@@ -358,8 +358,8 @@ def progressnotes_table(url_search):
                     hrefnote = f'/editproblemnote?mode=edit&note_id={note_id}&problem_id={problem_id}&patient_id={patient_id}'
                 buttons += [
                     html.Div(
-                        dbc.Button('Edit', href=hrefnote, size='sm', color='success'),
-                        style = {'text-align':'center'}
+                        dbc.Button('Edit', href=hrefnote, style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white", 'text-align':'center'}, size='sm'), #color='success'),
+                        #style = {'text-align':'center'}
                     )
                 ]
 

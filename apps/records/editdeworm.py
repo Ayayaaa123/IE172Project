@@ -124,6 +124,7 @@ layout = html.Div(
             dbc.ModalFooter(
                 dbc.Button(
                     "Return",
+                    style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white"}, 
                     href="",
                     id="deworm_return-button",
                 )

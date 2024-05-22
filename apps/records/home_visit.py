@@ -43,13 +43,13 @@ layout = html.Div([
                                 options = [],
                             ), width = 4),
                         
-                        dbc.Col(html.H6("Client not listed?", style={"text-align": "right"}), width = 2),
+                        dbc.Col(html.H6("Client not listed?", style={"margin-left": "30px", "margin-right": "-30px"}), width = 2),
 
                         dbc.Col(
                             dbc.Button(
                                 "Create Client Profile",
                                 id = "create_client_profile",
-                                style={"width":"100%"},
+                                style={"width":"100%", "backgroundColor": "#333", "borderColor": "#333" , "color": "white"},
                             ), width = 3), 
 
                     ], style={"margin-left": "2%", "margin-right": "1%", "align-items": "center"}),
@@ -66,15 +66,16 @@ layout = html.Div([
                                 placeholder="Search Patient",
                                 searchable=True,
                                 options=[],
+                                value=None,
                             ), width = 4),
                         
-                        dbc.Col(html.H6("Patient not listed?", style={"text-align": "right"}), width = 2),
+                        dbc.Col(html.H6("Patient not listed?", style={"margin-left": "30px", "margin-right": "-30px"}), width = 2),
 
                         dbc.Col(
                             dbc.Button(
                                 "Create Patient Profile",
                                 id = "create_patient_profile",
-                                style={"width":"100%"},
+                                style={"width":"100%", "backgroundColor": "#333", "borderColor": "#333" , "color": "white"},
                             ), width = 3), 
 
                     ], style={"margin-left": "2%", "margin-right": "1%", "align-items": "center"}),
@@ -83,7 +84,7 @@ layout = html.Div([
 
                     dbc.Row([ #Select Veterinarian
                             
-                        dbc.Col(html.H4("Assign Veterinarian"), width=3),
+                        dbc.Col(html.H4("Veterinarian in charge"), width=3),
 
                         dbc.Col(
                             dcc.Dropdown(
@@ -94,20 +95,24 @@ layout = html.Div([
                                 value=None,
                             ),width = 4),
                         
-                        dbc.Col(html.H6("Vet not listed?", style={"text-align": "right"}), width = 2),
-
+                        dbc.Col(html.H4("Visit Date", style={"margin-left": "30px", "margin-right": "-30px"}), width = 2),
+                        
                         dbc.Col(
-                            dbc.Button(
-                                "Create Veterinarian Profile",
-                                id = "create_vet_profile",
-                                style={"width":"100%"},
-                            ), width = 3), 
+                            dmc.DatePicker(
+                            id='visitdate',
+                            placeholder="Select Visit Date",
+                            value=datetime.now().date(),
+                            inputFormat='MMM DD, YYYY',
+                            dropdownType='modal',
+                            ), width=3
+                        ),
 
                     ], style={"margin-left": "2%", "margin-right": "1%", "align-items": "center"}),
 
-                    html.Br(),
+                    #html.Br(),
+                    html.Hr(),
                     
-                    dbc.Row([ #Visit purpose and Visit Date
+                    dbc.Row([ #Visit purpose
                         dbc.Col(html.H4("Visit Purpose"), width=3),
                         dbc.Col(
                             dbc.Checklist(
@@ -119,13 +124,13 @@ layout = html.Div([
                                 inline=True,
                                 style={
                                     "display": "flex",
-                                    "flex-direction": "column",
+                                    "flex-direction": "row",
                                     "justify-content": "flex-start",
                                     "fontSize": "1rem",
                                     "align-items": "flex-start",
                                 },
                             ),
-                            width=3, style={"margin-right": "-15px"}
+                            width=4, #style={"margin-right": "-15px"}
                         ),
                         dbc.Col(
                             dbc.Checklist(
@@ -137,28 +142,20 @@ layout = html.Div([
                                 inline=True,
                                 style={
                                     "display": "flex",
-                                    "flex-direction": "column",
+                                    "flex-direction": "row",
                                     "justify-content": "flex-start",
                                     "fontSize": "1rem",
                                     "align-items": "flex-start",
                                 },
                             ),
-                            width=1, style={"margin-left": "-15px", "margin-right": "30px"}
-                        ),
-                        dbc.Col(html.H4("Visit Date", style={"text-align": "right"}), width = 2),
-                        dbc.Col(
-                            dmc.DatePicker(
-                            id='visitdate',
-                            placeholder="Select Visit Date",
-                            value=datetime.now().date(),
-                            inputFormat='MMM DD, YYYY',
-                            dropdownType='modal',
-                            ), width=3
+                            width=4, style={"margin-left": "30px", "margin-right": "30px"}
                         ),
                     ], style={"margin-left": "2%", "margin-right": "1%", "align-items": "center"}),
 
+
                     html.Div([ #Previous Problem Extension
                         html.Br(),
+
                         dbc.Row([
                             dbc.Col(html.H4("Previous problem:"), width=3),
                             dbc.Col(
@@ -168,15 +165,46 @@ layout = html.Div([
                                     searchable=True,
                                     options=[],
                                     value=None,
-                                ),
-                            ),                    
+                                ), width= 4, 
+                            ),
+                            dbc.Col(html.H4("Problem status:", style={"margin-left": "30px", "margin-right": "-30px"}), width=2),
+                            dbc.Col(html.Div(id = "problem_status"), width=3),
+
                         ], style={"margin-left": "2%", "margin-right": "1%", "align-items": "center"}),
                     ],id = 'follow_up_field', style = {'display': 'none'}),
 
                 ]),
                 
             ]),
+
+        html.Div([ #Client and Patient Information
             
+            html.Br(),
+            dbc.Row([
+                dbc.Col( #Client Information (1st column)
+                    dbc.Card([ #Client Information Card
+                        dbc.CardHeader(
+                            html.Div([
+                                    html.H3("Client Information", className = "flex-grow-1"),
+                                    dbc.Button("Edit Info", id = 'edit_client_detail_btn', style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white"}, n_clicks = 0),
+                                ], className = "d-flex align-items-center justify-content-between"),
+                        ),
+                        dbc.CardBody(html.Div(id = 'client_content')),
+                    ]), width = 5,
+                ),
+                dbc.Col( #Patient Information (2nd Column)
+                    dbc.Card([ #Patient Information Card
+                        dbc.CardHeader(
+                            html.Div([
+                                    html.H3("Patient Information", className = "flex-grow-1"),
+                                    dbc.Button("Edit Info", id = 'edit_patient_detail_btn', style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white"}, n_clicks = 0),
+                                ], className = "d-flex align-items-center justify-content-between"),
+                        ),
+                        dbc.CardBody(html.Div(id = 'patient_content')),
+                    ]), width = 7,
+                ),
+            ]),
+        ], id = 'client_patient_row', style = {'display': 'none'}),     
 
         html.Br(),
         dbc.Button( #Submit button
@@ -185,14 +213,21 @@ layout = html.Div([
                     n_clicks = 0, #initialization 
                     className='custom-submitbutton',
                 ),
+
+
+
         #modal for successful saving of visit
         dbc.Modal(children = [ 
             dbc.ModalHeader(html.H4('Visit Recorded Successfully!', style={'text-align': 'center', 'width': '100%'}), close_button = False),
             dbc.ModalFooter([
-                dbc.Button("Proceed to Visit Details", href = "", id='home_visit_returnlink', className = "ms-auto"),
+                dbc.Button("Proceed to Visit Details", href = "", style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white"}, id='home_visit_returnlink', className = "ms-auto"),
             ]),
-        ],centered = True, id = 'visitrecord_successmodal', backdrop = 'static', is_open = False, keyboard = False),
-        
+        ],centered = True, id = 'visitrecord_successmodal', backdrop = 'static', is_open = False, keyboard = False),        
+
+
+
+        #CLIENT-RELEATED MODALS
+
         # modal for creating client profile
         dbc.Modal([
             dbc.ModalHeader(dbc.ModalTitle("Create Client Profile", style={'text-align': 'center', 'width': '100%'})),
@@ -269,17 +304,111 @@ layout = html.Div([
                 ),
             ]),
             dbc.ModalFooter([
-                dbc.Button("Submit Client Details", href = "/home_visit", id = "client_profile_submit", className = "ms-auto"),
+                dbc.Button("Submit Client Details", href = "/home_visit", style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white"}, id = "client_profile_submit", className = "ms-auto"),
             ]),
         ], centered = True, id = "client_profile_modal", is_open = False, backdrop = "static", size = 'lg'),
 
         dbc.Modal(children = [ # successful saving of client profile
             dbc.ModalHeader(html.H4('Client Profile Recorded Successfully!', style={'text-align': 'center', 'width': '100%'}), close_button = False),
             dbc.ModalFooter([
-                html.A(html.Button("Close", id = 'close_client_successmodal', className = "btn btn-primary ms-auto"),href = '/home_visit'),
+                html.A(html.Button("Close", style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white"}, id = 'close_client_successmodal', className = "btn btn-primary ms-auto"),href = '/home_visit'),
                 #dbc.Button("Close", href = "/", id = "close_client_successmodal", className = "ms-auto"),
             ]),
         ], centered = True, id = 'client_profile_successmodal', backdrop = 'static', is_open = False, keyboard = False),
+
+        # modal for editing client profile
+        dbc.Modal([
+            dbc.ModalHeader(dbc.ModalTitle("Edit Client Profile", style={'text-align': 'center', 'width': '100%'})),
+            dbc.ModalBody([
+                dbc.Alert(id = "edit_client_profile_alert", is_open = False),
+                dbc.InputGroup(
+                    [
+                        dbc.InputGroupText("First Name", style={"width": "17%"}),
+                        dbc.Input(id='edit_client_fn', type='text', placeholder="e.g. Juan"),
+                    ],
+                    className="mb-2",
+                ),
+
+                dbc.InputGroup(
+                    [
+                        dbc.InputGroupText("Last Name", style={"width": "17%"}),
+                        dbc.Input(id='edit_client_ln', type='text', placeholder="e.g. Dela Cruz"),
+                    ],
+                    className="mb-2",
+                ),
+
+                dbc.InputGroup(
+                    [
+                        dbc.InputGroupText("Middle Initial", style={"width": "17%"}),
+                        dbc.Input(id='edit_client_mi', type='text', placeholder="e.g. M."),
+                        dbc.InputGroupText("Suffix", style={"width": "12%"}),
+                        dbc.Input(id='edit_client_suffix', type='text', placeholder="e.g. Jr."),
+                    ],
+                    className="mb-4",
+                ),
+
+                dbc.InputGroup(
+                    [
+                        dbc.InputGroupText("Contact No.", style={"width": "17%"}),
+                        dbc.Input(id='edit_client_contact_no', type='text', placeholder="e.g. 09123456789"),
+                    ],
+                    className="mb-2",
+                ),
+
+                dbc.InputGroup(
+                    [
+                        dbc.InputGroupText("Email", style={"width": "17%"}),
+                        dbc.Input(id='edit_client_email', type='text', placeholder="e.g. Juan.DelaCruz@example.com"),
+                    ],
+                    className="mb-4",
+                ),
+
+                dbc.InputGroup(
+                    [
+                        dbc.InputGroupText("House No.", style={"width": "17%"}),
+                        dbc.Input(id='edit_client_house_no', type='text', placeholder="e.g. No. 1A (or any landmark)"),
+                    ],
+                    className="mb-2",
+                ),
+
+                dbc.InputGroup(
+                    [
+                        dbc.InputGroupText("Street", style={"width": "17%"}),
+                        dbc.Input(id='edit_client_street', type='text', placeholder="e.g. P. Vargas St."),
+                        dbc.InputGroupText("Barangay", style={"width": "12%"}),
+                        dbc.Input(id='edit_client_barangay', type='text', placeholder="e.g. Krus na Ligas"),
+                    ],
+                    className="mb-2",
+                ),
+
+                dbc.InputGroup(
+                    [
+                        dbc.InputGroupText("City", style={"width": "17%"}),
+                        dbc.Input(id='edit_client_city', type='text', placeholder="e.g. Pasay City"),
+                        dbc.InputGroupText("Region", style={"width": "12%"}),
+                        dbc.Input(id='edit_client_region', type='text', placeholder="e.g. Metro Manila"),
+                    ],
+                    #className="mb-3",
+                ),
+            ]),
+            dbc.ModalFooter([
+                #dbc.Button("Submit Modified Client Details", href = "/home_visit", id = "edit_client_profile_submit", className = "ms-auto"),
+                dbc.Button("Submit Modified Client Details", style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white"}, id = "edit_client_profile_submit", className = "ms-auto"),
+            ]),
+        ], centered = True, id = "edit_client_profile_modal", is_open = False, backdrop = "static", size = 'lg'),
+
+        dbc.Modal(children = [ # successful editing of client profile
+            dbc.ModalHeader(html.H4('Client Profile Edited Successfully!', style={'text-align': 'center', 'width': '100%'}), close_button = False),
+            dbc.ModalFooter([
+                #html.A(html.Button("Close", id = 'close_edit_client_successmodal', className = "btn btn-primary ms-auto")),
+                html.A(html.Button("Close", style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white"}, id = 'close_edit_client_successmodal', className = "btn btn-primary ms-auto"),href = '/home_visit'),
+                #dbc.Button("Close", href = "/", id = "close_client_successmodal", className = "ms-auto"),
+            ]),
+        ], centered = True, id = 'edit_client_profile_successmodal', backdrop = 'static', is_open = False, keyboard = False),
+
+
+
+        #PATIENT-RELATED MODALS
 
         # modal for creating patient profile
         dbc.Modal([
@@ -368,365 +497,171 @@ layout = html.Div([
                 ),
             ]),
             dbc.ModalFooter([
-                dbc.Button("Submit Patient Details", id = "patient_profile_submit", className = "ms-auto"),
+                dbc.Button("Submit Patient Details", style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white"}, id = "patient_profile_submit", className = "ms-auto"),
             ]),
         ], centered = True, id = "patient_profile_modal", is_open = False, backdrop = "static", size = 'lg'),
 
         dbc.Modal(children = [ # successful saving of patient profile
             dbc.ModalHeader(html.H4('Patient Profile Recorded Successfully!', style={'text-align': 'center', 'width': '100%'}), close_button = False),
             dbc.ModalFooter([
-                html.A(html.Button("Close", id = 'close_patient_successmodal', className = "btn btn-primary ms-auto"),href = '/home_visit'),
+                html.A(html.Button("Close", style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white"}, id = 'close_patient_successmodal', className = "btn btn-primary ms-auto"),href = '/home_visit'),
                 #dbc.Button("Close", id = "close_patient_successmodal", className = "ms-auto"),
             ]),
         ], centered = True, id = 'patient_profile_successmodal', backdrop = 'static', is_open = False, keyboard = False),
-
-        # modal for creating vet user profile
+    
+        # modal for editing patient profile
         dbc.Modal([
-            dbc.ModalHeader(dbc.ModalTitle("Create Veterinarian User Profile", style={'text-align': 'center', 'width': '100%'})),
+            dbc.ModalHeader(dbc.ModalTitle("Edit Patient Profile", style={'text-align': 'center', 'width': '100%'})),
             dbc.ModalBody([
-                dbc.Alert(id = "vet_profile_alert", is_open = False),
-
-                dbc.InputGroup(
-                    [
-                        dbc.InputGroupText("First Name", style={"width": "20%"}),
-                        dbc.Input(id='new_vet_fn', type='text', placeholder="e.g. Peter"),
-                    ],
-                    className="mb-2",
-                ),
+                dbc.Alert(id = "edit_patient_profile_alert", is_open = False),
                 
                 dbc.InputGroup(
                     [
-                        dbc.InputGroupText("Last Name", style={"width": "20%"}),
-                        dbc.Input(id='new_vet_ln', type='text', placeholder="e.g. Dimagiba"),
+                        dbc.InputGroupText("Name", style={"width": "17%"}),
+                        dbc.Input(id='edit_patient_m', type='text', placeholder="e.g. Bantay (leave blank if none)"),
                     ],
                     className="mb-2",
                 ),
 
-
                 dbc.InputGroup(
                     [
-                        dbc.InputGroupText("Middle Initial", style={"width": "20%"}),
-                        dbc.Input(id='new_vet_mi', type='text', placeholder="e.g. K"),
-                        dbc.InputGroupText("Suffix", style={"width": "9%"}),
-                        dbc.Input(id='new_vet_suffix', type='text', placeholder="e.g. III"),
-                    ],
-                    className="mb-4",
-                ),
-                
-                dbc.InputGroup(
-                    [
-                        dbc.InputGroupText("Contact Number", style={"width": "20%"}),
-                        dbc.Input(id='new_vet_cn', type='text', placeholder="e.g. 09123456789"),
+                        dbc.InputGroupText("Species", style={"width": "17%"}),
+                        dbc.Input(id='edit_patient_species', type='text', placeholder="e.g. Dog"),
                     ],
                     className="mb-2",
                 ),
 
-
                 dbc.InputGroup(
                     [
-                        dbc.InputGroupText("Email (Username)", style={"width": "20%"}),
-                        dbc.Input(type="text", id="new_vet_email", placeholder="e.g.PKDimagiba@example.com"),
-                    ],
-                    className="mb-4",
-                ),
-                
-                dbc.InputGroup(
-                    [
-                        dbc.InputGroupText("Password", style={"width": "20%"}),
-                        dbc.Input(type="password", id="new_vet_password", placeholder="Enter a password"),
-                    ],
-                    className="mb-2",
-                ),
-                
-                dbc.InputGroup(
-                    [
-                        dbc.InputGroupText("Confirm Password", style={"width": "20%"}),
-                        dbc.Input(type="password", id="new_vet_passwordconf", placeholder="Re-type the password"),
+                        dbc.InputGroupText("Breed", style={"width": "17%"}),
+                        dbc.Input(id='edit_patient_breed', type='text', placeholder="e.g. Bulldog"),
                     ],
                     className="mb-2",
                 ),
 
+                dbc.InputGroup(
+                    [
+                        dbc.InputGroupText("Color Marks", style={"width": "17%"}),
+                        dbc.Input(id='edit_patient_color', type='text', placeholder="e.g. White or With black spots"),
+                    ],
+                    className="mb-2",
+                ),
 
-            ]),
-            dbc.ModalFooter([
-                dbc.Button("Submit Vet User Details", id = "vet_profile_submit", className = "ms-auto"),
-            ]),
-        ], centered = True, id = "vet_profile_modal", is_open = False, backdrop = "static", size = 'lg'),
+                dbc.InputGroup(
+                    [
+                        dbc.InputGroupText("Sex", style={"width": "17%"}),                            
+                        dbc.InputGroupText(dcc.Dropdown(
+                            id='edit_patient_sex',
+                            options=[
+                                {'label':'Male', 'value':'Male'},
+                                {'label':'Female', 'value':'Female'},
+                            ],
+                            placeholder='Select Sex',
+                            style = {"width": "100%"}
+                            ), style = {"width": "43%"}
+                        ),
+                        dbc.InputGroupText("Birth Date", style={"width": "19%"}),
+                        dbc.InputGroupText(dcc.DatePickerSingle(
+                            id='edit_patient_bd',
+                            date=None,
+                            display_format='MMM DD, YYYY',
+                            placeholder = "Choose Date"
+                            ),
+                        ),
+                    ],
+                    className="mb-2",
+                ),
 
-        dbc.Modal(children = [ # successful saving of vet profile
-            dbc.ModalHeader(html.H4('Vet User Profile Recorded Successfully!', style={'text-align': 'center', 'width': '100%'}), close_button = False),
-            dbc.ModalFooter([
-                html.A(html.Button("Close", id = 'close_vet_successmodal', className = "btn btn-primary ms-auto"),href = '/home_visit'),
-                #dbc.Button("Close", id = "close_vet_successmodal", className = "ms-auto"),
-            ]),
-        ], centered = True, id = 'vet_profile_successmodal', backdrop = 'static', is_open = False, keyboard = False),
-
-        # modal for creating new problem profile
-        dbc.Modal([
-            dbc.ModalHeader(dbc.ModalTitle("Enter New Problem Details", style={'text-align': 'center', 'width': '100%'}), close_button = False),
-            dbc.ModalBody([
-                dbc.Alert(id = "new_problem_alert", is_open = False),
                 dbc.InputGroup(
                     [
-                        dbc.InputGroupText("Problem", style={"width": "23%"}),
-                        dbc.Input(id='newproblem', type='text', placeholder="Describe the overall problem"),
+                        dbc.InputGroupText("Idiosyncrasies", style={"width": "17%"}),
+                        dbc.Input(id='edit_patient_idiosync', type='text', placeholder="e.g. Likes morning walks"),
                     ],
-                    className="mb-4",
-                ),
-                html.H4("Health & Nutrients Intake", className="mb-2"),
-                dbc.InputGroup(
-                    [
-                        dbc.InputGroupText("Medical History", style={"width": "23%"}),
-                        dbc.InputGroupText(dbc.Textarea(id='newproblem_medhistory', placeholder='Enter any relevant medical history', style={"height":30, 'width':'100%'}), style={"width": "77%"})
-                    ],
-                    className="mb-2",
-                ),
-                dbc.InputGroup(
-                    [
-                        dbc.InputGroupText("Diet", style={"width": "23%"}),
-                        dbc.Input(id='newproblem_diet', type='text', placeholder="Enter patient's general diet"),
-                    ],
-                    className="mb-2",
-                ),
-                dbc.InputGroup(
-                    [
-                        dbc.InputGroupText("Water Source", style={"width": "23%"}),
-                        dbc.Input(id='newproblem_watersource', type='text', placeholder="Enter patient's general source of hydration"),
-                    ],
-                    className="mb-4",
-                ),
-                html.H4("Health Assessment", className="mb-2"),
-                dbc.InputGroup(
-                    [
-                        dbc.InputGroupText("Temperature", style={"width": "23%"}),
-                        dbc.Input(id='newproblem_temp', type='text', placeholder="Enter most recent temperature in °C"),
-                    ],
-                    className="mb-2",
-                ),
-                dbc.InputGroup(
-                    [
-                        dbc.InputGroupText("Pulse Rate", style={"width": "23%"}),
-                        dbc.Input(id='newproblem_pr', type='text', placeholder="Enter pulse rate per min"),
-                    ],
-                    className="mb-2",
-                ),
-                dbc.InputGroup(
-                    [
-                        dbc.InputGroupText("Weight", style={"width": "23%"}),
-                        dbc.Input(id='newproblem_weight', type='text', placeholder="Enter weight in kilogram"),
-                    ],
-                    className="mb-2",
-                ),
-                dbc.InputGroup(
-                    [
-                        dbc.InputGroupText("Respiration Rate", style={"width": "23%"}),
-                        dbc.Input(id='newproblem_rr', type='text', placeholder="Enter respiration rate per min"),
-                    ],
-                    className="mb-2",
-                ),
-                dbc.InputGroup(
-                    [
-                        dbc.InputGroupText("Body Condition Score", style={"width": "23%"}),
-                        dbc.Input(id='newproblem_bodyscore', type='text', placeholder="Enter patient's condition score (1-9)"),
-                    ],
-                    #className="mb-2",
+                    #className="mb-3",
                 ),
             ]),
             dbc.ModalFooter([
-                dbc.Button("Submit Problem Details", id = "problem_submit", className = "ms-auto"),
+                dbc.Button("Submit Modified Patient Details", style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white"}, id = "edit_patient_profile_submit", className = "ms-auto"),
             ]),
-        ], centered = True, id = "new_problem_modal", is_open = False, backdrop = "static", size = 'lg', keyboard = False),
+        ], centered = True, id = "edit_patient_profile_modal", is_open = False, backdrop = "static", size = 'lg'),
+
+        dbc.Modal(children = [ # successful editing of patient profile
+            dbc.ModalHeader(html.H4('Patient Profile Edited Successfully!', style={'text-align': 'center', 'width': '100%'}), close_button = False),
+            dbc.ModalFooter([
+                html.A(html.Button("Close", style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white"}, id = 'close_edit_patient_successmodal', className = "btn btn-primary ms-auto"),href = '/home_visit'),
+                #dbc.Button("Close", id = "close_patient_successmodal", className = "ms-auto"),
+            ]),
+        ], centered = True, id = 'edit_patient_profile_successmodal', backdrop = 'static', is_open = False, keyboard = False),
+
     ])
 
 
-# MODAL CALLBACKS
 
-@app.callback( #opens and close form and success modal for creating client profile
-        [
-            Output("client_profile_modal", "is_open"),
-            Output('client_profile_successmodal', 'is_open'),
-        ],
-        [
-            Input("create_client_profile", "n_clicks"),
-            Input('client_profile_submit','n_clicks'),
-            Input('close_client_successmodal','n_clicks'),
-        ],
-        [
-            State("client_profile_modal", "is_open"),
-            State('client_profile_successmodal', 'is_open'),
-            State('new_client_fn', 'value'),
-            State('new_client_ln', 'value'),
-            State('new_client_contact_no', 'value'),
-            State('new_client_email', 'value'),
-            State('new_client_street', 'value'),
-            State('new_client_barangay', 'value'),
-            State('new_client_city', 'value'),
-            State('new_client_region', 'value'),
-        ]
-)
-def toggle_client_profile_modal(create, submit, close, form, success, fn, ln, cn, email, street, brgy, city, region):
-    ctx = dash.callback_context
-    
-    if ctx.triggered:
-        eventid = ctx.triggered[0]['prop_id'].split('.')[0]
 
-        if eventid == "create_client_profile" and create:
-            return [not form, success]
-        
-        if eventid == 'client_profile_submit' and submit and all([fn, ln, cn, email, street, brgy, city, region]):
-            return [not form, not success]
-        
-        if eventid == 'close_client_successmodal' and close:
-            return [form, not success]
-        
-    return [form, success]
 
-@app.callback( #opens and close form and success modal for creating patient profile
-        [
-            Output("patient_profile_modal", "is_open"),
-            Output('patient_profile_successmodal', 'is_open'),
-        ],
-        [
-            Input("create_patient_profile", "n_clicks"),
-            Input('patient_profile_submit','n_clicks'),
-            Input('close_patient_successmodal','n_clicks'),
-        ],
-        [
-            State("patient_profile_modal", "is_open"),
-            State('patient_profile_successmodal', 'is_open'),
-            State('new_patient_species', 'value'),
-            State('new_patient_breed', 'value'),
-            State('new_patient_color', 'value'),
-            State('new_patient_sex', 'value'),
-            State('new_patient_bd', 'date'),
-            State('new_patient_idiosync', 'value'),
-            State('new_clientlist', 'value'),
-        ]
-)
-def toggle_patient_profile_modal(create, submit, close, form, success, species, breed, color, sex, bd, idiosync, client):
-    ctx = dash.callback_context
-    
-    if ctx.triggered:
-        eventid = ctx.triggered[0]['prop_id'].split('.')[0]
+# CLIENT-RELATED
 
-        if eventid == "create_patient_profile" and create:
-            return [not form, success]
-        
-        if eventid == "patient_profile_submit" and submit and all([species, color, breed, sex, bd, idiosync, client]):
-            return [not form, not success]
-        
-        if eventid == "close_patient_successmodal" and close:
-            return [form, not success]
-           
-    return [form, success]
-
-@app.callback( #opens and close form and success modal for creating vet user profile
-        [
-            Output("vet_profile_modal", "is_open"),
-            Output('vet_profile_successmodal', 'is_open'),
-        ],
-        [
-            Input("create_vet_profile", "n_clicks"),
-            Input('vet_profile_submit','n_clicks'),
-            Input('close_vet_successmodal','n_clicks'),
-        ],
-        [
-            State("vet_profile_modal", "is_open"),
-            State('vet_profile_successmodal', 'is_open'),
-            State('new_vet_fn', 'value'),
-            State('new_vet_ln', 'value'),
-            State('new_vet_cn', 'value'),
-            State('new_vet_email', 'value'),
-            State('new_vet_password', 'value'),
-            State('new_vet_passwordconf', 'value'),
-        ]
-)
-def toggle_vet_profile_modal(create, submit, close, form, success, fn, ln, cn, email, pw, pwconf):
-    ctx = dash.callback_context
-    
-    if ctx.triggered:
-        eventid = ctx.triggered[0]['prop_id'].split('.')[0]
-
-        if eventid == "create_vet_profile" and create:
-            return [not form, success]
-        
-        if eventid == "vet_profile_submit" and submit and all([ln, fn, email, cn, pw, pwconf]) and pw ==pwconf:
-            return [not form, not success]
-        
-        if eventid == "close_vet_successmodal" and close:
-            return [form, not success]
-        
-    return [form, success] 
-
-@app.callback( #opens and close form modal for creating new problem a d visit success modal
+@app.callback( # for list of existing clients for returning patient
     [
-        Output('visitrecord_successmodal','is_open'),
-        Output("new_problem_modal", "is_open"),
+        Output('re_clientlist', 'options'),
     ],
     [
-        Input('visitrecord_submit','n_clicks'),
-        Input('problem_submit','n_clicks'),
-    ],
-    [
-        State('visitrecord_successmodal','is_open'),
-        State("new_problem_modal", "is_open"),
-        State('re_clientlist', 'value'),
-        State('patientlist','value'),
-        State('vetlist','value'),
-        State('visitdate', 'value'),
-        State('problem_list', 'value'),
-        State('visitpurpose', 'value'),
-        State('visitpurpose_problem', 'value'),
-        State('newproblem', 'value'),
-        State('newproblem_medhistory', 'value'),
-        State('newproblem_diet', 'value'),
-        State('newproblem_watersource', 'value'),
-        State('newproblem_temp', 'value'),
-        State('newproblem_pr', 'value'),
-        State('newproblem_weight', 'value'),
-        State('newproblem_rr', 'value'),
-        State('newproblem_bodyscore', 'value'),
+        Input('url', 'pathname'),
+        Input('re_clientlist', 'value'),
+        Input('patientlist', 'value'),
     ]
 )
-def toggle_new_problem_modal(visit_btn, problem_btn, visit_success, problem_modal, client, patient, vet, date, prev_prob, vacc_deworm, prob, problem, hist, diet, water, temp, pr, weight, rr, bodyscore):
-    ctx = dash.callback_context
-    
-    if ctx.triggered:
-        eventid = ctx.triggered[0]['prop_id'].split('.')[0]
+def re_clientlist(pathname, searchterm, patient):
+    if patient:
+        sql = """
+            SELECT
+                client_id
+            FROM
+                patient
+            WHERE
+                patient_id = %s
+            """
+        values = [patient]
+        df = db.querydatafromdatabase(sql,values)     
+        client_id = int(df.loc[0,0])
 
-        if vacc_deworm is None:
-            vacc_deworm_purpose = []
-        else:
-            vacc_deworm_purpose = vacc_deworm
+    if pathname == "/home_visit"  and not searchterm:
+        sql = """ 
+            SELECT 
+                client_id,
+                COALESCE(client_fn, '') || ' ' || COALESCE(client_mi, '') || ' ' || COALESCE(client_ln, '') || ' ' || COALESCE(client_suffix, '') AS client_name
+            FROM 
+                client
+            WHERE 
+                NOT client_delete_ind 
+            """
+        values = []
 
-        if prob is None:
-            prob_purpose = []
-        else:
-            prob_purpose = prob
-
-        visit_for_vacc = 'vaccination' in vacc_deworm_purpose
-        visit_for_deworm = 'deworming' in vacc_deworm_purpose
-        new_problem = 'new_problem' in prob_purpose
-        follow_up = 'follow_up' in prob_purpose
-        follow_and_problem = follow_up == any([prev_prob])
-        visit_for_problem = len(prob_purpose) == 1
-
-        if eventid == "visitrecord_submit" and visit_btn and all([client, patient, vet, date, follow_and_problem, any([visit_for_problem, visit_for_deworm, visit_for_vacc])]):
-            if new_problem:
-                return [visit_success, not problem_modal]
-            else:
-                return [not visit_success, problem_modal]
+        if patient:
+            sql += """
+                AND client_id = %s
+            """
+            values.append(client_id)
             
-        if eventid == "problem_submit" and problem_btn and all([problem, hist, diet, water, temp, pr, rr, weight, bodyscore]):
-            return [not visit_success, not problem_modal]
+        if searchterm:
+            sql += """ AND (
+                client_ln ILIKE %s 
+                OR client_fn ILIKE %s
+                );
+            """
+            values.extend([f"%{searchterm}%", f"%{searchterm}%", f"%{searchterm}%"])
 
-    return [visit_success, problem_modal]
+        sql += " ORDER BY client_name;"
 
+        cols = ['client_id', 'client_name']
+        result = db.querydatafromdatabase(sql, values, cols)
+        options = [{'label': row['client_name'], 'value': row['client_id']} for _, row in result.iterrows()]
 
+        return options, 
+    else:
+        raise PreventUpdate  
 
-#SAVE AND SUBMIT CALLBACKS
-
-@app.callback( # Submit Button for client profile
+@app.callback( # Submit Button for new client profile
         [
             Output('client_profile_alert', 'color'),
             Output('client_profile_alert', 'children'),
@@ -834,6 +769,336 @@ def client_profile_save(submitbtn, fn, ln, mi, sf, cn, email, house_no, street, 
     else:
         raise PreventUpdate
 
+@app.callback( #form and success modal for create client profile
+        [
+            Output("client_profile_modal", "is_open"),
+            Output('client_profile_successmodal', 'is_open'),
+        ],
+        [
+            Input("create_client_profile", "n_clicks"),
+            Input('client_profile_submit','n_clicks'),
+            Input('close_client_successmodal','n_clicks'),
+        ],
+        [
+            State("client_profile_modal", "is_open"),
+            State('client_profile_successmodal', 'is_open'),
+            State('new_client_fn', 'value'),
+            State('new_client_ln', 'value'),
+            State('new_client_contact_no', 'value'),
+            State('new_client_email', 'value'),
+            State('new_client_street', 'value'),
+            State('new_client_barangay', 'value'),
+            State('new_client_city', 'value'),
+            State('new_client_region', 'value'),
+        ]
+)
+def toggle_client_profile_modal(create, submit, close, form, success, fn, ln, cn, email, street, brgy, city, region):
+    ctx = dash.callback_context
+    
+    if ctx.triggered:
+        eventid = ctx.triggered[0]['prop_id'].split('.')[0]
+
+        if eventid == "create_client_profile" and create:
+            return [not form, success]
+        
+        if eventid == 'client_profile_submit' and submit and all([fn, ln, cn, email, street, brgy, city, region]):
+            return [not form, not success]
+        
+        if eventid == 'close_client_successmodal' and close:
+            return [form, not success]
+        
+    return [form, success]
+
+@app.callback( # fill edit client modal
+    [
+        Output('edit_client_ln', 'value'),
+        Output('edit_client_fn', 'value'),
+        Output('edit_client_mi', 'value'),
+        Output('edit_client_suffix', 'value'),
+        Output('edit_client_contact_no', 'value'),
+        Output('edit_client_email', 'value'),
+        Output('edit_client_house_no', 'value'),
+        Output('edit_client_street', 'value'),
+        Output('edit_client_barangay', 'value'),
+        Output('edit_client_city', 'value'),
+        Output('edit_client_region', 'value'),
+    ],
+    [
+        Input('re_clientlist', 'value'),
+    ],
+)
+def edit_client_profile(client): 
+    if not client:
+        return [None, None, None, None, None, None, None, None, None, None, None]
+    else: 
+        sql = """ 
+            SELECT 
+                client_ln,
+                client_fn,
+                client_mi,
+                client_suffix,
+                client_email,
+                client_cn,
+                client_house_no,
+                client_street,
+                client_barangay,
+                client_city,
+                client_region
+            FROM 
+                client
+            WHERE 
+                NOT client_delete_ind and client_id = %s
+            """
+        values = [client]
+        cols = ['ln', 'fn', 'mi', 'sfx', 'email', 'cn', 'hn', 'street', 'brgy', 'city', 'region']
+        df = db.querydatafromdatabase(sql,values, cols)
+
+        ln = df['ln'][0]
+        fn = df['fn'][0]
+        mi = df['mi'][0]
+        sfx = df['sfx'][0]
+        email = df['email'][0]
+        cn = df['cn'][0]
+        hn = df['hn'][0]
+        street = df['street'][0]
+        brgy = df['brgy'][0]
+        city = df['city'][0]
+        region = df['region'][0]
+        
+        return [ln, fn, mi, sfx, cn, email, hn, street, brgy, city, region]
+
+@app.callback( # Submit Button for edit client profile
+    [
+        Output('edit_client_profile_alert', 'color'),
+        Output('edit_client_profile_alert', 'children'),
+        Output('edit_client_profile_alert', 'is_open'),
+    ],
+    [
+        Input('edit_client_profile_submit', 'n_clicks'),
+        Input('edit_client_fn', 'value'),
+        Input('edit_client_ln', 'value'),
+        Input('edit_client_mi', 'value'),
+        Input('edit_client_suffix', 'value'),
+        Input('edit_client_contact_no', 'value'),
+        Input('edit_client_email', 'value'),
+        Input('edit_client_house_no', 'value'),
+        Input('edit_client_street', 'value'),
+        Input('edit_client_barangay', 'value'),
+        Input('edit_client_city', 'value'),
+        Input('edit_client_region', 'value'),
+        Input('re_clientlist', 'value'),
+    ],
+)
+def edit_client_profile_save(submitbtn, fn, ln, mi, sf, cn, email, house_no, street, brgy, city, region, client_id):
+    ctx = dash.callback_context
+    
+    if ctx.triggered:
+        eventid = ctx.triggered[0]['prop_id'].split('.')[0]
+    
+        alert_open = False
+        alert_color = ''
+        alert_text = ''
+
+        if eventid == 'edit_client_profile_submit' and submitbtn:
+
+            if not fn:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = "Please enter client's first name"
+            elif not ln:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = "Please enter client's last name"
+            elif not cn:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = "Please enter client's contact number"
+            elif not email:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = "Please enter client's email address"
+            elif not street:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = "Please enter client's street address"
+            elif not brgy:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = "Please enter client's barangay"
+            elif not city:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = "Please enter the city of client's address"
+            elif not region:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = "Please enter the region of client's address"
+            else:
+                sql = '''
+                UPDATE client
+                SET
+                    client_ln = %s,
+                    client_fn = %s,
+                    client_mi = %s,
+                    client_suffix = %s,
+                    client_email = %s,
+                    client_cn = %s,
+                    client_house_no = %s,
+                    client_street = %s,
+                    client_barangay = %s,
+                    client_city = %s,
+                    client_region = %s
+                WHERE
+                    client_id = %s;
+                '''
+                values = [ln, fn, mi, sf, email, cn, house_no, street, brgy, city, region, client_id]
+
+                db.modifydatabase(sql, values)
+
+            if not all([fn, ln, cn, email, street, brgy, city, region]):
+                return [alert_color, alert_text, alert_open]
+
+            return [alert_color, alert_text, alert_open]
+
+        else:
+            raise PreventUpdate
+    else:
+        raise PreventUpdate
+
+@app.callback( #form and success modal for edit client profile
+        [
+            Output("edit_client_profile_modal", "is_open"),
+            Output('edit_client_profile_successmodal', 'is_open'),
+        ],
+        [
+            Input("edit_client_detail_btn", "n_clicks"),
+            Input('edit_client_profile_submit','n_clicks'),
+            Input('close_edit_client_successmodal','n_clicks'),
+        ],
+        [
+            State("edit_client_profile_modal", "is_open"),
+            State('edit_client_profile_successmodal', 'is_open'),
+            State('edit_client_fn', 'value'),
+            State('edit_client_ln', 'value'),
+            State('edit_client_contact_no', 'value'),
+            State('edit_client_email', 'value'),
+            State('edit_client_street', 'value'),
+            State('edit_client_barangay', 'value'),
+            State('edit_client_city', 'value'),
+            State('edit_client_region', 'value'),
+        ]
+)
+def toggle_edit_client_profile_modal(edit, submit, close, form, success, fn, ln, cn, email, street, brgy, city, region):
+    ctx = dash.callback_context
+    
+    if ctx.triggered:
+        eventid = ctx.triggered[0]['prop_id'].split('.')[0]
+
+        if eventid == "edit_client_detail_btn" and edit:
+            return [not form, success]
+        
+        if eventid == 'edit_client_profile_submit' and submit and all([fn, ln, cn, email, street, brgy, city, region]):
+            return [not form, not success]
+        
+        if eventid == 'close_edit_client_successmodal' and close:
+            return [form, not success]
+        
+    return [form, success]
+
+
+
+
+
+# PATIENT-RELATED
+
+@app.callback( #callback for list of existing patients in the database
+    [
+        Output('patientlist', 'options'),
+    ],
+    [
+        Input('url', 'pathname'),
+        Input('re_clientlist', 'value'),
+        Input('patientlist', 'value'),
+    ]
+)
+def patientlist(pathname, selected_client_id, searchterm):
+    if pathname == "/home_visit" and not searchterm:
+
+        sql = """ 
+            SELECT 
+                patient_id,
+                COALESCE(patient_m, '') ||' - ' || COALESCE(patient_species,'') || ' (' || COALESCE(patient_breed, '')|| ')' AS patient_name
+            FROM 
+                patient
+            WHERE 
+                NOT patient_delete_ind 
+            """
+        values = []
+
+        if selected_client_id:
+            client_id = int(selected_client_id)
+            sql += """ 
+                AND client_id = %s
+            """
+            values.append(client_id)
+
+        if searchterm:
+            sql += """ AND (
+                patient_m ILIKE %s 
+                OR patient_species ILIKE %s 
+                OR patient_breed ILIKE %s
+                );
+            """
+            values.extend([f"%{searchterm}%", f"%{searchterm}%", f"%{searchterm}%"])
+
+        sql += " ORDER BY patient_name;"
+
+        cols = ['patient_id', 'patient_name']
+        result = db.querydatafromdatabase(sql, values, cols)
+        options = [{'label': row['patient_name'], 'value': row['patient_id']} for _, row in result.iterrows()]
+        return options, 
+    else:
+        raise PreventUpdate  
+
+@app.callback( #callback for list of existing clients for new patient
+    [
+        Output('new_clientlist', 'options'),
+    ],
+    [
+        Input('url', 'pathname'),
+        Input('new_clientlist', 'value'),
+    ]
+)
+def new_clientlist(pathname, searchterm):
+    if pathname == "/home_visit"  and not searchterm:
+        sql = """ 
+            SELECT 
+                client_id,
+                COALESCE(client_fn, '') || ' ' || COALESCE(client_mi, '') || ' ' || COALESCE(client_ln, '') || ' ' || COALESCE(client_suffix, '') AS client_name
+            FROM 
+                client
+            WHERE 
+                NOT client_delete_ind 
+            """
+        values = []
+            
+        if searchterm:
+            sql += """ AND (
+                client_ln ILIKE %s 
+                OR client_fn ILIKE %s
+                );
+            """
+            values = [f"%{searchterm}%", f"%{searchterm}%", f"%{searchterm}%"]
+
+        sql += " ORDER BY client_name;"
+        
+        cols = ['client_id', 'client_name']
+        result = db.querydatafromdatabase(sql, values, cols)
+        options = [{'label': row['client_name'], 'value': row['client_id']} for _, row in result.iterrows()]
+        return options, 
+    else:
+        raise PreventUpdate  
+
 @app.callback( # Submit Button for patient profile
         [
             Output('patient_profile_alert', 'color'),
@@ -929,463 +1194,221 @@ def patient_profile_save(submitbtn, client, name, species, breed, color, sex, bd
     else:
         raise PreventUpdate
 
-@app.callback( # Submit Button for vet profile
+@app.callback( #form and success modal for create patient profile
         [
-            Output('vet_profile_alert', 'color'),
-            Output('vet_profile_alert', 'children'),
-            Output('vet_profile_alert', 'is_open'),
-            Output('new_vet_fn', 'value'),
-            Output('new_vet_ln', 'value'),
-            Output('new_vet_mi', 'value'),
-            Output('new_vet_suffix', 'value'),
-            Output('new_vet_cn', 'value'),
-            Output('new_vet_email', 'value'),
-            Output('new_vet_password', 'value'),
-            Output('new_vet_passwordconf', 'value'),
+            Output("patient_profile_modal", "is_open"),
+            Output('patient_profile_successmodal', 'is_open'),
         ],
         [
-            Input('vet_profile_submit', 'n_clicks'),
-            Input('new_vet_fn', 'value'),
-            Input('new_vet_ln', 'value'),
-            Input('new_vet_mi', 'value'),
-            Input('new_vet_suffix', 'value'),
-            Input('new_vet_cn', 'value'),
-            Input('new_vet_email', 'value'),
-            Input('new_vet_password', 'value'),
-            Input('new_vet_passwordconf', 'value'),
+            Input("create_patient_profile", "n_clicks"),
+            Input('patient_profile_submit','n_clicks'),
+            Input('close_patient_successmodal','n_clicks'),
+        ],
+        [
+            State("patient_profile_modal", "is_open"),
+            State('patient_profile_successmodal', 'is_open'),
+            State('new_patient_species', 'value'),
+            State('new_patient_breed', 'value'),
+            State('new_patient_color', 'value'),
+            State('new_patient_sex', 'value'),
+            State('new_patient_bd', 'date'),
+            State('new_patient_idiosync', 'value'),
+            State('new_clientlist', 'value'),
         ]
 )
-def vet_profile_save(submitbtn, fn, ln, mi, suffix, cn, email, pw, pwconf):
-    ctx = dash.callback_context
-    
-    if ctx.triggered:
-        eventid = ctx.triggered[0]['prop_id'].split('.')[0]
-    
-        alert_open = False
-        alert_color = ''
-        alert_text = ''
-
-        if eventid == 'vet_profile_submit' and submitbtn:
-
-            if not fn:
-                alert_open = True
-                alert_color = 'danger'
-                alert_text = "Please enter vet's first name"
-            elif not ln:
-                alert_open = True
-                alert_color = 'danger'
-                alert_text = "Please enter vet's last name"
-            elif not cn:
-                alert_open = True
-                alert_color = 'danger'
-                alert_text = "Please enter vet's contact number"
-            elif not email:
-                alert_open = True
-                alert_color = 'danger'
-                alert_text = "Please enter vet's email address"
-            elif not pw:
-                alert_open = True
-                alert_color = 'danger'
-                alert_text = "Please enter a password for user's login"
-            elif not pwconf:
-                alert_open = True
-                alert_color = 'danger'
-                alert_text = "Please confirm password"
-            elif pw != pwconf:
-                pwconf = None
-                alert_open = True
-                alert_color = 'danger'
-                alert_text = "Password doesn't match"
-            else:
-                sql = '''
-                INSERT INTO vet(
-                                vet_ln,
-                                vet_fn,
-                                vet_mi,
-                                vet_suffix,
-                                vet_email,
-                                vet_cn,
-                                vet_user_pw,
-                                vet_delete_ind
-                            )
-                            VALUES(%s, %s, %s, %s, %s, %s, %s, %s)
-                    '''
-                values = [ln, fn, mi, suffix, email, cn, pwconf, False]
-
-                db.modifydatabase(sql, values)
-
-            if not all([ln, fn, email, cn, pw, pwconf]):
-                return [alert_color, alert_text, alert_open, fn, ln, mi, suffix, cn, email, pw, pwconf]
-            
-            return [alert_color, alert_text, alert_open, None, None, None, None, None, None, None, None]
-        
-        else:
-            raise PreventUpdate
-    else:
-        raise PreventUpdate
-
-@app.callback( # Submit Button for new problem
-    [
-        Output('new_problem_alert', 'color'),
-        Output('new_problem_alert', 'children'),
-        Output('new_problem_alert', 'is_open'),
-        Output('newproblem', 'value'),
-        Output('newproblem_medhistory', 'value'),
-        Output('newproblem_diet', 'value'),
-        Output('newproblem_watersource', 'value'),
-        Output('newproblem_temp', 'value'),
-        Output('newproblem_pr', 'value'),
-        Output('newproblem_weight', 'value'),
-        Output('newproblem_rr', 'value'),
-        Output('newproblem_bodyscore', 'value'),
-    ],
-    [
-        Input('problem_submit', 'n_clicks'),
-        Input('newproblem', 'value'),
-        Input('newproblem_medhistory', 'value'),
-        Input('newproblem_diet', 'value'),
-        Input('newproblem_watersource', 'value'),
-        Input('newproblem_temp', 'value'),
-        Input('newproblem_pr', 'value'),
-        Input('newproblem_weight', 'value'),
-        Input('newproblem_rr', 'value'),
-        Input('newproblem_bodyscore', 'value'),
-    ]
-)
-def new_problem_save(submitbtn, problem, hist, diet, water, temp, pr, weight, rr, bodyscore):
+def toggle_patient_profile_modal(create, submit, close, form, success, species, breed, color, sex, bd, idiosync, client):
     ctx = dash.callback_context
     
     if ctx.triggered:
         eventid = ctx.triggered[0]['prop_id'].split('.')[0]
 
-        sql = """
-            select max(visit_id)
-            from visit
-            """
-        values = []
-        df = db.querydatafromdatabase(sql,values)
-        visit_id = int(df.loc[0,0])
-
-        sql = """
-            select patient_id
-            from visit
-            where visit_id = %s
-            """
-        values = [visit_id]
-        df = db.querydatafromdatabase(sql, values)
-        patient_id = int(df.loc[0][0])
-
-        sql = """
-            select count(distinct(problem_id)) + 1
-            from visit
-            where patient_id = %s
-            """
-        values = [patient_id]
-        df = db.querydatafromdatabase(sql, values)
-        prob_no = int(df.loc[0][0])
-
-        sql = """
-            select
-                floor(extract(year from age(current_date, patient_bd)))
-            from patient
-            where patient_id = %s
-            """
-        values = [patient_id]
-        df = db.querydatafromdatabase(sql, values)
-        prob_age = int(df.loc[0][0])
-    
-        alert_open = False
-        alert_color = ''
-        alert_text = ''
-
-        if eventid == 'problem_submit' and submitbtn:
-
-            if not problem:
-                alert_open = True
-                alert_color = 'danger'
-                alert_text = "Please describe the problem in general"
-            elif not hist:
-                alert_open = True
-                alert_color = 'danger'
-                alert_text = "Please enter any relevant medical history, medication, or injuries. If none, type None"
-            elif not diet:
-                alert_open = True
-                alert_color = 'danger'
-                alert_text = "Please enter the patient's general diet"
-            elif not water:
-                alert_open = True
-                alert_color = 'danger'
-                alert_text = "Please enter the patient's general source of hydration"
-            elif not temp:
-                alert_open = True
-                alert_color = 'danger'
-                alert_text = "Please enter the patient's most recent temperature"
-            elif not pr:
-                alert_open = True
-                alert_color = 'danger'
-                alert_text = "Please enter the patient's pulse rate per minute"
-            elif not weight:
-                alert_open = True
-                alert_color = 'danger'
-                alert_text = "Please enter the patient's weight in kilogram"
-            elif not rr:
-                alert_open = True
-                alert_color = 'danger'
-                alert_text = "Please enter the patient's respiration rate per minute"
-            elif not bodyscore:
-                alert_open = True
-                alert_color = 'danger'
-                alert_text = "Please enter the patient's body condition score"
-            else:
-                sql = '''
-                INSERT INTO problem(
-                                problem_no,
-                                problem_animalage,
-                                problem_chief_complaint,
-                                problem_medical_history,
-                                problem_diet_source,
-                                problem_water_source,
-                                problem_temp,
-                                problem_pr,
-                                problem_rr,
-                                problem_weight,
-                                problem_bodycondition_score,
-                                problem_delete_ind
-                            )
-                            VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-                    '''
-                values = [prob_no, prob_age, problem, hist, diet, water, temp, pr, rr, weight, bodyscore, False]
-
-                db.modifydatabase(sql, values)
-
-                sql_identify = """
-                    SELECT MAX(problem_id)
-                    FROM problem
-                """
-                values_identify = []
-                df = db.querydatafromdatabase(sql_identify, values_identify)
-                problem_id = int(df.loc[0,0])
-                
-                sql_identify = """
-                    SELECT MAX(visit_id)
-                    FROM visit
-                """
-                values_identify = []
-                df = db.querydatafromdatabase(sql_identify, values_identify)
-                visit_id = int(df.loc[0,0])
-
-                sql_modify = """
-                    UPDATE visit
-                    SET problem_id = %s
-                    WHERE visit_id = %s
-                """
-                values_modify = [problem_id, visit_id]
-                df = db.modifydatabase(sql_modify, values_modify)
-
-            if not all([problem, hist, diet, water, temp, pr, rr, weight, bodyscore]):
-                return [alert_color, alert_text, alert_open, problem, hist, diet, water, temp, pr, weight, rr, bodyscore]
-            
-            return [alert_color, alert_text, alert_open, None, None, None, None, None, None, None, None, None]
+        if eventid == "create_patient_profile" and create:
+            return [not form, success]
         
-        else:
-            raise PreventUpdate
-    else:
-        raise PreventUpdate
-    
-
-@app.callback( # Submit Button for visit
-    [
-        Output('visitrecord_alert','color'),
-        Output('visitrecord_alert','children'),
-        Output('visitrecord_alert','is_open'),
-        Output('re_clientlist', 'value'),
-        Output('patientlist','value'),
-        Output('vetlist','value'),
-        Output('visitdate', 'value'),
-        Output('problem_list', 'value'),
-    ],
-    [
-        Input('visitrecord_submit','n_clicks'),
-        Input('re_clientlist', 'value'),
-        Input('patientlist','value'),
-        Input('vetlist','value'),
-        Input('visitdate', 'value'),
-    ],
-    [
-        State('problem_list', 'value'),
-        State('visitpurpose', 'value'),
-        State('visitpurpose_problem', 'value')
-    ]
-)
-def visitrecord_save(submitbtn, client, patient, vet, date, prev_prob, vacc_deworm, prob):
-    ctx = dash.callback_context
-    
-    if ctx.triggered:
-        eventid = ctx.triggered[0]['prop_id'].split('.')[0]
-    
-        alert_open = False
-        alert_color = ''
-        alert_text = ''
-
-        if vacc_deworm is None:
-            vacc_deworm_purpose = []
-        else:
-            vacc_deworm_purpose = vacc_deworm
-
-        if prob is None:
-            prob_purpose = []
-        else:
-            prob_purpose = prob
+        if eventid == "patient_profile_submit" and submit and all([species, color, breed, sex, bd, idiosync, client]):
+            return [not form, not success]
         
-        if eventid == 'visitrecord_submit' and submitbtn:
+        if eventid == "close_patient_successmodal" and close:
+            return [form, not success]
+           
+    return [form, success]
 
-            visit_for_vacc = 'vaccination' in vacc_deworm_purpose
-            visit_for_deworm = 'deworming' in vacc_deworm_purpose
-            follow_up = 'follow_up' in prob_purpose
-            follow_and_problem = follow_up == any([prev_prob])
-            visit_for_problem = len(prob_purpose) == 1
-   
-            if not client:
-                alert_open = True
-                alert_color = 'danger'
-                alert_text = 'Please choose a client'
-            elif not patient:
-                alert_open = True
-                alert_color = 'danger'
-                alert_text = 'Please choose a patient'
-            elif not vet:
-                alert_open = True
-                alert_color = 'danger'
-                alert_text = 'Please choose the Veterinarian assigned'
-            elif not any([visit_for_problem, visit_for_deworm, visit_for_vacc]):
-                alert_open = True
-                alert_color = 'danger'
-                alert_text = 'Please choose the purpose of visit (can be more than one)'
-            elif not date:
-                alert_open = True
-                alert_color = 'danger'
-                alert_text = 'Please select the date of visit'
-            elif not follow_and_problem:
-                alert_open = True
-                alert_color = 'danger'
-                alert_text = 'Please select the previous problem for this follow-up visit'
-            else:
-                sql = '''
-                INSERT INTO visit(
-                                patient_id,
-                                vet_id,
-                                visit_for_vacc,
-                                visit_for_deworm,
-                                visit_for_problem,
-                                problem_id,
-                                visit_delete_ind
-                            )
-                            VALUES(%s, %s, %s, %s, %s, %s, %s)
-                    '''
-                values = [patient, vet, visit_for_vacc, visit_for_deworm, visit_for_problem, prev_prob, False]
-
-                db.modifydatabase(sql, values)
-            
-            if not all([client, patient, vet, date, follow_and_problem, any([visit_for_problem, visit_for_deworm, visit_for_vacc])]):
-                return [alert_color, alert_text, alert_open, client, patient, vet, date, prev_prob]
-
-            return [alert_color, alert_text, alert_open, None, None, None, datetime.now().date(), None]
-
-        else:
-            raise PreventUpdate
-    else:
-        raise PreventUpdate
-
-
-
-
-#FUNCTIONAL CALLBACKS
-
-@app.callback( #callback for list of existing clients for returning patient
+@app.callback( # fill edit patient modal
     [
-        Output('re_clientlist', 'options'),
+        Output('edit_patient_m', 'value'),
+        Output('edit_patient_species', 'value'),
+        Output('edit_patient_breed', 'value'),
+        Output('edit_patient_color', 'value'),
+        Output('edit_patient_sex', 'value'),
+        Output('edit_patient_bd', 'date'),
+        Output('edit_patient_idiosync', 'value'),
     ],
     [
-        Input('url', 'pathname'),
-        Input('re_clientlist', 'value'),
-    ]
+        Input('patientlist', 'value'),
+    ],
 )
-def re_clientlist(pathname, searchterm):
-    if pathname == "/home_visit"  and not searchterm:
-        sql = """ 
-            SELECT 
-                client_id,
-                COALESCE(client_fn, '') || ' ' || COALESCE(client_mi, '') || ' ' || COALESCE(client_ln, '') || ' ' || COALESCE(client_suffix, '') AS client_name
-            FROM 
-                client
-            WHERE 
-                NOT client_delete_ind 
-            """
-        values = []
-            
-        if searchterm:
-            sql += """ AND (
-                client_ln ILIKE %s 
-                OR client_fn ILIKE %s
-                );
-            """
-            values = [f"%{searchterm}%", f"%{searchterm}%", f"%{searchterm}%"]
+def edit_patient_profile(patient): 
+    if not patient:
+        return [None, None, None, None, None, None, None]
+    else: 
+        sql = """
+            SELECT
+                patient_m,
+                patient_species,
+                patient_breed,
+                patient_color,
+                patient_sex,
+                TO_CHAR(patient_bd, 'Mon DD, YYYY'),
+                patient_idiosync
+            FROM
+                patient
+            WHERE
+                NOT patient_delete_ind and patient_id = %s
+        """
+        values = [patient]
+        cols = ['patient_name', 'species', 'breed', 'color', 'sex', 'bd', 'idiosync']
+        df = db.querydatafromdatabase(sql,values, cols)
 
-        sql += " ORDER BY client_name;"
+        name = df['patient_name'][0]
+        species = df['species'][0]
+        breed = df['breed'][0]
+        color = df['color'][0]
+        sex = df['sex'][0]
+        bd = df['bd'][0]
+        idiosync = df['idiosync'][0]
+        
+        return [name, species, breed, color, sex, bd, idiosync]
 
-        cols = ['client_id', 'client_name']
-        result = db.querydatafromdatabase(sql, values, cols)
-        options = [{'label': row['client_name'], 'value': row['client_id']} for _, row in result.iterrows()]
-
-        return options, 
-    else:
-        raise PreventUpdate  
-
-@app.callback( #callback for list of existing patients in the database
+@app.callback( # Submit Button for patient edit profile
     [
-        Output('patientlist', 'options'),
+        Output('edit_patient_profile_alert', 'color'),
+        Output('edit_patient_profile_alert', 'children'),
+        Output('edit_patient_profile_alert', 'is_open'),
     ],
     [
-        Input('url', 'pathname'),
-        Input('re_clientlist', 'value'),
+        Input('edit_patient_profile_submit', 'n_clicks'),
+        Input('edit_patient_m', 'value'),
+        Input('edit_patient_species', 'value'),
+        Input('edit_patient_breed', 'value'),
+        Input('edit_patient_color', 'value'),
+        Input('edit_patient_sex', 'value'),
+        Input('edit_patient_bd', 'date'),
+        Input('edit_patient_idiosync', 'value'),
         Input('patientlist', 'value'),
     ]
 )
-def patientlist(pathname, selected_client_id, searchterm):
-    if pathname == "/home_visit" and not searchterm:
-        sql = """ 
-            SELECT 
-                patient_id,
-                COALESCE(patient_m, '') ||' - ' || COALESCE(patient_species,'') || ' (' || COALESCE(patient_breed, '')|| ')' AS patient_name
-            FROM 
-                patient
-            WHERE 
-                NOT patient_delete_ind
-            """
-        values = []
+def edit_patient_profile_save(submitbtn, name, species, breed, color, sex, bd, idiosync, patient):
+    ctx = dash.callback_context
+    
+    if ctx.triggered:
+        eventid = ctx.triggered[0]['prop_id'].split('.')[0]
+    
+        alert_open = False
+        alert_color = ''
+        alert_text = ''
 
-        if selected_client_id:
-            sql += 'AND client_id = %s'
-            values.append(selected_client_id)
+        if eventid == 'edit_patient_profile_submit' and submitbtn:
 
-        if searchterm:
-            sql += """ AND (
-                patient_m ILIKE %s 
-                OR patient_species ILIKE %s 
-                OR patient_breed ILIKE %s
-                );
-            """
-            values.extend([f"%{searchterm}%", f"%{searchterm}%", f"%{searchterm}%"])
+            if not name:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Please indicate the name of the patient. If none, type N/A'
+            elif not species:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Please indicate the species of the patient'
+            elif not breed:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Please indicate the breed of the patient'
+            elif not color:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Please describe the color or any color marks on the patient'
+            elif not sex:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Please indicate the sex of the patient'
+            elif not bd:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Please enter the birth date of the patient'
+            elif not idiosync:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Please describe any behavior or characteristic of the patient'
+            else:
+                sql = '''
+                UPDATE patient
+                SET
+                    patient_m = %s,
+                    patient_species = %s,
+                    patient_color = %s,
+                    patient_breed = %s,
+                    patient_sex = %s,
+                    patient_bd = %s,
+                    patient_idiosync = %s
+                WHERE
+                    patient_id = %s
+                    '''
+                values = [name, species, color, breed, sex, bd, idiosync, patient]
 
-        sql += " ORDER BY patient_name;"
+                db.modifydatabase(sql, values)
 
-        cols = ['patient_id', 'patient_name']
-        result = db.querydatafromdatabase(sql, values, cols)
-        options = [{'label': row['patient_name'], 'value': row['patient_id']} for _, row in result.iterrows()]
-        return options, 
+            if not all([name, species, color, breed, sex, bd, idiosync]):
+                return [alert_color, alert_text, alert_open]
+            
+            return [alert_color, alert_text, alert_open]
+        
+        else:
+            raise PreventUpdate
     else:
-        raise PreventUpdate  
-     
+        raise PreventUpdate
+
+@app.callback( #form and success modal for create patient profile
+        [
+            Output("edit_patient_profile_modal", "is_open"),
+            Output('edit_patient_profile_successmodal', 'is_open'),
+        ],
+        [
+            Input("edit_patient_detail_btn", "n_clicks"),
+            Input('edit_patient_profile_submit','n_clicks'),
+            Input('close_edit_patient_successmodal','n_clicks'),
+        ],
+        [
+            State("edit_patient_profile_modal", "is_open"),
+            State('edit_patient_profile_successmodal', 'is_open'),
+            State('edit_patient_species', 'value'),
+            State('edit_patient_breed', 'value'),
+            State('edit_patient_color', 'value'),
+            State('edit_patient_sex', 'value'),
+            State('edit_patient_bd', 'date'),
+            State('edit_patient_idiosync', 'value'),
+        ]
+)
+def toggle_edit_patient_profile_modal(create, submit, close, form, success, species, breed, color, sex, bd, idiosync):
+    ctx = dash.callback_context
+    
+    if ctx.triggered:
+        eventid = ctx.triggered[0]['prop_id'].split('.')[0]
+
+        if eventid == "edit_patient_detail_btn" and create:
+            return [not form, success]
+        
+        if eventid == "edit_patient_profile_submit" and submit and all([species, color, breed, sex, bd, idiosync]):
+            return [not form, not success]
+        
+        if eventid == "close_edit_patient_successmodal" and close:
+            return [form, not success]
+           
+    return [form, success]
+
+
+
+
+
+# VET-RELATED
+
 @app.callback(#list of veterinarian assigned for visit
     [
         Output("vetlist", 'options'),
@@ -1422,103 +1445,207 @@ def vetlist(pathname, searchterm):
     else:
         raise PreventUpdate  
 
-@app.callback( #callback for list of existing clients for new patientInp
+
+
+
+
+
+# VISIT-RELATED
+
+@app.callback( # Submit Button for visit
     [
-        Output('new_clientlist', 'options'),
+        Output('home_visit_returnlink', 'href'),
+        Output('visitrecord_alert','color'),
+        Output('visitrecord_alert','children'),
+        Output('visitrecord_alert','is_open'),
     ],
     [
-        Input('url', 'pathname'),
-        Input('new_clientlist', 'value'),
+        Input('visitrecord_submit','n_clicks'),
+        Input('re_clientlist', 'value'),
+        Input('patientlist','value'),
+        Input('vetlist','value'),
+        Input('visitdate', 'value'),
+    ],
+    [
+        State('problem_list', 'value'),
+        State('visitpurpose', 'value'),
+        State('visitpurpose_problem', 'value')
     ]
 )
-def new_clientlist(pathname, searchterm):
-    if pathname == "/home_visit"  and not searchterm:
-        sql = """ 
-            SELECT 
-                client_id,
-                COALESCE(client_fn, '') || ' ' || COALESCE(client_mi, '') || ' ' || COALESCE(client_ln, '') || ' ' || COALESCE(client_suffix, '') AS client_name
-            FROM 
-                client
-            WHERE 
-                NOT client_delete_ind 
-            """
-        values = []
+def visitrecord_save(submitbtn, client, patient_id, vet, date, prev_prob, vacc_deworm, prob):
+    ctx = dash.callback_context
+    
+    if ctx.triggered:
+        eventid = ctx.triggered[0]['prop_id'].split('.')[0]
+
+        link = ""
+        alert_open = False
+        alert_color = ''
+        alert_text = ''
+
+        if vacc_deworm is None:
+            vacc_deworm_purpose = []
+        else:
+            vacc_deworm_purpose = vacc_deworm
+
+        if prob is None:
+            prob_purpose = []
+        else:
+            prob_purpose = prob
+        
+        if eventid == 'visitrecord_submit' and submitbtn:
+
+            visit_for_vacc = 'vaccination' in vacc_deworm_purpose
+            visit_for_deworm = 'deworming' in vacc_deworm_purpose
+            follow_up = 'follow_up' in prob_purpose
+            new_problem = 'new_problem' in prob_purpose
+            follow_and_problem = follow_up == any([prev_prob])
+            visit_for_problem = len(prob_purpose) == 1
+   
+            if not client:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Please choose a client'
+            elif not patient_id:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Please choose a patient'
+            elif not vet:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Please choose the Veterinarian assigned'
+            elif not any([visit_for_problem, visit_for_deworm, visit_for_vacc]):
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Please choose the purpose of visit (can be more than one)'
+            elif not date:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = 'Please select the date of visit'
+            elif not follow_and_problem and not new_problem:
+                alert_open = True
+                alert_color = 'danger'
+                alert_text = "Please select the previous problem or tick the 'Follow up to a problem' for this follow-up visit"
+            elif not follow_and_problem and new_problem:
+                sql = '''
+                INSERT INTO visit(
+                                patient_id,
+                                vet_id,
+                                visit_for_vacc,
+                                visit_for_deworm,
+                                visit_for_problem,
+                                visit_delete_ind
+                            )
+                            VALUES(%s, %s, %s, %s, %s, %s)
+                    '''
+                values = [patient_id, vet, visit_for_vacc, visit_for_deworm, visit_for_problem, False]
+                db.modifydatabase(sql, values)    
+                link = f'/home_visit/purpose?mode=add&patient_id={patient_id}'
+
+            else:
+                sql = '''
+                INSERT INTO visit(
+                                patient_id,
+                                vet_id,
+                                visit_for_vacc,
+                                visit_for_deworm,
+                                visit_for_problem,
+                                problem_id,
+                                visit_delete_ind
+                            )
+                            VALUES(%s, %s, %s, %s, %s, %s, %s)
+                    '''
+                values = [patient_id, vet, visit_for_vacc, visit_for_deworm, visit_for_problem, prev_prob, False]
+                db.modifydatabase(sql, values)
+                link = f'/home_visit/purpose?mode=add&patient_id={patient_id}'
             
-        if searchterm:
-            sql += """ AND (
-                client_ln ILIKE %s 
-                OR client_fn ILIKE %s
-                );
-            """
-            values = [f"%{searchterm}%", f"%{searchterm}%", f"%{searchterm}%"]
+            if not all([client, patient_id, vet, date, any([follow_and_problem, new_problem]), any([visit_for_problem, visit_for_deworm, visit_for_vacc])]):
+                #return [alert_color, alert_text, alert_open, client, patient, vet, date, prev_prob]
+                return [link, alert_color, alert_text, alert_open]
 
-        sql += " ORDER BY client_name;"
-        
-        cols = ['client_id', 'client_name']
-        result = db.querydatafromdatabase(sql, values, cols)
-        options = [{'label': row['client_name'], 'value': row['client_id']} for _, row in result.iterrows()]
-        return options, 
+            return [link, alert_color, alert_text, alert_open]
+
+        else:
+            raise PreventUpdate
     else:
-        raise PreventUpdate  
+        raise PreventUpdate
 
-@app.callback( #list of problems for follow up 
+@app.callback( #visit success modal
     [
-        Output('problem_list', 'options'),
+        Output('visitrecord_successmodal','is_open'),
     ],
     [
-        Input('url', 'pathname'),
-        Input('patientlist', 'value'),
-        Input('problem_list', 'value'),
+        Input('visitrecord_submit','n_clicks'),
+    ],
+    [
+        State('visitrecord_successmodal','is_open'),
+        State('re_clientlist', 'value'),
+        State('patientlist','value'),
+        State('vetlist','value'),
+        State('visitdate', 'value'),
+        State('problem_list', 'value'),
+        State('visitpurpose', 'value'),
+        State('visitpurpose_problem', 'value'),
     ]
 )
-def problem_list_reCreP(pathname, selected_patient_id,searchterm):
-    if pathname == "/home_visit"  and not searchterm:
-        sql = """ 
-            SELECT DISTINCT
-                p.problem_id, 
-                p.problem_chief_complaint AS problem_name
-            FROM
-                visit v JOIN problem p
-            ON v.problem_id = p.problem_id
-            WHERE 
-                v.problem_id IS NOT NULL
-                AND NOT visit_delete_ind
-                AND NOT problem_delete_ind
-            """
-        values = []
-
-        if selected_patient_id:
-            sql += 'AND patient_id = %s'
-            values.append(selected_patient_id)
-        
-        if searchterm:
-            sql += """ AND (
-                problem_m ILIKE %s
-                );
-            """
-            values = [f"%{searchterm}%", f"%{searchterm}%", f"%{searchterm}%"]
-        
-        cols = ['problem_id', 'problem_name']
-        result = db.querydatafromdatabase(sql, values, cols)
-        options = [{'label': row['problem_name'], 'value': row['problem_id']} for _, row in result.iterrows()]
-        return options, 
+def toggle_visit_success_modal(visit_btn, visit_success, client, patient, vet, date, prev_prob, vacc_deworm, prob):
+    ctx = dash.callback_context
     
-    else:
-        raise PreventUpdate  
+    if ctx.triggered:
+        eventid = ctx.triggered[0]['prop_id'].split('.')[0]
 
-@app.callback( # to extend the card to include the problem dropdown
-    Output('follow_up_field', 'style'),
-    Input('visitpurpose_problem', 'value'),
+        if vacc_deworm is None:
+            vacc_deworm_purpose = []
+        else:
+            vacc_deworm_purpose = vacc_deworm
+
+        if prob is None:
+            prob_purpose = []
+        else:
+            prob_purpose = prob
+
+        visit_for_vacc = 'vaccination' in vacc_deworm_purpose
+        visit_for_deworm = 'deworming' in vacc_deworm_purpose
+        follow_up = 'follow_up' in prob_purpose
+        new_problem = 'new_problem' in prob_purpose
+        follow_and_problem = follow_up == any([prev_prob])
+        visit_for_problem = len(prob_purpose) == 1
+
+
+        if eventid == "visitrecord_submit" and visit_btn and all([client, patient, vet, date, any([follow_and_problem, new_problem]), any([visit_for_problem, visit_for_deworm, visit_for_vacc])]):
+            return [not visit_success]
+        
+    return [visit_success]
+
+@app.callback( #going to visit purpose page
+    [
+        #Output('home_visit_returnlink', 'href'),
+        Output('re_clientlist', 'value'),
+        Output('patientlist','value'),
+        Output('vetlist','value'),
+        Output('visitdate', 'value'),
+        Output('problem_list', 'value'),
+    ],
+    Input('home_visit_returnlink', 'n_clicks'),
+    State('patientlist','value'),
 )
-def toggle_problem_list(selected_option):
-    if selected_option is None:
-        selected_option = []
-    
-    if 'follow_up' in selected_option:
-        return {"display": "block"}
+def returnlink(clicks, patient_id):
+    ctx = dash.callback_context
+    if ctx.triggered:
+        eventid = ctx.triggered[0]['prop_id'].split('.')[0]
+        if eventid == 'home_visit_returnlink' and clicks:
+            #link = f'/home_visit/purpose?mode=add&patient_id={patient_id}'
+            #return [link, None, None, None, datetime.now().date(), None]
+            return [None, None, None, datetime.now().date(), None]
+        else:
+            raise PreventUpdate
     else:
-        return {"display": "none"}
-    
+        raise PreventUpdate
+
+
+
+# PROBLEM-RELATED
+
 @app.callback( # to reset the visit purpose and make the problem mutually exclusive
     [
         Output('visitpurpose', 'value'),
@@ -1565,21 +1692,236 @@ def resetvisitfield(submitbtn, selected_option, prob, vacc_deworm, client, patie
     
     return [vacc_deworm, prob]
 
-
-
-@app.callback(  
-    Output('home_visit_returnlink', 'href'),
-    Input('visitrecord_submit', 'n_clicks'),
-    State('patientlist','value'),
+@app.callback( # to extend the card to include the problem dropdown
+    Output('follow_up_field', 'style'),
+    Input('visitpurpose_problem', 'value'),
 )
-def returnlink(clicks, patient_id):
-    ctx = dash.callback_context
-    if ctx.triggered:
-        eventid = ctx.triggered[0]['prop_id'].split('.')[0]
-        if eventid == 'visitrecord_submit' and clicks:
-            link = f'/home_visit/purpose?mode=add&patient_id={patient_id}'
-            return link
-        else:
-            raise PreventUpdate
+def toggle_problem_list(selected_option):
+    if selected_option is None:
+        selected_option = []
+    
+    if 'follow_up' in selected_option:
+        return {"display": "block"}
     else:
-        raise PreventUpdate
+        return {"display": "none"}
+
+@app.callback( #list of problems for follow up 
+    [
+        Output('problem_list', 'options'),
+    ],
+    [
+        Input('url', 'pathname'),
+        Input('problem_list', 'value'),
+        Input('re_clientlist', 'value'),
+        Input('patientlist', 'value'),
+    ],
+)
+def problem_list_reCreP(pathname, searchterm, selected_client_id, selected_patient_id):
+    if pathname == "/home_visit"  and not searchterm and selected_client_id and selected_patient_id:
+        sql = """ 
+            SELECT DISTINCT
+                p.problem_id, 
+                p.problem_chief_complaint AS problem_name
+            FROM
+                visit v JOIN problem p
+            ON v.problem_id = p.problem_id
+            WHERE 
+                v.problem_id IS NOT NULL
+                AND NOT visit_delete_ind
+                AND NOT problem_delete_ind
+                AND patient_id = %s
+            """
+        values = [selected_patient_id]
+        
+        if searchterm:
+            sql += """ AND (
+                problem_m ILIKE %s
+                );
+            """
+            values = [f"%{searchterm}%", f"%{searchterm}%", f"%{searchterm}%"]
+        
+        cols = ['problem_id', 'problem_name']
+        result = db.querydatafromdatabase(sql, values, cols)
+        options = [{'label': row['problem_name'], 'value': row['problem_id']} for _, row in result.iterrows()]
+        return options, 
+    
+    else:
+        raise PreventUpdate  
+
+@app.callback( #Update problem status placeholder
+        Output('problem_status', 'children'),
+        Input('problem_list', 'value'),
+        State('problem_list', 'value')
+)
+def problem_status(_, problem):
+    if problem:
+        sql = """
+            SELECT
+                s.problem_status_m
+            FROM problem p JOIN problem_status s
+            ON p.problem_status_id = s.problem_status_id
+            WHERE NOT p.problem_delete_ind and p.problem_id = %s
+        """
+        values = [problem]
+        df = db.querydatafromdatabase(sql, values)
+        status = df.loc[0,0]
+        return html.H4(f'{status}')
+    else:
+        return html.H4("")
+     
+
+
+
+
+# ADDITIONAL ROW - CLIENT + PATIENT PROFILE
+
+@app.callback( # to show the client patient row
+    [
+        Output('client_patient_row', 'style')
+    ],
+    [
+        Input('re_clientlist', 'value'),
+        Input('patientlist', 'value'),
+    ],
+)
+def client_patient_row_view(client, patient):
+    if client and patient:
+        return [{'display': 'block'}]
+    else:
+        return [{'display': 'none'}]
+
+@app.callback( # profile content callbacks
+    [
+        Output('patient_content', 'children'),
+        Output('client_content', 'children'),
+    ],
+    [
+        Input('re_clientlist', 'value'),
+        Input('patientlist', 'value'),
+    ],
+)
+def client_patient(client, patient):
+
+    client_content = []  
+    patient_content = [] 
+
+    if not client or not patient:
+        return [patient_content, client_content]
+    
+    else:
+        # RETRIEVE INFO FOR PATIENT
+        sql = """
+            SELECT
+                patient_m,
+                patient_species,
+                patient_breed,
+                patient_color,
+                patient_sex,
+                TO_CHAR(patient_bd, 'Mon DD, YYYY'),
+                floor(extract(year from age(current_date, patient_bd))),
+                patient_idiosync
+            FROM
+                patient
+            WHERE
+                NOT patient_delete_ind and patient_id = %s
+        """
+        values = [patient]
+        cols = ['patient_name', 'species', 'breed', 'color', 'sex', 'bd', 'age', 'idiosync']
+        df = db.querydatafromdatabase(sql,values, cols)
+
+        patient_name = df['patient_name'][0]
+        patient_species = df['species'][0]
+        patient_breed = df['breed'][0]
+        patient_color = df['color'][0]
+        patient_sex = df['sex'][0]
+        patient_bd = df['bd'][0]
+        patient_age = int(df['age'][0])
+        patient_idiosync = df['idiosync'][0]
+    
+        if patient:
+            patient_content.extend([
+                html.Div([
+                    dbc.Row([
+                        dbc.Col(html.H6('Name:'), style={"margin-right": "-8px"}, width = 3),
+                        dbc.Col(html.H3(f'{patient_name}'), style={"margin-right": "8px"}),
+                    ], style={"align-items": "center", "border-bottom": "1px solid #ccc"}, className="mb-2"),
+                    dbc.Row([
+                        dbc.Col(html.H6('Species:'), width = 3),
+                        dbc.Col(html.H6(f'{patient_species}'), style={"border-bottom": "1px solid #ccc"}, width = 4),
+                        dbc.Col(html.H6('Breed:'), width = 2),
+                        dbc.Col(html.H6(f'{patient_breed}'), style={"border-bottom": "1px solid #ccc"}, width = 3),
+                    ], style={"align-items": "center", "margin-right": "2%"}, className="mb-2"),
+                    dbc.Row([
+                        dbc.Col(html.H6('Color Marks:'), width = 3),
+                        dbc.Col(html.H6(f'{patient_color}'), style={"border-bottom": "1px solid #ccc"}, width = 4),
+                        dbc.Col(html.H6('Sex:'), width = 2),
+                        dbc.Col(html.H6(f'{patient_sex}'), style={"border-bottom": "1px solid #ccc"}, width = 3),
+                    ], style={"align-items": "center", "margin-right": "2%"}, className="mb-2"),
+                    dbc.Row([
+                        dbc.Col(html.H6('Birth date:'), width = 3),
+                        dbc.Col(html.H6(f'{patient_bd}'), style={"border-bottom": "1px solid #ccc"}, width = 4),
+                        dbc.Col(html.H6('Age:'), width = 2),
+                        dbc.Col(html.H6(f'{patient_age} years old'), style={"border-bottom": "1px solid #ccc"}, width = 3),
+                    ], style={"align-items": "center", "margin-right": "2%"}, className="mb-2"),
+                    dbc.Row([
+                        dbc.Col(html.H6('Idiosyncracies:'), width = 3),
+                        dbc.Col(html.H6(f'{patient_idiosync}'), style={"border-bottom": "1px solid #ccc"}),
+                    ], style={"align-items": "center", "margin-right": "2%"}),
+                ])
+            ])
+
+
+        # RETRIEVE INFO FOR CLIENT DETAILS
+        sql = """ 
+            SELECT 
+                client_fn || ' ' || COALESCE(client_mi, '') || ' ' || client_ln || ' ' || COALESCE(client_suffix, ''),
+                client_email,
+                client_cn,
+                COALESCE(client_house_no || ' ', '') || client_street || ' ' || client_barangay,
+                client_city || ', ' || client_region
+            FROM 
+                client
+            WHERE 
+                NOT client_delete_ind and client_id = %s
+            """
+        values = [client]
+        cols = ['client_name', 'email', 'cn', 'add1', 'add2']
+        df = db.querydatafromdatabase(sql,values, cols)
+
+        client_name = df['client_name'][0]
+        client_email = df['email'][0]
+        client_cn = df['cn'][0]
+        client_add1 = df['add1'][0]
+        client_add2 = df['add2'][0]
+    
+        if client:
+            client_content.extend([
+                html.Div([
+                    dbc.Row([
+                        dbc.Col(html.H6('Name:'), style={"margin-right": "-5px"}, width = 3),
+                        dbc.Col(html.H3(f'{client_name}'), style={"margin-right": "5px"}),
+                    ], style={"align-items": "center", "border-bottom": "1px solid #ccc"}, className="mb-2"),
+                    dbc.Row([
+                        dbc.Col(html.H6('Email:'), width = 3),
+                        dbc.Col(html.H6(f'{client_email}'), style={"border-bottom": "1px solid #ccc"},),
+                    ], style={"align-items": "center", "margin-right": "2%"}, className="mb-2"),
+                    dbc.Row([
+                        dbc.Col(html.H6('Contact No:'), width = 3),
+                        dbc.Col(html.H6(f'{client_cn}'), style={"border-bottom": "1px solid #ccc"},),
+                    ], style={"align-items": "center", "margin-right": "2%"}, className="mb-2"),
+                    dbc.Row([
+                        dbc.Col(html.H6('Address:'), width = 3),
+                        dbc.Col(html.H6(f'{client_add1}'), style={"border-bottom": "1px solid #ccc"},),
+                    ], style={"align-items": "center", "margin-right": "2%"}, className="mb-2"),
+                    dbc.Row([
+                        dbc.Col(width = 3),
+                        dbc.Col(html.H6(f'{client_add2}'), style={"border-bottom": "1px solid #ccc"},),
+                    ], style={"align-items": "center", "margin-right": "2%"}),
+                ])
+            ])
+
+        return [patient_content, client_content]
+
+
+
+

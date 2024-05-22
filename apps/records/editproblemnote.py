@@ -42,7 +42,7 @@ layout = html.Div(
                 dbc.CardHeader([
                     html.Div([
                         html.H2("Laboratory Exams", className = 'flex-grow-1'),
-                        html.Div(dbc.Button("Add Laboratory Exam", id = "problem_labexam_btn", href=""), className = "ml-2 d-flex"),
+                        html.Div(dbc.Button("Add Laboratory Exam",style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white"},  id = "problem_labexam_btn", href=""), className = "ml-2 d-flex"),
                     ], className = "d-flex align-items-center justify-content-between")
                 ]),
                 dbc.CardBody([
@@ -133,6 +133,7 @@ layout = html.Div(
             dbc.ModalFooter(
                 dbc.Button(
                     "Return",
+                    style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white"}, 
                     href="",
                     id="problemnote_return-button",
                 )
@@ -191,8 +192,8 @@ def labexam_table(url_search):
                     hreflab = f'/editproblemlabexam?mode=edit&note_id={note_id}&lab_id={lab_id}'
                 buttons += [
                     html.Div(
-                        dbc.Button('Edit', href=hreflab, size='sm', color='success'),
-                        style = {'text-align':'center'}
+                        dbc.Button('Edit', href=hreflab,style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white", 'text-align':'center'},  size='sm'), #color='success'),
+                        #style = {'text-align':'center'}
                     )
                 ]
 
