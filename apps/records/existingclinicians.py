@@ -111,8 +111,8 @@ def view_clinicianlist(pathname, searchterm):
             for clinician_id in df['ID']:
                 buttons += [
                     html.Div(
-                        dbc.Button('Edit', href=f'/editclinician?mode=edit&id={clinician_id}', size='sm', color='success'),
-                        style = {'text-align':'center'}
+                        dbc.Button('Edit', href=f'/editclinician?mode=edit&id={clinician_id}', style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white", 'text-align':'center'}, size='sm'), #color='success'),
+                        #style = {'text-align':'center'}
                     )
                 ]
             df['Action'] = buttons

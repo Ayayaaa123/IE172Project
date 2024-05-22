@@ -164,6 +164,7 @@ layout = html.Div(
                 dbc.ModalFooter(
                     dbc.Button(
                         "Okay",
+                        style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white"}, 
                         href = '/viewuser', # bring user back to table
                         id = 'edituserprofile_btn_modal',
                     )                    

@@ -155,7 +155,7 @@ layout = html.Div(
                 dbc.CardHeader([
                     html.Div([
                         html.H2("Clinical Exams", className = 'flex-grow-1'),
-                        html.Div(dbc.Button("Add Clinical Exam", id = "problem_clinicalexam_btn", href=""), className = "ml-2 d-flex"),
+                        html.Div(dbc.Button("Add Clinical Exam",style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white"},  id = "problem_clinicalexam_btn", href=""), className = "ml-2 d-flex"),
                     ], className = "d-flex align-items-center justify-content-between")
                 ]),
                 dbc.CardBody([
@@ -169,7 +169,7 @@ layout = html.Div(
                 dbc.CardHeader([
                     html.Div([
                         html.H2("Progress Notes", className = 'flex-grow-1'),
-                        html.Div(dbc.Button("Add Progress Note", id = "problem_progressnote_btn", href=""), className = "ml-2 d-flex"),
+                        html.Div(dbc.Button("Add Progress Note",style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white"},  id = "problem_progressnote_btn", href=""), className = "ml-2 d-flex"),
                     ], className = "d-flex align-items-center justify-content-between")
                 ]),
                 dbc.CardBody([
@@ -248,6 +248,7 @@ layout = html.Div(
             dbc.ModalFooter(
                 dbc.Button(
                     "Return",
+                    style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white"}, 
                     href="",
                     id="problem_return-button",
                 )

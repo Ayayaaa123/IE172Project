@@ -194,8 +194,8 @@ def update_additional_inputs(_, selected_services):
                             [
                                 dbc.Row([
                                     dbc.Col(html.H2("Vaccine"), width=2),
-                                    dbc.Col(dbc.Button("+", id='vaccine-addbutton_existingpatient', className='custom-button', n_clicks=0), width=2),
-                                    dbc.Col(dbc.Button("-", id='vaccine-deletebutton_existingpatient', className='custom-button', n_clicks=0), width=2),
+                                    dbc.Col(dbc.Button("+", style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white"}, id='vaccine-addbutton_existingpatient', className='custom-button', n_clicks=0), width=2),
+                                    dbc.Col(dbc.Button("-", style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white"}, id='vaccine-deletebutton_existingpatient', className='custom-button', n_clicks=0), width=2),
                                 ]),
                             ]
                         ),
@@ -216,8 +216,8 @@ def update_additional_inputs(_, selected_services):
                             [
                                 dbc.Row([
                                     dbc.Col(html.H2("Deworming"), width=2),
-                                    dbc.Col(dbc.Button("+", id='deworming-addbutton_existingpatient', className='custom-button', n_clicks=0), width=2),
-                                    dbc.Col(dbc.Button("-", id='deworming-deletebutton_existingpatient', className='custom-button', n_clicks=0), width=2),
+                                    dbc.Col(dbc.Button("+", style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white"}, id='deworming-addbutton_existingpatient', className='custom-button', n_clicks=0), width=2),
+                                    dbc.Col(dbc.Button("-", style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white"}, id='deworming-deletebutton_existingpatient', className='custom-button', n_clicks=0), width=2),
                                 ]),
                             ]
                         ),
@@ -375,15 +375,15 @@ def update_additional_inputs(_, selected_services):
                             html.Br(),
                             dbc.Row([
                                 dbc.Col(html.H3("Clinical Exam"), width=3),
-                                dbc.Col(dbc.Button("+", id='newclinicalexam-addbutton', className='custom-button', n_clicks=0), width=2),
-                                dbc.Col(dbc.Button("-", id='newclinicalexam-deletebutton', className='custom-button', n_clicks=0), width=2),
+                                dbc.Col(dbc.Button("+", style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white"}, id='newclinicalexam-addbutton', className='custom-button', n_clicks=0), width=2),
+                                dbc.Col(dbc.Button("-", style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white"}, id='newclinicalexam-deletebutton', className='custom-button', n_clicks=0), width=2),
                             ]),
                             html.Div(id='newclinicalexam-lineitems'),
                             html.Br(),
                             dbc.Row([
                                 dbc.Col(html.H3("Laboratory Exam"), width=3),
-                                dbc.Col(dbc.Button("+", id='newlabexam-addbutton', className='custom-button', n_clicks=0), width=2),
-                                dbc.Col(dbc.Button("-", id='newlabexam-deletebutton', className='custom-button', n_clicks=0), width=2),
+                                dbc.Col(dbc.Button("+", style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white"}, id='newlabexam-addbutton', className='custom-button', n_clicks=0), width=2),
+                                dbc.Col(dbc.Button("-", style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white"}, id='newlabexam-deletebutton', className='custom-button', n_clicks=0), width=2),
                             ]),
                             html.Div(id='newlabexam-lineitems'),
                             html.Br(),
@@ -593,15 +593,15 @@ def update_additional_inputs(_, selected_services):
                             html.Br(),
                             dbc.Row([
                                 dbc.Col(html.H3("Clinical Exam"), width=3),
-                                dbc.Col(dbc.Button("+", id='followupclinicalexam-addbutton', className='custom-button', n_clicks=0), width=2),
-                                dbc.Col(dbc.Button("-", id='followupclinicalexam-deletebutton', className='custom-button', n_clicks=0), width=2),
+                                dbc.Col(dbc.Button("+", style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white"}, id='followupclinicalexam-addbutton', className='custom-button', n_clicks=0), width=2),
+                                dbc.Col(dbc.Button("-", style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white"}, id='followupclinicalexam-deletebutton', className='custom-button', n_clicks=0), width=2),
                             ]),
                             html.Div(id='followupclinicalexam-lineitems'),
                             html.Br(),
                             dbc.Row([
                                 dbc.Col(html.H3("Laboratory Exam"), width=3),
-                                dbc.Col(dbc.Button("+", id='followuplabexam-addbutton', className='custom-button', n_clicks=0), width=2),
-                                dbc.Col(dbc.Button("-", id='followuplabexam-deletebutton', className='custom-button', n_clicks=0), width=2),
+                                dbc.Col(dbc.Button("+", style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white"}, id='followuplabexam-addbutton', className='custom-button', n_clicks=0), width=2),
+                                dbc.Col(dbc.Button("-", style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white"}, id='followuplabexam-deletebutton', className='custom-button', n_clicks=0), width=2),
                             ]),
                             html.Div(id='followuplabexam-lineitems'),
                             html.Br(),

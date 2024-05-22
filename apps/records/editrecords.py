@@ -25,7 +25,7 @@ layout = html.Div(
                     dbc.CardHeader(
                         html.Div([
                             html.H3("Patient Information", className = "flex-grow-1"),
-                            dbc.Button("Edit Info", id = 'editrecords_patientdetails', n_clicks = 0),
+                            dbc.Button("Edit Info", style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white"}, id = 'editrecords_patientdetails', n_clicks = 0),
                         ], className = "d-flex align-items-center justify-content-between"),
                     ),
                     dbc.CardBody([
@@ -63,7 +63,7 @@ layout = html.Div(
                     dbc.CardHeader(
                         html.Div([
                             html.H3("Client Information", className = "flex-grow-1"),
-                            dbc.Button("Edit Info", id = 'editrecords_clientdetails', n_clicks = 0),
+                            dbc.Button("Edit Info", style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white"}, id = 'editrecords_clientdetails', n_clicks = 0),
                         ], className = "d-flex align-items-center justify-content-between"),
                     ),
                     dbc.CardBody([
@@ -190,7 +190,7 @@ layout = html.Div(
                 dbc.ModalHeader(html.H4('Save Success')),
                 dbc.ModalBody('Record has been updated', id='editrecord_feedback_message'),
                 dbc.ModalFooter(
-                    dbc.Button("Okay", href='/viewrecord', id='editrecord_btn_modal')
+                    dbc.Button("Okay", href='/viewrecord', style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white"}, id='editrecord_btn_modal')
                 )
             ],
             centered=True,
@@ -272,14 +272,14 @@ layout = html.Div(
                 ),
             ]),
             dbc.ModalFooter([
-                dbc.Button("Submit Client Details", id = "editprofile_client_submit", className = "ms-auto"),
+                dbc.Button("Submit Client Details", style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white"}, id = "editprofile_client_submit", className = "ms-auto"),
             ]),
         ], centered = True, id = "editprofile_client_modal", is_open = False, backdrop = "static", size = 'lg'),
 
         dbc.Modal(children = [ # successful saving of client profile
             dbc.ModalHeader(html.H4('Client Profile Recorded Successfully!', style={'text-align': 'center', 'width': '100%'}), close_button = False),
             dbc.ModalFooter([
-                dbc.Button("Close", id = 'editprofile_client_close_successmodal', className = "btn btn-primary ms-auto", href=""),
+                dbc.Button("Close", style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white"}, id = 'editprofile_client_close_successmodal', className = "btn btn-primary ms-auto", href=""),
                 #dbc.Button("Close", href = "/", id = "close_client_successmodal", className = "ms-auto"),
             ]),
         ], centered = True, id = 'editprofile_client_successmodal', backdrop = 'static', is_open = False, keyboard = False),
@@ -362,7 +362,7 @@ layout = html.Div(
         dbc.Modal(children = [ # successful saving of patient profile
             dbc.ModalHeader(html.H4('Patient Profile Recorded Successfully!', style={'text-align': 'center', 'width': '100%'}), close_button = False),
             dbc.ModalFooter([
-                dbc.Button("Close", id = 'editprofile_patient_close_successmodal', className = "btn btn-primary ms-auto", href=""),
+                dbc.Button("Close", style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white"}, id = 'editprofile_patient_close_successmodal', className = "btn btn-primary ms-auto", href=""),
                 #dbc.Button("Close", id = "close_patient_successmodal", className = "ms-auto"),
             ]),
         ], centered = True, id = 'editprofile_patient_successmodal', backdrop = 'static', is_open = False, keyboard = False),
@@ -474,8 +474,8 @@ def vaccine_table(url_search):
             for vacc_id, patient_id_query in zip(df['Vacc_ID'], df['Patient_ID']):
                 buttons += [
                     html.Div(
-                        dbc.Button('Edit', href=f'/editvaccine?mode=edit&vacc_id={vacc_id}&patient_id={patient_id_query}', size='sm', color='success'),
-                        style = {'text-align':'center'}
+                        dbc.Button('Edit', href=f'/editvaccine?mode=edit&vacc_id={vacc_id}&patient_id={patient_id_query}', style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white", 'text-align':'center'}, size='sm'), #color='success'),
+                        #style = {'text-align':'center'}
                     )
                 ]
 
@@ -519,8 +519,8 @@ def deworm_table(url_search):
             for deworm_id, patient_id_query in zip(df['Deworm_ID'], df['Patient_ID']):
                 buttons += [
                     html.Div(
-                        dbc.Button('Edit', href=f'/editdeworm?mode=edit&deworm_id={deworm_id}&patient_id={patient_id_query}', size='sm', color='success'),
-                        style = {'text-align':'center'}
+                        dbc.Button('Edit', href=f'/editdeworm?mode=edit&deworm_id={deworm_id}&patient_id={patient_id_query}', style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white", 'text-align':'center'}, size='sm'), #color='success'),
+                        #style = {'text-align':'center'}
                     )
                 ]
 
@@ -565,8 +565,8 @@ def problem_table(url_search):
             for problem_id, patient_id_query in zip(df['Problem_ID'], df['Patient_ID']):
                 buttons += [
                     html.Div(
-                        dbc.Button('Edit', href=f'/editproblem?mode=edit&problem_id={problem_id}&patient_id={patient_id_query}', size='sm', color='success'),
-                        style = {'text-align':'center'}
+                        dbc.Button('Edit', href=f'/editproblem?mode=edit&problem_id={problem_id}&patient_id={patient_id_query}', style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white", 'text-align':'center'}, size='sm'), #color='success'),
+                        #style = {'text-align':'center'}
                     )
                 ]
 

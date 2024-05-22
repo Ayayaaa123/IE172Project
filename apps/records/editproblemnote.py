@@ -192,7 +192,7 @@ def labexam_table(url_search):
                     hreflab = f'/editproblemlabexam?mode=edit&note_id={note_id}&lab_id={lab_id}'
                 buttons += [
                     html.Div(
-                        dbc.Button('Edit', href=hreflab,style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white", 'text-align':'center'},  size='sm'), #color='success'),
+                        dbc.Button('Edit', href=hreflab, style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white", 'text-align':'center'},  size='sm'), #color='success'),
                         #style = {'text-align':'center'}
                     )
                 ]
