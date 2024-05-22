@@ -253,10 +253,6 @@ def save_vacc_record(submitbtn, url_search, vaccine_name, vaccine_dose, vaccine_
                 alert_open = True
                 alert_color = 'danger'
                 alert_text = 'Check your inputs. Please select if vaccine is from vetmed'
-            elif vacc_delete is None:
-                alert_open = True
-                alert_color = 'danger'
-                alert_text = 'Check your inputs. Please select if vaccine should be deleted'
             else:
                 to_delete = bool(vacc_delete)
                 sql = """

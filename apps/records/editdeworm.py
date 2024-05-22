@@ -252,11 +252,7 @@ def save_deworm_record(submitbtn, url_search, deworm_name, deworm_dose, deworm_d
             elif deworm_fromvetmed is None:
                 alert_open = True
                 alert_color = 'danger'
-                alert_text = 'Check your inputs. Please select if vaccine is from vetmed'
-            elif deworm_delete is None:
-                alert_open = True
-                alert_color = 'danger'
-                alert_text = 'Check your inputs. Please select if vaccine should be deleted'
+                alert_text = 'Check your inputs. Please select if deworming medicine is from vetmed'
             else:
                 to_delete = bool(deworm_delete)
                 sql = """
