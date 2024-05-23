@@ -102,7 +102,7 @@ sidebar = dbc.Nav(
         #     start_collapsed=True,
         # ),
 
-        dbc.NavLink("New User", href="/newuser", active="exact", className="active-link", style=subelement_style),
+        # dbc.NavLink("New User", href="/newuser", active="exact", className="active-link", style=subelement_style),
         dbc.NavLink("View Users", href="/viewuser", active="exact", className="active-link", style=subelement_style),
         dbc. Accordion(
             [
