@@ -355,7 +355,7 @@ layout = html.Div(
                 ),
             ]),
             dbc.ModalFooter([
-                dbc.Button("Submit Patient Details", id = "editprofile_patient_submit", className = "ms-auto"),
+                dbc.Button("Submit Patient Details", style={"backgroundColor": "#333", "borderColor": "#333" , "color": "white"}, id = "editprofile_patient_submit", className = "ms-auto"),
             ]),
         ], centered = True, id = "editprofile_patient_modal", is_open = False, backdrop = "static", size = 'lg'),
 
